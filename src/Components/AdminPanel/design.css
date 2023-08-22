@@ -1,0 +1,27 @@
+
+
+.username{
+    transition: 0.3s all ease-in-out;
+    padding-right: 1.5rem;
+    color: #ffc107;
+    cursor: pointer;
+    background-color: rgb(0 0 0 / 80%);    
+}
+
+
+.list-of-users{ 
+    height: 90vh;
+}
+
+.list-of-access{
+    height: 90vh;
+}
+
+.access-list{
+    list-style-type: none;
+}
+
+    .access-list li{
+        list-style-type: none;
+    }
+
