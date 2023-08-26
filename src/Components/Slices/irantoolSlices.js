@@ -10,14 +10,23 @@ import {
   irantoolOperationList,
   irantoolChangeOperations,
   irantoolReasonOfDelayList,
-  irantoolChangeReasonOfDelay
+  irantoolChangeReasonOfDelay,
+  getgoodInfo,
+  getIrantoolMaterialList,
+  irantoolActionMachine,
+  irantoolActionDep,
 } from "../../Services/irantolJobReqServices";
 import { RsetLoading, RsetAddRole } from "./mainSlices";
-import { getToPersonByRole } from '../../Services/rootServices';
+import { getToPersonByRole, getUnits } from "../../Services/rootServices";
 import { errorMessage, successMessage } from "../../utils/message";
 import { RsetCurrentReqInfo } from "../Slices/currentReqSlice";
 import { RsetRealFilter } from "./filterSlices";
-import { RsetMachineCategory, RsetMachineCode, RsetMachineNumOfShift } from "./filterSlices";
+import {
+  RsetMachineCategory,
+  RsetMachineCode,
+  RsetMachineNumOfShift,
+} from "./filterSlices";
+import { useState } from "react";
 
 const initialState = {
   irantoolCategory: "",
@@ -26,18 +35,40 @@ const initialState = {
   irantoolShift: "",
   irantoolWorkHours: "",
   irantoolFilterData: [],
-  irantoolDeviceModal : false,
+  irantoolDeviceModal: false,
   irantoolInActiveDeviceModal: false,
-  irantoolAddOperatingUnitName: '',
-  irantoolOperationUnitList : [],
-  irantoolUsersByRoleList : [],
+  irantoolAddOperatingUnitName: "",
+  irantoolOperationUnitList: [],
+  irantoolUsersByRoleList: [],
   irantoolOperatorsSelect: [],
   irantoolOperatorList: [],
   irantoolOperatorOption: [],
-  irantoolOperationName:'',
+  irantoolOperationName: "",
   irantoolOperationList: [],
   irantoolReasonOfDelayList: [],
-  irantoolReasonOfDelayName: ''
+  irantoolReasonOfDelayName: "",
+
+  //
+  irantoolMaterialCode: "",
+  irantoolMaterialName: "",
+  irantoolMaterialNameAdd: "",
+  irantoolMaterialCount: "",
+  irantoolMaterialUnit: "",
+  irantoolMaterialUnitOptions: [],
+  irantoolMaterialModalSearch: false,
+  irantoolMaterialList: [],
+  irantoolSelectMaterial: "",
+  irantoolMaterialItem: [],
+  irantoolMaterialDescription: "",
+  irantoolActionDept: "",
+  irantoolActionOprator: "",
+  irantoolActionDevice: "",
+  irantoolActionCount: "",
+  irantoolActionDescription: "",
+  irantoolActionDeptOptions: [],
+  irantoolActionOpratorOptions: [],
+  irantoolActionDeviceOptions: [],
+  irantoolActionItem: [],
 };
 
 export const handleIrantoolCategoryList = createAsyncThunk(
@@ -167,21 +198,21 @@ export const handleEditIrantoolMachine = createAsyncThunk(
       if (editIrantoolMachineRes.data.code === 415) {
         var editedValue = [];
         var editedValueName = [];
-        if(editValue.machineCode !== undefined){
-          editedValue.push(editValue.machineCode)
-          editedValueName.push('machineCode')
+        if (editValue.machineCode !== undefined) {
+          editedValue.push(editValue.machineCode);
+          editedValueName.push("machineCode");
         }
-        if(editValue.useabilityHour !== undefined){
-          editedValue.push(editValue.useabilityHour)
-          editedValueName.push('useabilityHour')
+        if (editValue.useabilityHour !== undefined) {
+          editedValue.push(editValue.useabilityHour);
+          editedValueName.push("useabilityHour");
         }
-        if(editValue.numberOfShift !== undefined){
-          editedValue.push(editValue.machineCode)
-          editedValueName.push('machineCode')
+        if (editValue.numberOfShift !== undefined) {
+          editedValue.push(editValue.machineCode);
+          editedValueName.push("machineCode");
         }
-        if(editValue.categoryId !== undefined){
-          editedValue.push(editValue.categoryId)
-          editedValueName.push('categoryId')
+        if (editValue.categoryId !== undefined) {
+          editedValue.push(editValue.categoryId);
+          editedValueName.push("categoryId");
         }
         const logValue = {
           machineId: currentReqInfo.machineId,
@@ -200,9 +231,9 @@ export const handleEditIrantoolMachine = createAsyncThunk(
         } else {
           errorMessage("خطا!");
         }
-      } else if(editIrantoolMachineRes.data.code === 420){
-        errorMessage('کد دستگاه تکراری است!')
-      }else {
+      } else if (editIrantoolMachineRes.data.code === 420) {
+        errorMessage("کد دستگاه تکراری است!");
+      } else {
         errorMessage("خطا!");
       }
     } catch (ex) {
@@ -269,17 +300,19 @@ export const handleChangeOperationUnit = createAsyncThunk(
   async (changedValues, { dispatch }) => {
     dispatch(RsetLoading(true));
     try {
-      const changeOperationUnitRes = await irantoolChangeOperationUnit(changedValues);
+      const changeOperationUnitRes = await irantoolChangeOperationUnit(
+        changedValues
+      );
       if (changeOperationUnitRes.data.code === 415) {
         dispatch(RsetLoading(false));
-        successMessage('واحد مورد نظر با موفقیت ثبت شد!');
-        dispatch(RsetIrantoolAddOperatingUnitName(''));
+        successMessage("واحد مورد نظر با موفقیت ثبت شد!");
+        dispatch(RsetIrantoolAddOperatingUnitName(""));
         dispatch(RsetAddRole(null));
         dispatch(handleOperationUnitList());
-      } else if(changeOperationUnitRes.data.code === 420){
+      } else if (changeOperationUnitRes.data.code === 420) {
         errorMessage("واحد تکراری است!");
         dispatch(RsetLoading(false));
-      }else {
+      } else {
         errorMessage("خطا!");
         dispatch(RsetLoading(false));
       }
@@ -310,7 +343,14 @@ export const handleOperatorOptions = createAsyncThunk(
   async (exist, { dispatch, getState }) => {
     try {
       const { user } = getState().mainHome;
-      const operatorRes = await getToPersonByRole('2', user.Location, user.CompanyCode, exist, null, '0');
+      const operatorRes = await getToPersonByRole(
+        "2",
+        user.Location,
+        user.CompanyCode,
+        exist,
+        null,
+        "0"
+      );
       if (operatorRes.data.code === 415) {
         dispatch(RsetIrantoolOperatorOption(operatorRes.data.list));
       } else {
@@ -327,7 +367,14 @@ export const handleOperatorList = createAsyncThunk(
   async (obj, { dispatch, getState }) => {
     try {
       const { user } = getState().mainHome;
-      const operatorRes = await getToPersonByRole('2', user.Location, user.CompanyCode, 1, null, '0');
+      const operatorRes = await getToPersonByRole(
+        "2",
+        user.Location,
+        user.CompanyCode,
+        1,
+        null,
+        "0"
+      );
       if (operatorRes.data.code === 415) {
         dispatch(RsetIrantoolOperatorList(operatorRes.data.list));
       } else {
@@ -363,14 +410,14 @@ export const handleChangeOperation = createAsyncThunk(
       const changeOperationRes = await irantoolChangeOperations(changedValues);
       if (changeOperationRes.data.code === 415) {
         dispatch(RsetLoading(false));
-        successMessage('عملیات مورد نظر با موفقیت ثبت شد!');
-        dispatch(RsetIrantoolOperationName(''));
+        successMessage("عملیات مورد نظر با موفقیت ثبت شد!");
+        dispatch(RsetIrantoolOperationName(""));
         dispatch(RsetAddRole(null));
         dispatch(handleOperationList());
-      } else if(changeOperationRes.data.code === 420){
+      } else if (changeOperationRes.data.code === 420) {
         errorMessage("عملیات تکراری است!");
         dispatch(RsetLoading(false));
-      }else {
+      } else {
         errorMessage("خطا!");
         dispatch(RsetLoading(false));
       }
@@ -385,7 +432,14 @@ export const handleIrtUsersByRole = createAsyncThunk(
   async (obj, { dispatch, getState }) => {
     try {
       const { user } = getState().mainHome;
-      const usersByRoleRes = await getToPersonByRole('26', user.Location, user.CompanyCode, 1, null, '0');
+      const usersByRoleRes = await getToPersonByRole(
+        "26",
+        user.Location,
+        user.CompanyCode,
+        1,
+        null,
+        "0"
+      );
       if (usersByRoleRes.data.code === 415) {
         dispatch(RsetIrantoolUsersByRoleList(usersByRoleRes.data.list));
       } else {
@@ -418,11 +472,13 @@ export const handleChangeReasonOfDelay = createAsyncThunk(
   async (changedValues, { dispatch, getState }) => {
     dispatch(RsetLoading(true));
     try {
-      const changeReasonOfDelayRes = await irantoolChangeReasonOfDelay(changedValues);
+      const changeReasonOfDelayRes = await irantoolChangeReasonOfDelay(
+        changedValues
+      );
       if (changeReasonOfDelayRes.data.code === 415) {
         dispatch(RsetLoading(false));
-        successMessage('عملیات مورد نظر با موفقیت ثبت شد!');
-        dispatch(RsetIrantoolReasonOfDelayName(''));
+        successMessage("عملیات مورد نظر با موفقیت ثبت شد!");
+        dispatch(RsetIrantoolReasonOfDelayName(""));
         dispatch(RsetAddRole(null));
         dispatch(handleReasonOfDelayList());
       } else {
@@ -432,6 +488,182 @@ export const handleChangeReasonOfDelay = createAsyncThunk(
     } catch (ex) {
       console.log(ex);
       dispatch(RsetLoading(false));
+    }
+  }
+);
+
+export const handleIrantoolMaterialUnitOptions = createAsyncThunk(
+  "irantool/handleIrantoolMaterialUnitOptions",
+  async (obj, { dispatch, getState }) => {
+    try {
+      const unitsRes = await getUnits();
+      if (unitsRes.data.code === 415) {
+        dispatch(RsetIrantoolMaterialUnitOptions(unitsRes.data.list));
+      } else {
+        dispatch(RsetIrantoolMaterialUnitOptions([]));
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  }
+);
+export const handleIrantoolActionDeptOptions = createAsyncThunk(
+  "irantool/handleIrantoolActionDeptOptions",
+  async (obj, { dispatch, getState }) => {
+    try {
+      const irantoolActionDepRes = await irantoolActionDep();
+      console.log(irantoolActionDepRes);
+      if (irantoolActionDepRes.data.code === 415) {
+        dispatch(RsetIrantoolActionDeptOptions(irantoolActionDepRes.data.list));
+      } else {
+        dispatch(RsetIrantoolActionDeptOptions([]));
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  }
+);
+export const handleIrantoolActionOpratorOptions = createAsyncThunk(
+  "irantool/handleIrantoolActionOpratorOptions",
+  async (obj, { dispatch, getState }) => {
+    const { user } = getState().mainHome;
+    console.log(user);
+    try {
+      const getToPersonByRoleRes = await getToPersonByRole(
+        2,
+        user.Location,
+        user.CompanyCode,
+        1,
+        null
+      );
+      if (getToPersonByRoleRes.data.code === 415) {
+        dispatch(
+          RsetIrantoolActionOpratorOptions(getToPersonByRoleRes.data.list)
+        );
+      } else {
+        dispatch(RsetIrantoolActionOpratorOptions([]));
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  }
+);
+
+export const handleIrantoolActionDeviceOptions = createAsyncThunk(
+  "irantool/handleIrantoolActionDeviceOptions",
+  async (obj, { dispatch, getState }) => {
+    try {
+      const irantoolActionMachineRes = await irantoolActionMachine();
+      console.log(irantoolActionMachineRes);
+      if (irantoolActionMachineRes.data.code === 415) {
+        dispatch(
+          RsetIrantoolActionDeviceOptions(irantoolActionMachineRes.data.list)
+        );
+      } else {
+        dispatch(RsetIrantoolActionDeviceOptions([]));
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  }
+);
+
+export const handleDeleteMaterialItem = createAsyncThunk(
+  "irantool/handleDeleteMaterialItem",
+  async (itemId, { dispatch, getState }) => {
+    const { irantoolMaterialItem } = getState().irantool;
+    const items = [...irantoolMaterialItem];
+    const filteredItems = items.filter((tr) => tr.id !== itemId);
+    dispatch(RsetIrantoolMaterialItem(filteredItems));
+  }
+);
+export const handleDeleteActionItem = createAsyncThunk(
+  "irantool/handleDeleteActionItem",
+  async (itemId, { dispatch, getState }) => {
+    const { irantoolActionItem } = getState().irantool;
+    const items = [...irantoolActionItem];
+    const filteredItems = items.filter((tr) => tr.id !== itemId);
+    dispatch(RsetIrantoolActionItem(filteredItems));
+  }
+);
+
+export const handleGetProWithCode = createAsyncThunk(
+  "irantool/handleGetProWithCode",
+  async (event, { dispatch, getState }) => {
+    const { irantoolMaterialCode } = getState().irantool;
+
+    let addProCode = event.target.value;
+    if (addProCode.length >= 5) {
+      const inputLength = 10 - addProCode.length;
+      var zero = "";
+      const autoZero = () => {
+        for (var i = 0; i < inputLength; i++) {
+          zero = zero + "0";
+        }
+        return zero;
+      };
+      const completedCode =
+        addProCode.substring(0, 4) +
+        autoZero() +
+        addProCode.substring(4, addProCode.Length);
+      dispatch(RsetIrantoolMaterialCode(completedCode));
+      // dispatch(RsetLoading(true));
+      try {
+        const values = {
+          itemCode: completedCode,
+          itemName: "",
+          itemGroupName: "",
+          itemTechnicalInfo: "",
+          date: undefined,
+        };
+        const getProByCodeRes = await getgoodInfo(values);
+
+        if (getProByCodeRes.data.code === 415) {
+          dispatch(RsetLoading(false));
+          dispatch(
+            RsetIrantoolMaterialName(getProByCodeRes.data.items[0].itemName)
+          );
+        } else {
+          dispatch(RsetIrantoolMaterialName(""));
+          dispatch(RsetLoading(false));
+          errorMessage("کد موردنظر یافت نشد!");
+        }
+      } catch (ex) {
+        dispatch(RsetLoading(false));
+        console.log(ex);
+      }
+    } else {
+      dispatch(RsetIrantoolMaterialCode(event.target.value));
+    }
+  }
+);
+export const handleGetProWithName = createAsyncThunk(
+  "irantool/handleGetProWithName",
+  async (event, { dispatch, getState }) => {
+    dispatch(RsetLoading(true));
+    try {
+      const { irantoolMaterialName } = getState().irantool;
+      const values = {
+        itemCode: "",
+        itemName: irantoolMaterialName,
+        itemGroupName: "",
+        itemTechnicalInfo: "",
+        date: undefined,
+      };
+      const getProByNameRes = await getgoodInfo(values);
+
+      if (getProByNameRes.data.code === 415) {
+        dispatch(RsetLoading(false));
+        dispatch(RsetIrantoolMaterialList(getProByNameRes.data.items));
+      } else {
+        dispatch(RsetLoading(false));
+        errorMessage("متریال موردنظر یافت نشد!");
+        dispatch(RsetIrantoolMaterialList([]));
+        dispatch(RsetIrantoolMaterialCode(""));
+      }
+    } catch (ex) {
+      dispatch(RsetLoading(false));
+      console.log(ex);
     }
   }
 );
@@ -491,6 +723,68 @@ const irantoolSlice = createSlice({
     RsetIrantoolReasonOfDelayName: (state, action) => {
       return { ...state, irantoolReasonOfDelayName: action.payload };
     },
+    //
+    RsetIrantoolMaterialCode: (state, action) => {
+      return { ...state, irantoolMaterialCode: action.payload };
+    },
+    RsetIrantoolMaterialName: (state, action) => {
+      return { ...state, irantoolMaterialName: action.payload };
+    },
+    RsetIrantoolMaterialNameAdd: (state, action) => {
+      return { ...state, irantoolMaterialNameAdd: action.payload };
+    },
+    RsetIrantoolMaterialCount: (state, action) => {
+      return { ...state, irantoolMaterialCount: action.payload };
+    },
+    RsetIrantoolMaterialUnit: (state, action) => {
+      return { ...state, irantoolMaterialUnit: action.payload };
+    },
+    RsetIrantoolMaterialUnitOptions: (state, action) => {
+      return { ...state, irantoolMaterialUnitOptions: action.payload };
+    },
+    RsetIrantoolMaterialModalSearch: (state, action) => {
+      return { ...state, irantoolMaterialModalSearch: action.payload };
+    },
+    RsetIrantoolMaterialList: (state, action) => {
+      return { ...state, irantoolMaterialList: action.payload };
+    },
+    RsetIrantoolSelectMaterial: (state, action) => {
+      return { ...state, irantoolSelectMaterial: action.payload };
+    },
+    RsetIrantoolMaterialItem: (state, action) => {
+      return { ...state, irantoolMaterialItem: action.payload };
+    },
+    RsetIrantoolMaterialDescription: (state, action) => {
+      return { ...state, irantoolMaterialDescription: action.payload };
+    },
+    //
+    RsetIrantoolActionDept: (state, action) => {
+      return { ...state, irantoolActionDept: action.payload };
+    },
+    RsetIrantoolActionOprator: (state, action) => {
+      return { ...state, irantoolActionOprator: action.payload };
+    },
+    RsetIrantoolActionDevice: (state, action) => {
+      return { ...state, irantoolActionDevice: action.payload };
+    },
+    RsetIrantoolActionCount: (state, action) => {
+      return { ...state, irantoolActionCount: action.payload };
+    },
+    RsetIrantoolActionDescription: (state, action) => {
+      return { ...state, irantoolActionDescription: action.payload };
+    },
+    RsetIrantoolActionDeptOptions: (state, action) => {
+      return { ...state, irantoolActionDeptOptions: action.payload };
+    },
+    RsetIrantoolActionOpratorOptions: (state, action) => {
+      return { ...state, irantoolActionOpratorOptions: action.payload };
+    },
+    RsetIrantoolActionDeviceOptions: (state, action) => {
+      return { ...state, irantoolActionDeviceOptions: action.payload };
+    },
+    RsetIrantoolActionItem: (state, action) => {
+      return { ...state, irantoolActionItem: action.payload };
+    },
   },
 });
 
@@ -511,25 +805,103 @@ export const {
   RsetIrantoolOperationName,
   RsetIrantoolOperationList,
   RsetIrantoolReasonOfDelayList,
-  RsetIrantoolReasonOfDelayName
+  RsetIrantoolReasonOfDelayName,
+  RsetIrantoolMaterialCode,
+  RsetIrantoolMaterialName,
+  RsetIrantoolMaterialNameAdd,
+  RsetIrantoolMaterialCount,
+  RsetIrantoolMaterialUnit,
+  RsetIrantoolMaterialUnitOptions,
+  RsetIrantoolMaterialModalSearch,
+  RsetIrantoolMaterialList,
+  RsetIrantoolSelectMaterial,
+  RsetIrantoolMaterialItem,
+  RsetIrantoolMaterialDescription,
+  RsetIrantoolActionDept,
+  RsetIrantoolActionOprator,
+  RsetIrantoolActionDevice,
+  RsetIrantoolActionCount,
+  RsetIrantoolActionDescription,
+  RsetIrantoolActionDeptOptions,
+  RsetIrantoolActionOpratorOptions,
+  RsetIrantoolActionDeviceOptions,
+  RsetIrantoolActionItem,
 } = irantoolSlice.actions;
 
-export const selectIrantoolCategory = (state) => state.irantool.irantoolCategory;
-export const selectIrantoolCategoryOptions = (state) => state.irantool.irantoolCategoryOptions;
-export const selectIrantoolDeviceCode = (state) => state.irantool.irantoolDeviceCode;
+export const selectIrantoolCategory = (state) =>
+  state.irantool.irantoolCategory;
+export const selectIrantoolCategoryOptions = (state) =>
+  state.irantool.irantoolCategoryOptions;
+export const selectIrantoolDeviceCode = (state) =>
+  state.irantool.irantoolDeviceCode;
 export const selectIrantoolShift = (state) => state.irantool.irantoolShift;
-export const selectIrantoolWorkHours = (state) => state.irantool.irantoolWorkHours;
-export const selectIrantoolFilterData = (state) => state.irantool.irantoolFilterData;
-export const selectIrantoolDeviceModal = (state) => state.irantool.irantoolDeviceModal;
-export const selectIrantoolInActiveDeviceModal = (state) => state.irantool.irantoolInAvtiveDeviceModal;
-export const selectIrantoolAddOperatingUnitName = (state) => state.irantool.irantoolAddOperatingUnitName;
-export const selectIrantoolOperationUnitList = (state) => state.irantool.irantoolOperationUnitList;
-export const selectIrantoolUsersByRoleList = (state) => state.irantool.irantoolUsersByRoleList;
-export const selectIrantoolOperatorList = (state) => state.irantool.irantoolOperatorList;
-export const selectIrantoolOperatorOption = (state) => state.irantool.irantoolOperatorOption;
-export const selectIrantoolOperationName = (state) => state.irantool.irantoolOperationName;
-export const selectIrantoolOperationList = (state) => state.irantool.irantoolOperationList;
-export const selectIrantoolReasonOfDelayList = (state) => state.irantool.irantoolReasonOfDelayList;
-export const selectIrantoolReasonOfDelayName = (state) => state.irantool.irantoolReasonOfDelayName;
+export const selectIrantoolWorkHours = (state) =>
+  state.irantool.irantoolWorkHours;
+export const selectIrantoolFilterData = (state) =>
+  state.irantool.irantoolFilterData;
+export const selectIrantoolDeviceModal = (state) =>
+  state.irantool.irantoolDeviceModal;
+export const selectIrantoolInActiveDeviceModal = (state) =>
+  state.irantool.irantoolInAvtiveDeviceModal;
+export const selectIrantoolAddOperatingUnitName = (state) =>
+  state.irantool.irantoolAddOperatingUnitName;
+export const selectIrantoolOperationUnitList = (state) =>
+  state.irantool.irantoolOperationUnitList;
+export const selectIrantoolUsersByRoleList = (state) =>
+  state.irantool.irantoolUsersByRoleList;
+export const selectIrantoolOperatorList = (state) =>
+  state.irantool.irantoolOperatorList;
+export const selectIrantoolOperatorOption = (state) =>
+  state.irantool.irantoolOperatorOption;
+export const selectIrantoolOperationName = (state) =>
+  state.irantool.irantoolOperationName;
+export const selectIrantoolOperationList = (state) =>
+  state.irantool.irantoolOperationList;
+export const selectIrantoolReasonOfDelayList = (state) =>
+  state.irantool.irantoolReasonOfDelayList;
+export const selectIrantoolReasonOfDelayName = (state) =>
+  state.irantool.irantoolReasonOfDelayName;
+//
+export const selectIrantoolMaterialCode = (state) =>
+  state.irantool.irantoolMaterialCode;
+export const selectIrantoolMaterialName = (state) =>
+  state.irantool.irantoolMaterialName;
+export const selectIrantoolMaterialNameAdd = (state) =>
+  state.irantool.irantoolMaterialNameAdd;
+export const selectIrantoolMaterialCount = (state) =>
+  state.irantool.irantoolMaterialCount;
+export const selectIrantoolMaterialUnit = (state) =>
+  state.irantool.irantoolMaterialUnit;
+export const selectIrantoolMaterialUnitOptions = (state) =>
+  state.irantool.irantoolMaterialUnitOptions;
+export const selectIrantoolMaterialModalSearch = (state) =>
+  state.irantool.irantoolMaterialModalSearch;
+export const selectIrantoolMaterialList = (state) =>
+  state.irantool.irantoolMaterialList;
+export const selectIrantoolSelectMaterial = (state) =>
+  state.irantool.irantoolSelectMaterial;
+export const selectIrantoolMaterialItem = (state) =>
+  state.irantool.irantoolMaterialItem;
+export const selectIrantoolMaterialDescription = (state) =>
+  state.irantool.irantoolMaterialDescription;
+//action
+export const selectIrantoolActionDept = (state) =>
+  state.irantool.irantoolActionDept;
+export const selectIrantoolActionOprator = (state) =>
+  state.irantool.irantoolActionOprator;
+export const selectIrantoolActionDevice = (state) =>
+  state.irantool.irantoolActionDevice;
+export const selectIrantoolActionCount = (state) =>
+  state.irantool.irantoolActionCount;
+export const selectIrantoolActionDescription = (state) =>
+  state.irantool.irantoolActionDescription;
+export const selectIrantoolActionDeptOptions = (state) =>
+  state.irantool.irantoolActionDeptOptions;
+export const selectIrantoolActionOpratorOptions = (state) =>
+  state.irantool.irantoolActionOpratorOptions;
+export const selectIrantoolActionDeviceOptions = (state) =>
+  state.irantool.irantoolActionDeviceOptions;
+export const selectIrantoolActionItem = (state) =>
+  state.irantool.irantoolActionItem;
 
 export default irantoolSlice.reducer;

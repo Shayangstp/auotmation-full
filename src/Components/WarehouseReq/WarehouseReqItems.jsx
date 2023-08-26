@@ -56,13 +56,6 @@ const ReqItems = ({ reqItemsOperation, edit }) => {
         dispatch(RsetPrevList(currentReqItems))
     },[]);
 
-    useEffect(()=>{
-        if(currentReqInfo.typeId === 2 && acceptReqModal){
-            console.log(currentItem)
-            
-        }
-    },[currentReqInfo])
-
 
     const context = useContext(reqContext);
     const {
@@ -102,7 +95,7 @@ const ReqItems = ({ reqItemsOperation, edit }) => {
                                 menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
                         </td>
                         <td>
-                            <Select defaultValue={{ label: 'هست', value: 1 }} className="font12" onChange={(e) => {
+                            <Select className="font12" defaultValue={{ label: 'هست', value: 1 }}  onChange={(e) => {
                                 dispatch(handleEditWarehouseReqItemBorrowed({ event: e, reqItemId: item.itemId }));
                             }}
                                 placeholder='انتخاب' options={[{ label: 'هست', value: 1 }, { label: 'نیست', value: 0 }]}

@@ -140,7 +140,7 @@ const BaseInfoTable = ({ handleList, list, role }) => {
                                 //     memberId: '',
                                 // }
                                 dispatch(handleList(1));
-                            }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی جدول</Button> */}
+                            }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button> */}
                             <BaseInfoItem
                                 requests={list}
                                 columns={columns}

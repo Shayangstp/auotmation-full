@@ -378,7 +378,7 @@ const OverTimeReqsList = ({setPageTitle}) => {
                 className="ml-2 me-1"
                 icon={faArrowsRotate}
               />
-              به روز رسانی جدول
+              به روز رسانی
             </span>
           </Button>
           <OverTimeReqItem

@@ -313,7 +313,7 @@ const MissionReqsList = ({setPageTitle, loading, setLoading}) => {
                                             type: 9
                                         }
                                         handleGetRequestList(filterValues);
-                                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2'/>به روزرسانی جدول</Button>
+                                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2'/>به روزرسانی</Button>
                                     <MissionReqItem
                                         requests={requestList}
                                         notVisited={notVisited}

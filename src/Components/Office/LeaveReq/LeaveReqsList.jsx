@@ -360,7 +360,7 @@ const LeaveReqsList = ({ setPageTitle }) => {
                                         type: 4
                                     }
                                     dispatch(handleReqsList(filterParams));
-                                }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی جدول</Button>
+                                }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button>
                                 <LeaveReqItem
                                     requests={reqsList}
                                     notVisited={notVisited}

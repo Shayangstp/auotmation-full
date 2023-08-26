@@ -9,16 +9,18 @@ import { faBan, faCheck, faEye, faArrowsRotate, faSpinner, faPlus, faHome, faWar
 import moment from 'moment-jalaali';
 import xssFilters from 'xss-filters';
 import { useDispatch, useSelector } from 'react-redux';
-import { handleReqsList, selectReqsList, handleCurrentReqInfo, handleUserInformation, handleUserImage, selectUserInfoModal } from '../../Slices/mainSlices';
+import { handleReqsList, selectReqsList, handleCurrentReqInfo, handleUserInformation, handleUserImage, selectUserInfoModal, selectLoading } from '../../Slices/mainSlices';
 import { RsetCurrentReqItems } from '../../Slices/currentReqSlice';
 import UserInfoModal from '../../Modals/UserInfoModal';
 import { selectShowFilter, RsetShowFilter } from '../../Slices/filterSlices';
+import Loading from '../../Common/Loading';
 
-const PurchaseReqsList = ({ setPageTitle, loading, setLoading }) => {
+const PurchaseReqsList = ({ setPageTitle }) => {
     const dispatch = useDispatch();
     const reqsList = useSelector(selectReqsList);
     const userInfoModal = useSelector(selectUserInfoModal);
     const showFilter = useSelector(selectShowFilter);
+    const loading = useSelector(selectLoading);
 
     const mainContext = useContext(rootContext);
     const {
@@ -33,6 +35,7 @@ const PurchaseReqsList = ({ setPageTitle, loading, setLoading }) => {
     useEffect(() => {
         setPageTitle('لیست درخواست های خرید');
         dispatch(RsetCurrentReqItems([]));
+        dispatch(RsetShowFilter(false));
     }, [])
 
     const [data, setData] = useState([]);
@@ -56,6 +59,11 @@ const PurchaseReqsList = ({ setPageTitle, loading, setLoading }) => {
                 Header: "درخواست کننده",
                 accessor: "reqUser",
                 disableSortBy: false
+            },
+            {
+                Header: "تایید کننده",
+                accessor: "reqAcceptor",
+                sort: true
             },
             {
                 Header: "شرکت",
@@ -97,15 +105,29 @@ const PurchaseReqsList = ({ setPageTitle, loading, setLoading }) => {
             </a>
         )
     }
-    const userInfo = (request) => {
+    const userInfo = (request, userStatus) => {
+        const name = ()=> {
+            if(userStatus === 'user'){
+                return xssFilters.inHTMLData(request.fullName)
+            }else if(userStatus === 'acceptor' && request.lastActionCode !== 0 && request.lastActionCode !== 2){
+                return xssFilters.inHTMLData(request.lastAcceptorName);
+            }else{
+                return '';
+            }
+        }
         return (
             <div className='text-dark cursorPointer' title='مشاهده اطلاعات کاربر '
                 onClick={() => {
-                    dispatch(handleUserInformation(request.userId));
-                    dispatch(handleUserImage({ userId: request.userId, status: 1 }));
+                    if(userStatus === 'user'){
+                        dispatch(handleUserInformation(request.userId));
+                        dispatch(handleUserImage({ userId: request.userId, status: 1 }));
+                    }else if(userStatus === 'acceptor'){
+                        dispatch(handleUserInformation(request.lastAcceptorId));
+                        dispatch(handleUserImage({ userId: request.lastAcceptorId, status: 1 }));
+                    }
                 }}
             >
-                {xssFilters.inHTMLData(request.fullName)}
+                {name()}
             </div>
         )
     }
@@ -250,7 +272,8 @@ const PurchaseReqsList = ({ setPageTitle, loading, setLoading }) => {
                 var tableItem = {
                     reqSerial: link(requests[i]),
                     reqDate: moment.utc(requests[i].createdDate, 'YYYY/MM/DD').locale('fa').format('jYYYY/jMM/jDD'),
-                    reqUser: userInfo(requests[i]),
+                    reqUser: userInfo(requests[i], 'user'),
+                    reqAcceptor: userInfo(requests[i], 'acceptor'),
                     reqCompany: xssFilters.inHTMLData(requests[i].companyName),
                     reqPlace: xssFilters.inHTMLData(requests[i].placeOfPurchaseName),
                     reqItemsCount: xssFilters.inHTMLData(requests[i].itemsCount),
@@ -277,7 +300,8 @@ const PurchaseReqsList = ({ setPageTitle, loading, setLoading }) => {
                 var tableItem = {
                     reqSerial: link(requests[i]),
                     reqDate: moment.utc(requests[i].createdDate, 'YYYY/MM/DD').locale('fa').format('jYYYY/jMM/jDD'),
-                    reqUser: userInfo(requests[i]),
+                    reqUser: userInfo(requests[i], 'user'),
+                    reqAcceptor: userInfo(requests[i], 'acceptor'),
                     reqCompany: xssFilters.inHTMLData(requests[i].companyName),
                     reqPlace: xssFilters.inHTMLData(requests[i].placeOfPurchaseName),
                     reqItemsCount: xssFilters.inHTMLData(requests[i].itemsCount),
@@ -324,55 +348,52 @@ const PurchaseReqsList = ({ setPageTitle, loading, setLoading }) => {
         <Container fluid className='pb-4'>
             {/* {menuPermission ? */}
             <Fragment>
-                <section>
-                    {loading ?
-                        <div className="d-flex justify-content-center"><FontAwesomeIcon icon={faSpinner} className='spinner font60' /></div>
-                        :
-                        <div>
-                            {showFilter
-                                ? <Row>
-                                    <Col md='12'>
-                                        <PurchaseReqsFilter />
-                                    </Col>
-                                </Row>
-                                : null
-                            }
-                            <div className="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <Link to='/PurchaseReqRegistration'>
-                                        <Button size='sm' variant='success' className='mb-2 font12'>
-                                            <FontAwesomeIcon icon={faPlus} className='me-2' />افزودن درخواست جدید
-                                        </Button>
-                                    </Link>
-                                    <Button size='sm' variant='warning' className='mb-2 ms-2 font12' onClick={()=>{dispatch(RsetShowFilter(!showFilter))}}>
-                                        <FontAwesomeIcon icon={faFilter} className='me-2' />فیلتر پیشرفته
-                                    </Button>
-                                </div>
-                                <Button size='sm' variant='primary' className='mb-2 font12' onClick={() => {
-                                    const filterValues = {
-                                        applicantId: localStorage.getItem('id'),
-                                        memberId: '',
-                                        serial: '',
-                                        status: '',
-                                        fromDate: 'null',
-                                        toDate: 'null',
-                                        type: 9
-                                    }
-                                    dispatch(handleReqsList(filterValues));
-                                }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی جدول</Button>
-                            </div>
-                            <PurchaseReqItem
-                                requests={reqsList}
-                                columns={columns}
-                                data={data}
-                                onSort={handleSort}
-                                fetchData={fetchData}
-                                loading={load}
-                                pageCount={pageCount}
-                            />
-                            {userInfoModal && <UserInfoModal />}
-                        </div>
-                    }
+                {showFilter
+                    ? <Row>
+                        <Col md='12'>
+                            <PurchaseReqsFilter />
+                        </Col>
+                    </Row>
+                    : null
+                }
+                <div className="d-flex align-items-center justify-content-between">
+                    <div>
+                        <Link to='/PurchaseReqRegistration'>
+                            <Button size='sm' variant='success' className='mb-2 font12'>
+                                <FontAwesomeIcon icon={faPlus} className='me-2' />افزودن درخواست جدید
+                            </Button>
+                        </Link>
+                        <Button size='sm' variant='warning' className='mb-2 ms-2 font12' onClick={() => { dispatch(RsetShowFilter(!showFilter)) }}>
+                            <FontAwesomeIcon icon={faFilter} className='me-2' />فیلتر
+                        </Button>
+                    </div>
+                    <Button size='sm' variant='primary' className='mb-2 font12' onClick={() => {
+                        const filterValues = {
+                            applicantId: localStorage.getItem('id'),
+                            memberId: '',
+                            serial: '',
+                            status: '',
+                            fromDate: 'null',
+                            toDate: 'null',
+                            type: 9
+                        }
+                        dispatch(handleReqsList(filterValues));
+                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button>
+                </div>
+                <section className="position-relative">
+                    {loading ? <Loading /> : null}
+                    <div>
+                        <PurchaseReqItem
+                            requests={reqsList}
+                            columns={columns}
+                            data={data}
+                            onSort={handleSort}
+                            fetchData={fetchData}
+                            loading={load}
+                            pageCount={pageCount}
+                        />
+                        {userInfoModal && <UserInfoModal />}
+                    </div>
                 </section>
             </Fragment>
             {/* :

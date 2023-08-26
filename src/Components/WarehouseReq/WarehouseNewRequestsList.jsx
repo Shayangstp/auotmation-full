@@ -283,7 +283,7 @@ const WarehouseNewRequestsList = ({setPageTitle, loading, setLoading}) => {
                                 <div>
                                     <Button size='sm' variant='primary' className='mb-2' onClick={()=>{
                                         handleAllNewWarehouseRequests();
-                                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2'/>به روزرسانی جدول</Button>
+                                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2'/>به روزرسانی</Button>
                                     <Requests
                                         requests={allWarehouseReqs}
                                         notVisited={notVisited}

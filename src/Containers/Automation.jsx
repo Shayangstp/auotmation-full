@@ -100,6 +100,7 @@ import BaseInfo from "../Components/IranTolJobReq/IranTolBaseInfo/BaseInfo";
 import PaySlipReport from "../Components/Financial/Report/PaySlip/PaySlipReport";
 
 import PurchaseItemsList from "../Components/WarehouseReq/ProductPurchase/PurchaseItemsList";
+import IranTolJobMaterialWorkflow from "../Components/IranTolJobReq/IranTolJobMaterialWorkflow";
 
 const Automation = (props) => {
 
@@ -301,6 +302,20 @@ const Automation = (props) => {
                                     <AddFileContext>
                                         <IranTolJobContext>
                                             <IranTolJobReqsList setPageTitle={setPageTitle} setLocklinks={setLocklinks} />
+                                        </IranTolJobContext>
+                                    </AddFileContext>
+                                </MainContext>
+                            </CookieContext>}
+                    />
+                    <Route path="/MtrWrkflw/:id" render={() =>
+                        hasJWT() === false ?
+                            <Redirect to="/" />
+                            :
+                            <CookieContext>
+                                <MainContext>
+                                    <AddFileContext>
+                                        <IranTolJobContext>
+                                            <IranTolJobMaterialWorkflow setPageTitle={setPageTitle} setLocklinks={setLocklinks} />
                                         </IranTolJobContext>
                                     </AddFileContext>
                                 </MainContext>

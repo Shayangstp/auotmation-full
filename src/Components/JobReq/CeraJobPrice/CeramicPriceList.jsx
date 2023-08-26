@@ -350,7 +350,7 @@ const SoftwareSupportList = () => {
                 onClick={() => {}}
               >
                 <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
-                به روزرسانی جدول
+                به روزرسانی
               </Button>
               {ceramicMaterialFilterData !== undefined ? (
                 <Fragment>

@@ -243,7 +243,7 @@ const WarehouseItemsList = ({ setPageTitle, loading, setLoading }) => {
                                     toDate: 'null',
                                 }
                                 dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
-                            }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی جدول</Button>
+                            }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button>
                             <PurchaseReqItem
                                 requests={currentReqItems}
                                 columns={columns}

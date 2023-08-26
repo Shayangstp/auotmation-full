@@ -971,10 +971,8 @@ const MainContext = ({ children }) => {
                     errorMessage('شخص دریافت کننده ای یافت نشد!')
                 }
             } else if (acceptType === 'warehouseAccept') {
-                const rattletrapTypeNull = currentReqItems.filter(item => item.rattletrap === null);
-                const consumableTypeNull = currentReqItems.filter(item => item.consumable === null);
-                const borrowedTypeNull = currentReqItems.filter(item => item.borrowed === null);
-                if (rattletrapTypeNull.length === 0 && consumableTypeNull.length === 0 && borrowedTypeNull.length === 0) {
+                const rattletrapTypeNull = currentReqItems.filter(item => item.invCode === null);
+                if (rattletrapTypeNull.length === 0) {
                     const toPersons = await getToPersonByRole('36, 3', user.Location, user.CompanyCode, 1, null, '0');
                     if (toPersons.data.code === 415) {
                         var toPersonsArr = [];

@@ -118,7 +118,7 @@ const ProductsList = ({ setPageTitle }) => {
                                 itemGroupName: '', itemCode: '', itemName: '', itemTechnicalInfo: ''
                             }
                             dispatch(handleProductsList(filterValues));
-                        }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی جدول</Button>
+                        }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button>
                         <ProItem
                             requests={productsList}
                             columns={columns}

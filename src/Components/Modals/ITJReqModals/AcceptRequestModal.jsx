@@ -325,7 +325,7 @@ const AcceptRequestModal = () => {
                         : null
                     } */}
 
-                    {/* {currentReqInfo.process[currentReqInfo.process.length - 1].action_code === 41
+                    {/* {currentReqInfo.lastActionCode === 41
                         ? <Row>
                             <hr className="mt-4 mb-5" />
                             <h3 className="fw-bold font16 mb-4">ثبت برنامه های عملیاتی</h3>

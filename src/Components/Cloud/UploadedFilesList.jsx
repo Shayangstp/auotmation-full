@@ -224,7 +224,7 @@ const UploadedFilesList = ({setPageTitle}) => {
                         >
                             <span>
                                 <FontAwesomeIcon aria-hidden="true" focusable="false" data-prefix="fas" className="ml-2 me-1" icon={faArrowsRotate} />
-                                به روز رسانی جدول
+                                به روز رسانی
                             </span>
                         </Button>
                         <FilesClodItem

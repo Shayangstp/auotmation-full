@@ -427,7 +427,7 @@ const RequestsList = ({setPageTitle, loading, setLoading}) => {
                                             type: 13
                                         }
                                         handleGetRequestList(filterParams);
-                                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2'/>به روزرسانی جدول</Button>
+                                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2'/>به روزرسانی</Button>
                                     <Requests
                                         requests={requestList}
                                         notVisited={notVisited}

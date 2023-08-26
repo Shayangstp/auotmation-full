@@ -6,7 +6,7 @@ import { rootContext } from "../context/rootContext";
 import WarehouseRequests from './WarehouseRequests';
 import ReqListFilter from './WarehouseReqFilter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare, faBan, faCheck, faEye, faArrowsRotate, faSpinner, faClockRotateLeft, faHome, faWarning } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faBan, faCheck, faEye, faArrowsRotate, faPlus, faFilter, faClockRotateLeft, faHome, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import xssFilters from 'xss-filters';
 import Loading from '../Common/Loading';
@@ -20,10 +20,13 @@ import { handleReqProcess, RsetCurrentReqItems } from '../Slices/currentReqSlice
 import ProcessModal from '../Modals/ProcessModal';
 import { selectProcessModal } from '../Slices/modalsSlice';
 import UserInfoModal from '../Modals/UserInfoModal';
+import { selectShowFilter, RsetShowFilter } from '../Slices/filterSlices';
 
 const WarehouseReqPage = ({ setPageTitle }) => {
     const processModal = useSelector(selectProcessModal);
     const userInfoModal = useSelector(selectUserInfoModal);
+    const showFilter = useSelector(selectShowFilter);
+
     const mainContext = useContext(rootContext);
     const {
         // handleCheckPermission,
@@ -41,6 +44,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
     useEffect(() => {
         setPageTitle('مدیریت درخواست ها');
         dispatch(RsetCurrentReqItems([]));
+        dispatch(RsetShowFilter(false));
     }, []);
 
     const user = useSelector(selectUser);
@@ -68,6 +72,11 @@ const WarehouseReqPage = ({ setPageTitle }) => {
             {
                 Header: "درخواست کننده",
                 accessor: "reqUser",
+                sort: true
+            },
+            {
+                Header: "تایید کننده",
+                accessor: "reqAcceptor",
                 sort: true
             },
             {
@@ -145,7 +154,6 @@ const WarehouseReqPage = ({ setPageTitle }) => {
                     active
                     onClick={() => {
                         dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'edit' }));
-                        setSeenSerial(request.serial);
                     }}
                 >
                     <FontAwesomeIcon icon={faPenToSquare} />
@@ -155,15 +163,29 @@ const WarehouseReqPage = ({ setPageTitle }) => {
             return null;
         }
     }
-    const userInfo = (request) => {
+    const userInfo = (request, userStatus) => {
+        const name = ()=> {
+            if(userStatus === 'user'){
+                return xssFilters.inHTMLData(request.fullName)
+            }else if(userStatus === 'acceptor' && request.lastActionCode !== 0 && request.lastActionCode !== 2){
+                return xssFilters.inHTMLData(request.lastAcceptorName);
+            }else{
+                return '';
+            }
+        }
         return (
             <div className='text-dark cursorPointer' title='مشاهده اطلاعات کاربر '
                 onClick={() => {
-                    dispatch(handleUserInformation(request.userId));
-                    dispatch(handleUserImage({ userId: request.userId, status: 1 }));
+                    if(userStatus === 'user'){
+                        dispatch(handleUserInformation(request.userId));
+                        dispatch(handleUserImage({ userId: request.userId, status: 1 }));
+                    }else if(userStatus === 'acceptor'){
+                        dispatch(handleUserInformation(request.lastAcceptorId));
+                        dispatch(handleUserImage({ userId: request.lastAcceptorId, status: 1 }));
+                    }
                 }}
             >
-                {xssFilters.inHTMLData(request.fullName)}
+                {name()}
             </div>
         )
     }
@@ -189,7 +211,6 @@ const WarehouseReqPage = ({ setPageTitle }) => {
                         active
                         onClick={() => {
                             dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'edit' }));
-                            setSeenSerial(request.serial);
                         }}
                     >
                         <FontAwesomeIcon icon={faPenToSquare} />
@@ -327,7 +348,8 @@ const WarehouseReqPage = ({ setPageTitle }) => {
                 var tableItem = {
                     reqSerial: link(requests[i]),
                     reqDate: moment.utc(requests[i].createdDate, 'YYYY/MM/DD').locale('fa').format('jYYYY/jMM/jDD'),
-                    reqUser: userInfo(requests[i]),
+                    reqUser: userInfo(requests[i], 'user'),
+                    reqAcceptor: userInfo(requests[i], 'acceptor'),
                     reqDep: xssFilters.inHTMLData(requests[i].deptName),
                     reqType: xssFilters.inHTMLData(requests[i].reqTypeName),
                     reqStatus: status(requests[i]),
@@ -353,7 +375,8 @@ const WarehouseReqPage = ({ setPageTitle }) => {
                 var tableItem = {
                     reqSerial: link(requests[i]),
                     reqDate: moment.utc(requests[i].createdDate, 'YYYY/MM/DD').locale('fa').format('jYYYY/jMM/jDD'),
-                    reqUser: userInfo(requests[i]),
+                    reqUser: userInfo(requests[i], 'user'),
+                    reqAcceptor: userInfo(requests[i], 'acceptor'),
                     reqDep: xssFilters.inHTMLData(requests[i].deptName),
                     reqType: xssFilters.inHTMLData(requests[i].reqTypeName),
                     reqStatus: status(requests[i]),
@@ -417,13 +440,41 @@ const WarehouseReqPage = ({ setPageTitle }) => {
         <Container fluid className='pb-4'>
             {/* {menuPermission? */}
             <Fragment>
-                <ReqListFilter />
+                {showFilter
+                    ? <Row>
+                        <Col md='12'>
+                            <ReqListFilter />
+                        </Col>
+                    </Row>
+                    : null
+                }
+                <div className="d-flex align-items-center justify-content-between">
+                    <div>
+                        <Link to='/WarehouseNewRequest'>
+                            <Button size='sm' variant='success' className='mb-2 font12'>
+                                <FontAwesomeIcon icon={faPlus} className='me-2' />افزودن درخواست جدید
+                            </Button>
+                        </Link>
+                        <Button size='sm' variant='warning' className='mb-2 ms-2 font12' onClick={() => { dispatch(RsetShowFilter(!showFilter)) }}>
+                            <FontAwesomeIcon icon={faFilter} className='me-2' />فیلتر
+                        </Button>
+                    </div>
+                    <Button size='sm' variant='primary' className='mb-2 font12' onClick={() => {
+                        const filterValues = {
+                            applicantId: localStorage.getItem('id'),
+                            memberId: '',
+                            mDep: '',
+                            status: '',
+                            fromDate: 'null',
+                            toDate: 'null',
+                            type: 2
+                        }
+                        dispatch(handleReqsList(filterValues));
+                    }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button>
+                </div>
                 <section className='position-relative'>
                     {loading ? <Loading /> : null}
                     <div>
-                        <Button size='sm' variant='primary' className='mb-2' onClick={() => {
-                            handleCancelFilter('warehouse')
-                        }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی جدول</Button>
                         <WarehouseRequests
                             requests={reqsList}
                             notVisited={notVisited}

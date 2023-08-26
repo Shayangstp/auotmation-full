@@ -52,7 +52,7 @@ const Requests = ({ columns, data, onSort, fetchData, loading, pageCount: contro
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map((column) => (
-                            <th className="col-1 bg-secondary text-white fw-normal" {...column.getHeaderProps(column.getSortByToggleProps())} title='' /*title={`مرتب سازی براساس ${column.render("Header")}`} */>
+                            <th className="bg-secondary text-white fw-normal" {...column.getHeaderProps(column.getSortByToggleProps())} title='' /*title={`مرتب سازی براساس ${column.render("Header")}`} */>
                             {column.render("Header")}
                             <span>
                                 {column.isSorted
@@ -71,7 +71,7 @@ const Requests = ({ columns, data, onSort, fetchData, loading, pageCount: contro
                         prepareRow(row);
                         function findNoVisited(){
                             for(var r = 0 ; r < requests.length ; r++){
-                                if(row.cells[0].value.props.children === notVisited[r]){
+                                if(row.cells[0].value.props.children == notVisited[r] && requests[r].userId !== localStorage.getItem('id')){
                                     return notVisited[r];
                                 }
                             }

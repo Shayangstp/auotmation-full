@@ -365,7 +365,7 @@ const SoftwareReqList = ({setPageTitle}) => {
                 }}
               >
                 <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
-                به روزرسانی جدول
+                به روزرسانی
               </Button>
               {reqsList !== undefined ? (
                 <Fragment>

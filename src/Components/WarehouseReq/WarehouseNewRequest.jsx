@@ -2,8 +2,10 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { rootContext } from "../context/rootContext";
 import { reqContext } from '../context/warehouseReqsContext/reqContext';
-import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, InputGroup } from "react-bootstrap";
 import Select from 'react-select';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import WarehouseReqNewItem from "./WarehouseReqNewItem";
 import WarehouseReqItems from "./WarehouseReqItems";
 import xssFilters from "xss-filters";
@@ -132,8 +134,6 @@ const WarehouseNewRequest = ({ setPageTitle, setLocklinks }) => {
         //handleCheckPermission(localStorage.getItem('lastLocation'));
     }, [])
 
-
-
     useEffect(() => {
         setPageTitle('برگه درخواست انبار');
         if (currentReqItems.length !== 0) {
@@ -144,11 +144,12 @@ const WarehouseNewRequest = ({ setPageTitle, setLocklinks }) => {
     }, [currentReqItems])
 
     useEffect(() => {
-        dispatch(handleUsersByRoles({roles: undefined, location: user.Location, company: user.CompanyCode, exist: 1, dep: undefined, task: 0}));
+        dispatch(handleUsersByRoles({ roles: undefined, location: user.Location, company: user.CompanyCode, exist: 1, dep: undefined, task: 0 }));
         if (user.Supervisor !== undefined) {
             if (user.Supervisor._id !== '6301bfc820ef705fdc27039e') {
                 // if (user.Supervisor.Approved === true) {
                 dispatch(RsetWarehouseReqSupervisor(user.Supervisor.FirstName + " " + user.Supervisor.LastName));
+                dispatch(RsetUsersByRole({ label: user.Supervisor.FirstName + " " + user.Supervisor.LastName, value: user.Supervisor._id }))
                 // }
             } else {
                 dispatch(RsetSetSupervisorModal(true));
@@ -210,9 +211,22 @@ const WarehouseNewRequest = ({ setPageTitle, setLocklinks }) => {
                                 </Form.Group>
                                 <Form.Group as={Col} md='4' xl='3' className='mb-4'>
                                     <Form.Label className='mb-1 required-field'>سرپرست/مدیر :</Form.Label>
-                                    {user.Supervisor === undefined ? null :
-                                        <Form.Control type="text" disabled value={warehouseReqSupervisor} id='reqSupervisor' name="supervisor" onChange={(e) => { dispatch(RsetWarehouseReqSupervisor(e)) }} />
-                                    }
+                                    <InputGroup className="mb-3">
+                                        {user.Supervisor === undefined ? null :
+                                            <Form.Control aria-describedby="basic-addon2" type="text" disabled value={warehouseReqSupervisor} id='reqSupervisor' name="supervisor" onChange={(e) => { dispatch(RsetWarehouseReqSupervisor(e)) }} />
+                                        }
+                                        {user.Supervisor !== undefined && usersByRole.value !== user.Supervisor._id ? 
+                                            <Button variant="outline-secondary" id="button-addon2" title="جهت انتخاب مدیر/سرپرست می توانید از این آیتم استفاده کنید." onClick={()=>{
+                                                dispatch(RsetUsersByRole({ label: user.Supervisor.FirstName + " " + user.Supervisor.LastName, value: user.Supervisor._id }))
+                                            }}>
+                                                <FontAwesomeIcon icon={faArrowLeft} />
+                                            </Button>
+                                        : null}
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group as={Col} md='4' xl='3' className='mb-4'>
+                                    <Form.Label className='mb-1 required-field'>ارسال به :</Form.Label>
+                                    <Select isSearchable value={usersByRole} name='usersByRole' options={usersByRoleOptions} onChange={(option) => { dispatch(RsetUsersByRole(option)) }} placeholder='ارسال به ...' className="me-md-3 mb-3 mb-md-0 w-100" />
                                 </Form.Group>
                                 <Form.Group as={Col} md='4' xl='3' className='mb-4'>
                                     <Form.Label className='mb-1 ms-2'>درخواست پروژه ای:</Form.Label>
@@ -244,9 +258,11 @@ const WarehouseNewRequest = ({ setPageTitle, setLocklinks }) => {
                                 </Form.Group>
                             </Row>
                             <Row className='mt-4 justify-content-center'>
-                                <Col md='4' xxl='2'>
-                                    <Select isSearchable value={usersByRole} name='usersByRole' options={usersByRoleOptions} onChange={(option) => { dispatch(RsetUsersByRole(option)) }} placeholder='ارسال به ...' className="me-md-3 mb-3 mb-md-0 w-100" />
-                                </Col>
+                                {/* <Col md='4' xxl='2'>
+                                    <Button variant='success' className='me-md-3 mb-3 mb-md-0 w-100' onClick={(event) => addWarehouseNewReqItem(event)} preventdefault='true'>
+                                        ارسال مستقیم به انبار
+                                    </Button>
+                                </Col> */}
                                 <Col md='4' xxl='2'>
                                     <Button variant='success' className='me-md-3 mb-3 mb-md-0 w-100' onClick={(event) => addWarehouseNewReqItem(event)} preventdefault='true'>
                                         ثبت درخواست
