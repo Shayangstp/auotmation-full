@@ -33,8 +33,13 @@ import {
   handleUserInformation,
   handleUserImage,
 } from "../Slices/mainSlices";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import {
+  RsetIrantoolAddMaterialWorkFlowModal,
+  selectIrantoolMaterialWorkFlowModal,
+} from "../Slices/irantoolSlices";
+import AddMaterialWorkFlowModal from "../Modals/ITJReqModals/AddMaterialWorkflowModal";
 
 const IranTolJobReqsList = ({ setPageTitle }) => {
   const dispatch = useDispatch();
@@ -57,6 +62,10 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
   useEffect(() => {
     setPageTitle("لیست درخواست کار ایرانتول");
   }, [setPageTitle]);
+
+  const irantoolAddMaterialWorkFlowModal = useSelector(
+    selectIrantoolMaterialWorkFlowModal
+  );
 
   const [data, setData] = useState([]);
   const [load, setload] = useState(false);
@@ -241,7 +250,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           </Button>
         </div>
       );
-      // this is for when tolid seen second time 
+      // this is for when tolid seen second time
       // } else if (
       //   request.lastToPersons !== null &&
       //   request.lastToPersons
@@ -337,7 +346,8 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                 })
               );
               setSeenSerial(serialNumber);
-              history.push(`/MtrWrkflw/${request.requestId}`);
+              // history.push(`/MtrWrkflw/${request.requestId}`);
+              dispatch(RsetIrantoolAddMaterialWorkFlowModal(true));
             }}
           >
             <FontAwesomeIcon icon={faPlus} />
@@ -513,6 +523,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                     </Col>
                 </Row>
             } */}
+      {irantoolAddMaterialWorkFlowModal && <AddMaterialWorkFlowModal />}
     </Container>
   );
 };

@@ -65,17 +65,24 @@ import {
   RsetIrantoolActionDevice,
   selectIrantoolActionCount,
   RsetIrantoolActionCount,
+  selectIrantoolActionWorkTime,
+  RsetIrantoolActionWorkTime,
+  selectIrantoolActionOpration,
+  RsetIrantoolActionOrpration,
   RsetIrantoolActionDescription,
   selectIrantoolActionDescription,
   selectIrantoolActionDeptOptions,
   selectIrantoolActionOpratorOptions,
   selectIrantoolActionDeviceOptions,
+  selectIrantoolActionOprationOptions,
   handleIrantoolActionDeptOptions,
   handleIrantoolActionOpratorOptions,
   handleIrantoolActionDeviceOptions,
   selectIrantoolActionItem,
   RsetIrantoolActionItem,
   handleDeleteActionItem,
+  RsetIrantoolActionOpration,
+  handleIrantoolActionOprations,
   //test
 } from "../Slices/irantoolSlices";
 
@@ -89,6 +96,7 @@ import { errorMessage } from "../../utils/message";
 
 const IranTolJobMaterialWorkflow = () => {
   const mainContext = useContext(rootContext);
+
   const {
     // currentReqInfo
     currentReqCo,
@@ -100,7 +108,7 @@ const IranTolJobMaterialWorkflow = () => {
     jobContext;
 
   const dispatch = useDispatch();
-  const { id } = useParams();
+  const { userId, fileId } = useParams();
 
   const currentReqInfo = useSelector(selectCurrentReqInfo);
   const irantoolMaterialCode = useSelector(selectIrantoolMaterialCode);
@@ -135,29 +143,42 @@ const IranTolJobMaterialWorkflow = () => {
   const irantoolActionDeviceOptions = useSelector(
     selectIrantoolActionDeviceOptions
   );
+  const irantoolActionWorkTime = useSelector(selectIrantoolActionWorkTime);
+  const irantoolActionOpration = useSelector(selectIrantoolActionOpration);
+  const irantoolActionOprationOptions = useSelector(
+    selectIrantoolActionOprationOptions
+  );
   const irantoolActionItem = useSelector(selectIrantoolActionItem);
+
   const user = useSelector(selectUser);
 
   useEffect(() => {
-    handleReqFiles(currentReqInfo.requestId, 0, 0, 1, "");
-  }, []);
+    if (currentReqInfo.requestId !== undefined)
+      handleReqFiles(currentReqInfo.requestId, 0, 0, 1, "");
+  }, [currentReqInfo]);
 
   useEffect(() => {
     dispatch(handleIrantoolMaterialUnitOptions());
     dispatch(handleIrantoolActionDeptOptions());
     dispatch(handleIrantoolActionDeviceOptions());
+    dispatch(handleIrantoolActionOprations());
+
+    // dispatch(handleIrantoolActionOpratorOptions());
   }, []);
 
   useEffect(() => {
-    if (user._id === undefined) {
+    if (user._id !== undefined) {
       dispatch(handleIrantoolActionOpratorOptions());
     }
   }, [user]);
 
+  // console.log(user);
+  // console.log(irantoolActionOpratorOptions);
+
   useEffect(() => {
     dispatch(
       handleCurrentReqInfo({
-        reqId: id,
+        reqId: userId,
         reqType: 1,
       })
     );
@@ -195,12 +216,16 @@ const IranTolJobMaterialWorkflow = () => {
   const irantoolActionOpratorIsValid = irantoolActionOprator.length !== 0;
   const irantoolActionDeviceIsValid = irantoolActionDevice.length !== 0;
   const irantoolActionCountIsValid = irantoolActionCount !== "";
+  const irantoolActionWorkTimeIsValid = irantoolActionWorkTime !== "";
+  const irantoolActionOprationIsValid = irantoolActionOpration.length !== 0;
 
   const ActionAddTableIsValid =
     irantoolActionDeptIsValid &&
     irantoolActionOpratorIsValid &&
     irantoolActionDeviceIsValid &&
-    irantoolActionCountIsValid;
+    irantoolActionCountIsValid &&
+    irantoolActionWorkTimeIsValid &&
+    irantoolActionOprationIsValid;
 
   const validationWork = () => {
     var errors = {};
@@ -215,6 +240,12 @@ const IranTolJobMaterialWorkflow = () => {
     }
     if (!irantoolActionCountIsValid) {
       errors.irantoolActionCount = "واردکردن تعداد اجباری است!";
+    }
+    if (!irantoolActionOprationIsValid) {
+      errors.irantoolActionOpration = "واردکردن نوع عملیات اجباری است!";
+    }
+    if (!irantoolActionWorkTimeIsValid) {
+      errors.irantoolActionWorkTime = "واردکردن زمان انجام کار اجباری است!";
     }
     return errors;
   };
@@ -263,11 +294,28 @@ const IranTolJobMaterialWorkflow = () => {
   };
 
   //handle the deviceOptions
-  let deviceValue = 1;
   const deviceOptions = irantoolActionDeviceOptions.map((item) => ({
     label: item.categoryName,
-    value: deviceValue++,
+    value: item.machineCode,
   }));
+  //handle worktime
+  const workTimeSum = irantoolActionItem.reduce(
+    (sum, item) => sum + item.actionWorkTime,
+    0
+  );
+  const workTimeSumMinuts = Math.floor(workTimeSum);
+  const workTimeSumHours = Math.floor(workTimeSumMinuts / 60);
+  const remainingMinutes = workTimeSumMinuts % 60;
+  const formattedWorkTime = `${workTimeSumHours}:${
+    remainingMinutes < 10 ? "0" : ""
+  }${remainingMinutes}`;
+  let workTime;
+
+  if (workTimeSumHours < 1) {
+    workTime = workTimeSumMinuts + " دقیقه";
+  } else {
+    workTime = formattedWorkTime + " ساعت";
+  }
 
   //action
 
@@ -278,16 +326,20 @@ const IranTolJobMaterialWorkflow = () => {
       let reqItem = {
         id: generateRandomNumber(1000, 9999),
         actionDept: irantoolActionDept.label,
+        actionOpration: irantoolActionOpration.label,
         actionOprator: irantoolActionOprator.label,
         actionDevice: irantoolActionDevice.label,
+        actionWorkTime: irantoolActionWorkTime,
         actionCount: irantoolActionCount,
       };
 
       reqItems.push(reqItem);
       dispatch(RsetIrantoolActionItem(reqItems));
       dispatch(RsetIrantoolActionDept(""));
+      dispatch(RsetIrantoolActionOpration(""));
       dispatch(RsetIrantoolActionOprator(""));
       dispatch(RsetIrantoolActionDevice(""));
+      dispatch(RsetIrantoolActionWorkTime(""));
       dispatch(RsetIrantoolActionCount(""));
       dispatch(RsetFormErrors(""));
     } else {
@@ -297,7 +349,9 @@ const IranTolJobMaterialWorkflow = () => {
             irantoolActionDept,
             irantoolActionOprator,
             irantoolActionDevice,
-            irantoolActionCount
+            irantoolActionCount,
+            irantoolActionWorkTime,
+            irantoolActionOpration
           )
         )
       );
@@ -321,6 +375,55 @@ const IranTolJobMaterialWorkflow = () => {
       errorMessage("اضافه کردن جدول مواد اولیه و برنامه عملیاتی اجباری است!");
     }
   };
+
+  const file = currentReqFiles.find((file) => file.id === fileId);
+
+  // let iconComponent;
+  // switch (file.name.split(".").pop()) {
+  //   case "docx":
+  //     iconComponent = (
+  //       <FontAwesomeIcon icon={faFileWord} className="font24 cursorPointer" />
+  //     );
+  //     break;
+  //   case "xlsx":
+  //   case "xltx":
+  //     iconComponent = (
+  //       <FontAwesomeIcon icon={faFileExcel} className="font24 cursorPointer" />
+  //     );
+  //     break;
+  //   case "pptx":
+  //   case "ppt":
+  //     iconComponent = (
+  //       <FontAwesomeIcon
+  //         icon={faFilePowerpoint}
+  //         className="font24 cursorPointer"
+  //       />
+  //     );
+  //     break;
+  //   case "pdf":
+  //     iconComponent = (
+  //       <FontAwesomeIcon icon={faFilePdf} className="font24 cursorPointer" />
+  //     );
+  //     break;
+  //   case "jpeg":
+  //   case "jpg":
+  //   case "png":
+  //   case "gif":
+  //     iconComponent = (
+  //       <FontAwesomeIcon icon={faFileImage} className="font24 cursorPointer" />
+  //     );
+  //     break;
+  //   case "zip":
+  //   case "rar":
+  //     iconComponent = (
+  //       <FontAwesomeIcon icon={faFileZipper} className="font24 cursorPointer" />
+  //     );
+  //     break;
+  //   default:
+  //     iconComponent = (
+  //       <FontAwesomeIcon icon={faFile} className="font24 cursorPointer" />
+  //     );
+  // }
 
   return (
     <Container>
@@ -368,178 +471,27 @@ const IranTolJobMaterialWorkflow = () => {
             {currentReqFiles.length !== 0 ? (
               <Fragment>
                 <ul className="d-flex mt-5 list-unstyled">
-                  {currentReqFiles.map((file, index) => {
-                    switch (file.name.split(".").pop()) {
-                      case "docx":
-                        return (
-                          <li
-                            key={file.path}
-                            className="mx-2"
-                            onClick={() => {
-                              handleReqFiles(
-                                currentReqInfo.requestId,
-                                file.row,
-                                0,
-                                0,
-                                file.name
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faFileWord}
-                              className="font24 cursorPointer"
-                            />
-                          </li>
-                        );
-                      case "xlsx":
-                      case "xltx":
-                        return (
-                          <li
-                            key={file.path}
-                            className="mx-2"
-                            onClick={() => {
-                              handleReqFiles(
-                                currentReqInfo.requestId,
-                                file.row,
-                                0,
-                                0,
-                                file.name
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faFileExcel}
-                              className="font24 cursorPointer"
-                            />
-                          </li>
-                        );
-                      case "pptx":
-                      case "ppt":
-                        return (
-                          <li
-                            key={file.path}
-                            className="mx-2"
-                            onClick={() => {
-                              handleReqFiles(
-                                currentReqInfo.requestId,
-                                file.row,
-                                0,
-                                0,
-                                file.name
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faFilePowerpoint}
-                              className="font24 cursorPointer"
-                            />
-                          </li>
-                        );
-                      case "pdf":
-                        return (
-                          <li
-                            key={file.path}
-                            className="mx-2"
-                            onClick={() => {
-                              handleReqFiles(
-                                currentReqInfo.requestId,
-                                file.row,
-                                0,
-                                0,
-                                file.name
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faFilePdf}
-                              className="font24 cursorPointer"
-                            />
-                          </li>
-                        );
-                      case "jpeg":
-                      case "jpg":
-                      case "png":
-                      case "gif":
-                        return (
-                          <li
-                            key={file.path}
-                            className="mx-2"
-                            onClick={() => {
-                              handleReqFiles(
-                                currentReqInfo.requestId,
-                                file.row,
-                                0,
-                                0,
-                                file.name
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faFileImage}
-                              className="font24 cursorPointer"
-                            />
-                          </li>
-                        );
-                      case "zip":
-                      case "rar":
-                        return (
-                          <li
-                            key={file.path}
-                            className="mx-2"
-                            onClick={() => {
-                              handleReqFiles(
-                                currentReqInfo.requestId,
-                                file.row,
-                                0,
-                                0,
-                                file.name
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faFileZipper}
-                              className="font24 cursorPointer"
-                            />
-                          </li>
-                        );
-                      default:
-                        return (
-                          <li
-                            key={file.path}
-                            className="mx-2"
-                            onClick={() => {
-                              handleReqFiles(
-                                currentReqInfo.requestId,
-                                file.row,
-                                0,
-                                0,
-                                file.name
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faFile}
-                              className="font24 cursorPointer"
-                            />
-                          </li>
-                        );
-                    }
-                  })}
+                  <li
+                    key={file.path}
+                    className="mx-2"
+                    onClick={() => {
+                      handleReqFiles(
+                        currentReqInfo.requestId,
+                        file.row,
+                        0,
+                        0,
+                        file.id
+                      );
+                      console.log("hi");
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={faFile}
+                      className="font24 cursorPointer"
+                    />
+                    <p>{file.name ? file.name : null}</p>
+                  </li>
                 </ul>
-                <div
-                  className="my-4 cursorPointer"
-                  onClick={() => {
-                    handleReqFiles(
-                      currentReqInfo.requestId,
-                      0,
-                      1,
-                      0,
-                      "allFiles"
-                    );
-                  }}
-                >
-                  <span>دانلود همه فایل های درخواست</span>
-                </div>
               </Fragment>
             ) : (
               <p>فایلی آپلود نشده است!</p>
@@ -695,10 +647,10 @@ const IranTolJobMaterialWorkflow = () => {
                 <thead className="bg-secondary light-text">
                   <tr>
                     <th>ردیف</th>
-                    <th>نام نرم افزار</th>
-                    <th>شرکت عامل</th>
-                    <th>موارد مورد نیاز</th>
-                    <th></th>
+                    <th>کد کالا</th>
+                    <th>نام کالا</th>
+                    <th>تعداد</th>
+                    <th>واحد شمارش</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -769,11 +721,35 @@ const IranTolJobMaterialWorkflow = () => {
               )}
             </Form.Group>
             <Form.Group as={Col} md="3">
+              <Form.Label className="mb-1 required-field">
+                نوع عملیات:{" "}
+              </Form.Label>
+              <Select
+                value={irantoolActionOpration}
+                name="units"
+                id="units"
+                // ref={ceramicProjectMaterialUnitRef}
+                onChange={(e) => {
+                  dispatch(RsetIrantoolActionOpration(e));
+                  // handleNextInput2();
+                }}
+                placeholder=" انتخاب..."
+                options={irantoolActionOprationOptions}
+                // isDisabled={ceramicMaterialCode !== "" ? false : true}
+                isSearchable={true}
+              />
+              {!irantoolActionOpration && (
+                <p className="font12 text-danger mb-0 mt-1">
+                  {formErrors.irantoolActionOpration}
+                </p>
+              )}
+            </Form.Group>
+            <Form.Group as={Col} md="3">
               <Form.Label className="mb-1 required-field">اپراتور: </Form.Label>
               <Select
                 value={irantoolActionOprator}
-                name="units"
-                id="units"
+                name="oprator"
+                id="oprator"
                 // ref={ceramicProjectMaterialUnitRef}
                 onChange={(e) => {
                   dispatch(RsetIrantoolActionOprator(e));
@@ -812,52 +788,34 @@ const IranTolJobMaterialWorkflow = () => {
                 </p>
               )}
             </Form.Group>
-            <Form.Group as={Col} md="3">
-              <Form.Label className="mb-1 required-field">
-                نوع عملیات:{" "}
-              </Form.Label>
-              <Select
-                value={irantoolActionDevice}
-                name="units"
-                id="units"
-                // ref={ceramicProjectMaterialUnitRef}
-                onChange={(e) => {
-                  dispatch(RsetIrantoolActionDevice(e));
-                  // handleNextInput2();
-                }}
-                placeholder=" انتخاب..."
-                options={deviceOptions}
-                // isDisabled={ceramicMaterialCode !== "" ? false : true}
-                isSearchable={true}
-              />
-              {!irantoolActionDeviceIsValid && (
-                <p className="font12 text-danger mb-0 mt-1">
-                  {formErrors.irantoolActionDevice}
-                </p>
-              )}
-            </Form.Group>
+
             <Form.Group as={Col} md="3" className="mt-3">
               <Form.Label className="mb-1 required-field">
-                تاریخ اتمام :{" "}
+                زمان انجام کار(دقیقه) :{" "}
               </Form.Label>
-              {/* <DatePicker
-                id="date"
-                name="date"
-                timePicker={false}
-                // disabled={ceramicMaterialCode !== "" ? false : true}
-                showTodayButton={false}
-                isGregorian={false}
-                // value={ceramicProjectMaterialDate}
-                // ref={ceramicProjectMaterialDateRef}
-                // onChange={(value) => {
-                //   dispatch(RsetCeramicProjectMaterialDate(value));
-                // }}
+              <NumberFormat
+                dir="ltr"
+                id="workTime"
                 className="form-control"
-                // inputReadOnly
-              /> */}
-              {!irantoolActionDeviceIsValid && (
+                value={irantoolActionWorkTime}
+                // onKeyDown={(e) => {
+                //   if (e.keyCode === 13) {
+                //     dispatch(handleGetProWithCode(e));
+                //     // handleNextInput(e);
+                //   }
+                // }}
+                onChange={(e) => {
+                  dispatch(RsetIrantoolActionWorkTime(Number(e.target.value)));
+                }}
+                // onBlur={(e) => {
+                //   dispatch(handleGetProWithCode(e));
+                //   // handleNextInput(e);
+                //   // dispatch(RsetCeramicMaterialModalSearch(true));
+                // }}
+              />
+              {!irantoolActionWorkTimeIsValid && (
                 <p className="font12 text-danger mb-0 mt-1">
-                  {formErrors.irantoolActionDevice}
+                  {formErrors.irantoolActionWorkTime}
                 </p>
               )}
             </Form.Group>
@@ -912,8 +870,10 @@ const IranTolJobMaterialWorkflow = () => {
                   <tr>
                     <th>ردیف</th>
                     <th>واحد</th>
+                    <th>نوع عملیات</th>
                     <th>اپراتور</th>
                     <th>دستگاه</th>
+                    <th>زمان انجام کار</th>
                     <th>تعداد</th>
                     <th></th>
                   </tr>
@@ -924,8 +884,10 @@ const IranTolJobMaterialWorkflow = () => {
                       <tr key={idx}>
                         <td className="font12">{idx + 1}</td>
                         <td className="font12">{item.actionDept}</td>
+                        <td className="font12">{item.actionOpration}</td>
                         <td className="font12">{item.actionOprator}</td>
                         <td className="font12">{item.actionDevice}</td>
+                        <td className="font12">{item.actionWorkTime}</td>
                         <td className="font12">{item.actionCount}</td>
                         <td className="font12 text-center">
                           <FontAwesomeIcon
@@ -939,6 +901,14 @@ const IranTolJobMaterialWorkflow = () => {
                       </tr>
                     );
                   })}
+                  <tr>
+                    <td colSpan="5" className="text-right font12">
+                      کل زمان انجام کار:
+                    </td>
+                    <td className="font12">{workTime}</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
                 </tbody>
               </Table>
             )}

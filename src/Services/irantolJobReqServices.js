@@ -164,7 +164,7 @@ export const irantoolOperationUnitList = (changedValues) => {
     timeout: 30000,
   });
 };
-export const irantoolActionMachine = (changedValues) => {
+export const irantoolActionMachine = () => {
   return http.get(`${config.localapi}/work/irantool/machine`, {
     timeout: 30000,
   });
