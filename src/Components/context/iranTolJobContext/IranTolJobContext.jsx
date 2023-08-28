@@ -648,7 +648,6 @@ const IranTolJobContext = ({ children }) => {
         multi,
         justShow
       );
-      console.log("shayan");
       if (reqFilesRes.data.code === 415) {
         setCurrentReqFiles(reqFilesRes.data.files);
       } else if (reqFilesRes.data.size !== undefined) {

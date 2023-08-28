@@ -4,12 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import xssFilters from "xss-filters";
 import momentJalaali from "moment-jalaali";
 import {
-  selectIrantoolMaterialModalSearch,
-  RsetIrantoolMaterialModalSearch,
+  selectIrantoolModalSearch,
+  RsetIrantoolModalSearch,
   selectIrantoolSelectMaterial,
   RsetIrantoolMaterialCode,
   RsetIrantoolMaterialName,
   RsetIrantoolSelectMaterial,
+  selectIrantoolMaterialToolSearch,
+  RsetIrantoolToolCode,
+  RsetIrantoolToolName,
 } from "../../../Slices/irantoolSlices";
 import IrantoolMaterialModalAdd from "./IrantoolMaterialModalAdd";
 // import { RsetFormErrors } from "../../Slices/mainSlices";
@@ -17,10 +20,11 @@ import IrantoolMaterialModalAdd from "./IrantoolMaterialModalAdd";
 const IrantoolMaterialModalSearch = () => {
   const dispatch = useDispatch();
 
-  const irantoolMaterialModalSearch = useSelector(
-    selectIrantoolMaterialModalSearch
-  );
+  const irantoolModalSearch = useSelector(selectIrantoolModalSearch);
   const irantoolSelectMaterial = useSelector(selectIrantoolSelectMaterial);
+  const irantoolMaterialToolSearch = useSelector(
+    selectIrantoolMaterialToolSearch
+  );
 
   // useEffect(() => {
   //   dispatch(RsetCeramicAddMaterialList([]));
@@ -33,9 +37,9 @@ const IrantoolMaterialModalSearch = () => {
       aria-labelledby="contained-modal-title-vcenter"
       centered
       backdrop="static"
-      show={irantoolMaterialModalSearch}
+      show={irantoolModalSearch}
       onHide={() => {
-        dispatch(RsetIrantoolMaterialModalSearch(false));
+        dispatch(RsetIrantoolModalSearch(false));
       }}
       dialogClassName="modal-96w overflow-visible-modal"
     >
@@ -57,10 +61,15 @@ const IrantoolMaterialModalSearch = () => {
           <Button
             disabled={irantoolSelectMaterial.code !== undefined ? false : true}
             onClick={() => {
-              dispatch(RsetIrantoolMaterialCode(irantoolSelectMaterial.code));
-              dispatch(RsetIrantoolMaterialName(irantoolSelectMaterial.name));
+              if (irantoolMaterialToolSearch === false) {
+                dispatch(RsetIrantoolMaterialCode(irantoolSelectMaterial.code));
+                dispatch(RsetIrantoolMaterialName(irantoolSelectMaterial.name));
+              } else {
+                dispatch(RsetIrantoolToolCode(irantoolSelectMaterial.code));
+                dispatch(RsetIrantoolToolName(irantoolSelectMaterial.name));
+              }
 
-              dispatch(RsetIrantoolMaterialModalSearch(false));
+              dispatch(RsetIrantoolModalSearch(false));
               dispatch(RsetIrantoolSelectMaterial(""));
             }}
           >
@@ -71,7 +80,7 @@ const IrantoolMaterialModalSearch = () => {
             onClick={() => {
               dispatch(RsetIrantoolMaterialCode(""));
               dispatch(RsetIrantoolMaterialName(""));
-              dispatch(RsetIrantoolMaterialModalSearch(false));
+              dispatch(RsetIrantoolModalSearch(false));
               // dispatch(RsetFormErrors(""));
             }}
           >

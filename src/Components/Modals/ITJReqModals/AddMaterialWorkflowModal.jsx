@@ -11,6 +11,7 @@ import {
   faFileExcel,
   faFilePowerpoint,
   faFileZipper,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { iranTolJobCntxt } from "../../context/iranTolJobContext/IranTolJobCntxt";
 import { rootContext } from "../../context/rootContext";
@@ -127,39 +128,68 @@ const ViewRequestModal = () => {
             </tr>
           </tbody>
         </Table>
+        <hr className="mt-2 mb-4" />
+        <h3 className="fw-bold font16 mb-4  bg-lightBlue p-4 rounded text-dark mb-2">
+          پیوست ها
+        </h3>
         {currentReqFiles.length !== 0 ? (
           <Fragment>
-            <ul className="d-flex justify-content-center mt-5 list-unstyled">
-              {currentReqFiles.map((file, index) => {
-                return (
-                  <div>
-                    <li
-                      key={file.path}
-                      className="mx-2"
-                      onClick={() => {
-                        // handleReqFiles(
-                        //   currentReqInfo.requestId,
-                        //   file.row,
-                        //   0,
-                        //   0,
-                        //   file.name
-                        // );
-                        history.push(
-                          `/MtrWrkflw/${currentReqInfo.requestId}/${file.id}`
-                        );
-                        dispatch(RsetIrantoolAddMaterialWorkFlowModal(false));
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faFile}
-                        className="font24 cursorPointer"
-                      />
-                    </li>
-                    <p>{file.name}</p>
-                  </div>
-                );
-              })}
-            </ul>
+            {/* <ul className="d-flex mt-2 list-unstyled"> */}
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>ردیف</th>
+                  <th>سریال</th>
+                  <th>نام فایل</th>
+                  <th>نوع فایل</th>
+                  <th>فایل</th>
+                  <th>ثبت متریال / مراحل عملیات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentReqFiles.map((file, index) => {
+                  return (
+                    <tr key={file.path}>
+                      <td className="font12">{index + 1}</td>
+                      <td className="border p-2 mx-2">{file.id}</td>
+                      <td className="border p-2 mx-2">{file.name}</td>
+                      <td className="border p-2 mx-2">{file.mimetype}</td>
+                      <td
+                        className="border p-2 mx-2 cursorPointer text-center"
+                        onClick={() => {
+                          handleReqFiles(
+                            currentReqInfo.requestId,
+                            file.row,
+                            0,
+                            0,
+                            file.name
+                          );
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faFile} className="font24" />
+                      </td>
+                      <td className="cursorPointer text-center">
+                        <Button
+                          className="mx-2 font12"
+                          onClick={() => {
+                            history.push(
+                              `/MtrWrkflw/${currentReqInfo.requestId}/${file.id}`
+                            );
+                            dispatch(
+                              RsetIrantoolAddMaterialWorkFlowModal(false)
+                            );
+                          }}
+                        >
+                          ثبت
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+
+              {/* </ul> */}
+            </Table>
             <div
               className="my-4 cursorPointer"
               onClick={() => {
