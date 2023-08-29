@@ -139,7 +139,7 @@ const ViewRequestModal = () => {
               <thead>
                 <tr>
                   <th>ردیف</th>
-                  <th>سریال</th>
+                  <th>شماره نقشه</th>
                   <th>نام فایل</th>
                   <th>نوع فایل</th>
                   <th>فایل</th>

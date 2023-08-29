@@ -607,6 +607,15 @@ export const handleDeleteMaterialItem = createAsyncThunk(
     dispatch(RsetIrantoolMaterialItem(filteredItems));
   }
 );
+export const handleDeleteToolItem = createAsyncThunk(
+  "irantool/handleDeleteToolItem",
+  async (itemId, { dispatch, getState }) => {
+    const { irantoolToolItem } = getState().irantool;
+    const items = [...irantoolToolItem];
+    const filteredItems = items.filter((tr) => tr.id !== itemId);
+    dispatch(RsetIrantoolToolItem(filteredItems));
+  }
+);
 export const handleDeleteActionItem = createAsyncThunk(
   "irantool/handleDeleteActionItem",
   async (itemId, { dispatch, getState }) => {
