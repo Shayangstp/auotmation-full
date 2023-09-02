@@ -566,6 +566,7 @@ export const handleIrantoolActionDeviceOptions = createAsyncThunk(
   async (obj, { dispatch, getState }) => {
     try {
       const irantoolActionMachineRes = await irantoolActionMachine();
+      console.log(irantoolActionMachineRes);
       if (irantoolActionMachineRes.data.code === 415) {
         dispatch(
           RsetIrantoolActionDeviceOptions(irantoolActionMachineRes.data.list)

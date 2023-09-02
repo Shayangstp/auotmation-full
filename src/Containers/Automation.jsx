@@ -100,6 +100,7 @@ import PaySlipReport from "../Components/Financial/Report/PaySlip/PaySlipReport"
 
 import PurchaseItemsList from "../Components/WarehouseReq/ProductPurchase/PurchaseItemsList";
 import IranTolJobMaterialWorkflow from "../Components/IranTolJobReq/IranTolJobMaterialWorkflow";
+import Background from "../Components/Account/Background";
 
 const Automation = (props) => {
   const [currentRequest, setCurrentRequest] = useState({});

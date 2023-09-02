@@ -640,14 +640,18 @@ const IranTolJobContext = ({ children }) => {
     setITJProjectMaterialsDesc("");
   };
   const [currentReqFiles, setCurrentReqFiles] = useState([]);
+
+  //getITJReqFileList is change to download plans api
   const handleReqFiles = async (reqId, index, multi, justShow, fileName) => {
     try {
-      const reqFilesRes = await getITJReqFileList(
+      const reqFilesRes = await downloadITJReqPlans(
         reqId,
         index,
         multi,
         justShow
       );
+
+      console.log(reqFilesRes);
       if (reqFilesRes.data.code === 415) {
         setCurrentReqFiles(reqFilesRes.data.files);
       } else if (reqFilesRes.data.size !== undefined) {
