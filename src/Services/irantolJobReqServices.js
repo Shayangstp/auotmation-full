@@ -108,6 +108,16 @@ export const getWorkDevices = () => {
     timeout: 30000,
   });
 };
+//opration step
+export const postWorkAndMaterials = (reqId, reqValues) => {
+  console.log(reqId);
+  return http.post(
+    `${config.localapi}/work/irantool/programming/` + reqId,
+    reqValues,
+    // userId: localStorage.getItem("id"),
+    { timeout: 30000 }
+  );
+};
 
 export const patchWorkAndMaterials = (
   reqId,

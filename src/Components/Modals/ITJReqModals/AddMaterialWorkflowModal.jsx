@@ -54,8 +54,6 @@ const ViewRequestModal = () => {
     }
   }, [currentReqInfo]);
 
-  console.log(currentReqFiles);
-
   return (
     <Modal
       aria-labelledby="contained-modal-title-vcenter"

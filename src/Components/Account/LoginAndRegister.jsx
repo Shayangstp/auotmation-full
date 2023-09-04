@@ -5,7 +5,11 @@ import DatePicker from "react-datepicker2";
 import momentJalali from "moment-jalaali";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faSpinner,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { rootContext } from "../context/rootContext";
 import { context } from "../context/context";
@@ -339,8 +343,8 @@ const LoginAndRegister = () => {
                                 ref={passwordRef}
                               />
                               <FontAwesomeIcon
-                                icon={faEye}
-                                className="position-absolute cursorPointer"
+                                className="position-absolute cursorPointer text-dark start-0 top-0 mt-3 ms-3 h5"
+                                icon={passType === "text" ? faEye : faEyeSlash}
                                 onClick={handlePassType}
                               />
                               {!password && (
@@ -1057,12 +1061,12 @@ const LoginAndRegister = () => {
                     <Col
                       md="12"
                       lg="6"
-                      className="d-flex justify-content-between mx-auto"
+                      className="d-flex justify-content-between mx-auto zIndex-50"
                     >
                       <div className="text-white">
                         {showChangePassCom === false ? (
                           <span
-                            className="font12 cursorPointer text-decoration-underline fw-bold text-warning"
+                            className="h6 cursorPointer text-decoration-underline fw-bold text-warning "
                             onClick={() => {
                               dispatch(RsetShowChangePassCom(true));
                             }}
@@ -1071,7 +1075,7 @@ const LoginAndRegister = () => {
                           </span>
                         ) : (
                           <span
-                            className="font12 cursorPointer text-decoration-underline"
+                            className="h6 cursorPointer text-decoration-underline"
                             onClick={() => {
                               dispatch(RsetShowChangePassCom(false));
                             }}
@@ -1083,7 +1087,7 @@ const LoginAndRegister = () => {
                       <a
                         href={window.location.origin + "/files/Automation.pdf"}
                         download
-                        className="text-white font12"
+                        className="text-white h6 text-danger"
                       >
                         دانلود فایل راهنمای استفاده از اتوماسیون
                       </a>

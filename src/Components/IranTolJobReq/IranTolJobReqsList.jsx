@@ -251,61 +251,13 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
         </div>
       );
       // this is for when tolid seen second time
-      // } else if (
-      //   request.lastToPersons !== null &&
-      //   request.lastToPersons
-      //     .split(",")
-      //     .some((elem) => elem === localStorage.getItem("id")) === true &&
-      //   request.lastActionCode === 41
-      // ) {
-      //   return (
-      //     <section className="d-flex justify-content-between flex-wrap">
-      //       <Button
-      //         title="مشاهده"
-      //         className="btn btn-warning d-flex align-items-center"
-      //         size="sm"
-      //         active
-      //         onClick={() => {
-      //           dispatch(
-      //             handleCurrentReqInfo({
-      //               reqId: request.requestId,
-      //               reqType: request.typeId,
-      //               reqSeen: request.seen,
-      //               company: request.companyName,
-      //               dep: "",
-      //               oprationType: "view",
-      //             })
-      //           );
-      //           setSeenSerial(serialNumber);
-      //         }}
-      //       >
-      //         <FontAwesomeIcon icon={faEye} />
-      //       </Button>
-      //       <Button
-      //         title="ثبت متریال و مراحل کار"
-      //         className="btn btn-primary d-flex align-items-center"
-      //         size="sm"
-      //         active
-      //         onClick={() => {
-      //           dispatch(
-      //             handleCurrentReqInfo({
-      //               reqId: request.requestId,
-      //               reqType: request.typeId,
-      //               reqSeen: request.seen,
-      //               company: request.companyName,
-      //               dep: "",
-      //               oprationType: "plus",
-      //             })
-      //           );
-      //           setSeenSerial(serialNumber);
-      //           history.push(`/MtrWrkflw/${request.requestId}`);
-      //         }}
-      //       >
-      //         <FontAwesomeIcon icon={faPlus} />
-      //       </Button>
-      //     </section>
-      //   );
-    } else {
+    } else if (
+      request.lastToPersons !== null &&
+      request.lastToPersons
+        .split(",")
+        .some((elem) => elem === localStorage.getItem("id")) === true &&
+      request.lastActionCode === 41
+    ) {
       return (
         <section className="d-flex justify-content-between flex-wrap">
           <Button
@@ -346,12 +298,60 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                 })
               );
               setSeenSerial(serialNumber);
+              history.push(`/MtrWrkflw/${request.requestId}`);
+            }}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+        </section>
+      );
+    } else {
+      return (
+        <section className="d-flex justify-content-between flex-wrap">
+          <Button
+            title="مشاهده"
+            className="btn btn-warning d-flex align-items-center"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "view",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faEye} />
+          </Button>
+          {/* <Button
+            title="ثبت متریال و مراحل کار"
+            className="btn btn-primary d-flex align-items-center"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "plus",
+                })
+              );
+              setSeenSerial(serialNumber);
               // history.push(`/MtrWrkflw/${request.requestId}`);
               dispatch(RsetIrantoolAddMaterialWorkFlowModal(true));
             }}
           >
             <FontAwesomeIcon icon={faPlus} />
-          </Button>
+          </Button> */}
         </section>
       );
     }

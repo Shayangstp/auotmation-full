@@ -404,7 +404,7 @@ const Automation = (props) => {
             }
           />
           <Route
-            path="/MtrWrkflw/:userId/:fileId"
+            path="/MtrWrkflw/:reqId/:fileId"
             render={() =>
               hasJWT() === false ? (
                 <Redirect to="/" />

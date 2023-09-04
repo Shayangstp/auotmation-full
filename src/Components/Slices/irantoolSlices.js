@@ -502,6 +502,8 @@ export const handleChangeReasonOfDelay = createAsyncThunk(
   }
 );
 
+//irantool product plannig 
+
 export const handleIrantoolMaterialUnitOptions = createAsyncThunk(
   "irantool/handleIrantoolMaterialUnitOptions",
   async (obj, { dispatch, getState }) => {
@@ -566,7 +568,6 @@ export const handleIrantoolActionDeviceOptions = createAsyncThunk(
   async (obj, { dispatch, getState }) => {
     try {
       const irantoolActionMachineRes = await irantoolActionMachine();
-      console.log(irantoolActionMachineRes);
       if (irantoolActionMachineRes.data.code === 415) {
         dispatch(
           RsetIrantoolActionDeviceOptions(irantoolActionMachineRes.data.list)
@@ -834,7 +835,7 @@ const irantoolSlice = createSlice({
       return { ...state, irantoolToolUnitOptions: action.payload };
     },
     RsetIrantoolToolDescription: (state, action) => {
-      return { ...state, irantooToolDescription: action.payload };
+      return { ...state, irantoolToolDescription: action.payload };
     },
     RsetIrantoolToolItem: (state, action) => {
       return { ...state, irantoolToolItem: action.payload };
