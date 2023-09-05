@@ -27,7 +27,6 @@ const ProcessModal = () => {
             <Modal
                 size="s"
                 centered
-                backdrop="static"
                 show={processModal}
                 onHide={() => {
                     dispatch(RsetProcessModal(false));

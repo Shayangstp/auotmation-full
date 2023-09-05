@@ -526,8 +526,16 @@ const IranTolJobMaterialWorkflow = () => {
             null,
             "0"
           );
-          const actionValues = {
+          const actionValuesFirst = {
             actionCode: 0,
+            actionId: postWarehouseReqRes.data.id,
+            userId: localStorage.getItem("id"),
+            typeId: 2,
+            toPersons: localStorage.getItem("id"),
+            comment: null,
+          };
+          const actionValuesSecond = {
+            actionCode: 6,
             actionId: postWarehouseReqRes.data.id,
             userId: localStorage.getItem("id"),
             typeId: 2,
@@ -535,14 +543,21 @@ const IranTolJobMaterialWorkflow = () => {
             toPersons: "6434f84d89828a92a92181c4",
             comment: null,
           };
-          const postActionRes = await postAction(actionValues);
-          if (postActionRes.data.code === 415) {
-            successMessage("درخواست مورد نظر با موفقیت ثبت شد!");
-            dispatch(RsetFormErrors(""));
-            dispatch(RsetIrantoolToolItem(""));
-            dispatch(RsetIrantoolMaterialItem(""));
+          const postActionFirstRes = await postAction(actionValuesFirst);
+          console.log(postActionFirstRes);
+          if (postActionFirstRes.data.code === 415) {
+            const postActionSecondRes = await postAction(actionValuesSecond);
+            console.log(postActionSecondRes);
+            if (postActionSecondRes.data.code === 415) {
+              successMessage("درخواست مورد نظر با موفقیت ثبت شد!");
+              dispatch(RsetFormErrors(""));
+              dispatch(RsetIrantoolToolItem(""));
+              dispatch(RsetIrantoolMaterialItem(""));
+            } else {
+              errorMessage("خطا");
+            }
           } else {
-            errorMessage("خطا");
+            errorMessage("!خطا");
           }
         };
         const items = [...irantoolMaterialItem, ...irantoolToolItem];
@@ -562,6 +577,7 @@ const IranTolJobMaterialWorkflow = () => {
           const postWarehouseReqItemsRes = await postWarehouseReqItems(
             reqItemValues
           );
+          console.log(postWarehouseReqItemsRes);
           if (postWarehouseReqItemsRes.data.code === 415) {
             count = count + 1;
             if (count === items.length) {
@@ -684,13 +700,13 @@ const IranTolJobMaterialWorkflow = () => {
               </Table>
             </Row>
             <hr className="mt-5 mb-4" />
-            <div className="lightGray-bg p-4 rounded">
+            <div className="lightGray-bg p-4 rounded shadow">
               <Row>
-                <h3 className="fw-bold font16 mb-4 bg-primary p-4 rounded text-white mb-1">
+                <h3 className="fw-bold font16 mb-4 lightBlue-bg p-4 rounded text-dark mb-4 shadow ">
                   ثبت مواد اولیه
                 </h3>
                 <Form.Group as={Col} md="2" className="mb-4">
-                  <Form.Label className="mb-1 required-field">
+                  <Form.Label className="required-field">
                     کد متریال :{" "}
                   </Form.Label>
                   <div className="d-flex flex-row justify-content-center align-items-center">
@@ -733,8 +749,8 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3" className="mb-3">
-                  <Form.Label className="mb-1 required-field">
+                <Form.Group as={Col} md="2" className="mb-3">
+                  <Form.Label className="required-field">
                     نام متریال :{" "}
                   </Form.Label>
                   <Form.Control
@@ -751,7 +767,7 @@ const IranTolJobMaterialWorkflow = () => {
                   )}
                 </Form.Group>
                 <Form.Group as={Col} md="2" className="mb-3">
-                  <Form.Label className="mb-1 required-field">
+                  <Form.Label className="required-field">
                     تعداد / مقدار :{" "}
                   </Form.Label>
                   <NumberFormat
@@ -772,8 +788,8 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3">
-                  <Form.Label className="mb-1 required-field">
+                <Form.Group as={Col} md="2">
+                  <Form.Label className="required-field">
                     واحد شمارش:{" "}
                   </Form.Label>
                   <Select
@@ -793,21 +809,11 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="2">
-                  <Button
-                    className="mt-4 font12"
-                    onClick={handleIrantoolMaterial}
-                  >
-                    افزودن آیتم
-                  </Button>
-                </Form.Group>
-              </Row>
-              <Row>
-                <Form.Group as={Col} md="12" className="mt-1 mb-2">
-                  <Form.Label className="mb-1">توضیحات: </Form.Label>
+                <Form.Group as={Col} md="2" className="mb-2">
+                  <Form.Label className="">توضیحات: </Form.Label>
                   <Form.Control
                     as="textarea"
-                    rows={2}
+                    rows={1}
                     maxLength={2000}
                     name="softwareReqDescription"
                     value={irantoolMaterialDescription}
@@ -816,11 +822,20 @@ const IranTolJobMaterialWorkflow = () => {
                     }}
                   />
                 </Form.Group>
+                <Form.Group as={Col} md="2">
+                  <Button
+                    className="mt30 font12"
+                    onClick={handleIrantoolMaterial}
+                  >
+                    افزودن آیتم
+                  </Button>
+                </Form.Group>
               </Row>
+              <Row></Row>
               <Row>
                 {irantoolMaterialItem.length !== 0 && (
                   <Table striped bordered hover responsive className="mt-5">
-                    <thead className="bg-primary light-text">
+                    <thead className="lightBlue-bg light-dark">
                       <tr>
                         <th>ردیف</th>
                         <th>کد متریال</th>
@@ -831,7 +846,7 @@ const IranTolJobMaterialWorkflow = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody style={{ backgroundColor: "#afeffa" }}>
+                    <tbody style={{ backgroundColor: "#f0f8ff" }}>
                       {irantoolMaterialItem.map((item, idx) => {
                         return (
                           <tr key={idx}>
@@ -858,10 +873,10 @@ const IranTolJobMaterialWorkflow = () => {
                 )}
               </Row>
             </div>
-            <hr className="mt-5 mb-2" />
-            <div className="lightGray-bg p-4 rounded">
+            <hr className="mt-5 mb-4" />
+            <div className="lightGray-bg p-4 rounded shadow">
               <Row>
-                <h3 className="fw-bold font16 mb-4 bg-warning p-4 rounded text-black mb-2">
+                <h3 className="fw-bold font16 mb-4 lightYellow  p-4 rounded text-black mb-2 shadow">
                   ثبت ابزارآلات
                 </h3>
                 <Form.Group as={Col} md="2" className="mb-4">
@@ -969,10 +984,7 @@ const IranTolJobMaterialWorkflow = () => {
                   )}
                 </Form.Group>
                 <Form.Group as={Col} md="2">
-                  <Button
-                    className="mt-4 font12 bg-warning border border-warning text-dark"
-                    onClick={handleIrantoolTool}
-                  >
+                  <Button className="mt30 font12" onClick={handleIrantoolTool}>
                     افزودن آیتم
                   </Button>
                 </Form.Group>
@@ -1033,7 +1045,7 @@ const IranTolJobMaterialWorkflow = () => {
                 )}
               </Row>
             </div>
-            <hr className="mt-4 mb-5" />
+            <hr className="mt-4 mb-4" />
             <div className="lightGray-bg p-4 rounded">
               <h3 className="fw-bold font16 mb-4 bg-success p-4 rounded text-white">
                 ثبت برنامه های عملیاتی

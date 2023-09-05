@@ -71,8 +71,11 @@ const Requests = ({ columns, data, onSort, fetchData, loading, pageCount: contro
                         prepareRow(row);
                         function findNoVisited(){
                             for(var r = 0 ; r < requests.length ; r++){
-                                if(row.cells[0].value.props.children == notVisited[r] && requests[r].userId !== localStorage.getItem('id')){
-                                    return notVisited[r];
+                                if(row.cells[0].value.props.children == notVisited[r]){
+                                    const index = requests.findIndex(req=>req.serial === notVisited[r]);
+                                    if(index !== -1 && requests[index].userId !== localStorage.getItem('id')){
+                                        return notVisited[r];
+                                    }
                                 }
                             }
                         }

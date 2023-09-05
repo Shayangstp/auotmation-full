@@ -197,6 +197,15 @@ const UserMenu = ({ logOutModal, setLogoutModal, lockLinks, setLocklinks, setLoc
                                                         </Link>
                                                         : null
                                                     }
+                                                    {req.typeId === 9 ?
+                                                        <Link className="text-decoration-none text-dark d-flex align-items-center justify-content-between">
+                                                            <div className="d-flex align-items-center">
+                                                                <FontAwesomeIcon icon={faCartShopping} className='pink-text me-2 font10' />
+                                                                <p className="m-0 font10"> {req.fullName} درخواست خرید جدیدی ثبت کرد.</p>
+                                                            </div>
+                                                        </Link>
+                                                        : null
+                                                    }
                                                 </ListGroup.Item>
                                             )
                                         }) : null}

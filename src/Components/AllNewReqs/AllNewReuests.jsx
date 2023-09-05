@@ -65,6 +65,11 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
     const columns = useMemo(
         () => [
             {
+                Header: "سریال",
+                accessor: "reqSerial",
+                sort: true
+            },
+            {
                 Header: "تاریخ ثبت درخواست",
                 accessor: "reqDate",
                 sort: true
@@ -186,6 +191,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
         if (requests.length !== 0) {
             for (var i = 0; i < requests.length; i++) {
                 var tableItem = {
+                    reqSerial: requests[i].serial,
                     reqDate: moment.utc(requests[i].date, 'YYYY/MM/DD').locale('fa').format('jYYYY/jMM/jDD'),
                     reqUser: (requests[i].fullName),
                     reqCategory: requests[i].title,
@@ -209,6 +215,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
         if (requests.length !== 0) {
             for (var i = 0; i < requests.length; i++) {
                 var tableItem = {
+                    reqSerial: requests[i].serial,
                     reqDate: moment.utc(requests[i].date, 'YYYY/MM/DD').locale('fa').format('jYYYY/jMM/jDD'),
                     reqUser: (requests[i].fullName),
                     reqCategory: requests[i].title,

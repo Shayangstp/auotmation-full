@@ -41,7 +41,6 @@ const NextAcceptRequestModal = () => {
         <Modal
             aria-labelledby="contained-modal-title-vcenter"
             centered
-            size="lg"
             backdrop="static"
             show={nextAcceptReqModal}
             onHide={() => {

@@ -57,7 +57,7 @@ const IranTolJobRegistration = ({ setPageTitle }) => {
         handleITJProjectTypes();
     }, [setPageTitle])
     return (
-        <Container>
+        <Container className="lightGray2-bg p-3 shadow mt-5">
             {/* {menuPermission ? */}
             <Form className="position-relative">
                 {loading && <Loading />}

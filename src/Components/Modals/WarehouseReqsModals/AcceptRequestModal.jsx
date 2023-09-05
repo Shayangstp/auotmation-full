@@ -1,6 +1,6 @@
 import React, { useContext, Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import momentJalaali from 'moment-jalaali';
 import WarehouseReqItems from '../../WarehouseReq/WarehouseReqItems';
 import xssFilters from "xss-filters";
@@ -12,7 +12,6 @@ import { rootContext } from "../../context/rootContext";
 import { selectUser, handleUserInformation, handleUserImage } from '../../Slices/mainSlices';
 import { selectCurrentReqComments, selectCurrentReqItems, selectCurrentReqInfo } from '../../Slices/currentReqSlice';
 import { selectAcceptReqModal, RsetAcceptReqModal, selectAcceptReqComment, RsetAcceptReqComment, RsetNextAcceptReqModal } from "../../Slices/modalsSlice";
-import { handleAcceptPurchaseReq } from '../../Slices/purchaseSlice';
 import PurchaseReqItems from "../../WarehouseReq/ProductPurchase/PurchaseReqItems";
 
 const AcceptRequestModal = () => {
@@ -26,9 +25,6 @@ const AcceptRequestModal = () => {
 
     const mainContext = useContext(rootContext);
     const {
-        currentReqToPerson,
-        setCurrentReqToPerson,
-        currentReqToPersonsSelect,
         setReqPriority,
         reqCompletionDeadline,
         setReqCompletionDeadline,
@@ -44,7 +40,7 @@ const AcceptRequestModal = () => {
                         variant="success"
                         onClick={() => {
                             if (currentReqInfo.typeId === 9) {
-                                dispatch(handleAcceptPurchaseReq());
+                                // dispatch(handleAcceptPurchaseReq());
                             } else if (currentReqInfo.typeId === 2) {
                                 if (currentReqInfo.lastActionCode === 6) {
                                     dispatch(RsetAcceptReqModal(false));
@@ -74,7 +70,7 @@ const AcceptRequestModal = () => {
                         variant="success"
                         onClick={() => {
                             if (currentReqInfo.typeId === 9) {
-                                dispatch(handleAcceptPurchaseReq());
+                                // dispatch(handleAcceptPurchaseReq());
                             } else if (currentReqInfo.typeId === 2) {
                                 if (currentReqInfo.lastActionCode === 6) {
                                     dispatch(RsetAcceptReqModal(false));
@@ -256,18 +252,11 @@ const AcceptRequestModal = () => {
                 </div>
                 <div className="d-flex justify-content-between">
                     <div className="w-75 d-flex align-items-center">
-                        {currentReqInfo.typeId === 8 ?
-                            <Select className='me-3' value={currentReqToPerson} name="currentReqToPerson" onChange={(e) => { setCurrentReqToPerson(e) }} placeholder='انتخاب مدیر پشتیبانی شرکت' options={currentReqToPersonsSelect} />
-                            : null}
-                        {/* {currentReqInfo.lastActionCode === 29 ?
-                            <Select className='me-3' value={currentReqToPerson} name="currentReqToPerson" onChange={(e) => { setCurrentReqToPerson(e) }} placeholder='انتخاب تحویل گیرنده' options={coUsers} />
-                            : null} */}
                         {acceptBTN()}
                     </div>
                     <Button
                         onClick={() => {
                             dispatch(RsetAcceptReqComment(''));
-                            setCurrentReqToPerson('');
                             dispatch(RsetAcceptReqModal(false));
                         }}
                         variant="secondary"

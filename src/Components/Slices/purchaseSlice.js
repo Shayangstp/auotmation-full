@@ -1,12 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { errorMessage, successMessage, warningMessage } from "../../utils/message";
-import { RsetFormErrors, handleReqsList, RsetLoading, handleAllItems } from "./mainSlices";
-import { getToPersonByRole, postAction, checkReqUpdateDate } from "../../Services/rootServices";
+import { RsetFormErrors, handleReqsList, RsetLoading, handleAllItems, RsetUsersByRole } from "./mainSlices";
+import { getToPersonByRole, postAction, checkItemUpdateDate } from "../../Services/rootServices";
 import { postPurchaseReq, postPurchaseReqItems, editPurchaseReqItem, postPurchaseItemAction, purchasedItem } from '../../Services/warehouseReqService';
 import { RsetCurrentReqItems, handleCurrentReqItems } from "./currentReqSlice";
-import { RsetDeleteReqItemModal, RsetAcceptReqModal, RsetAcceptReqComment } from './modalsSlice';
+import { RsetDeleteReqItemModal, RsetAcceptReqModal, RsetAcceptReqComment, RsetEditReqModal } from './modalsSlice';
 import { RsetGoodCode, RsetGoodName, RsetPrevList } from "./goodSearchSlice";
-import { RsetEditReqModal } from "./modalsSlice";
 
 
 const initialState = {
@@ -22,7 +21,12 @@ const initialState = {
     purchaseReqItemId: '',
     purchaseDeletedReqItems: [],
     purchaseItemModal: false,
-    
+
+    selectedPurchaseItems: [],
+    purchaseSendItemsModal: false,
+    usersBySupportSupervisor: '',
+    usersBySupportSupervisorOptions: [],
+
     purchasedItemModal: false,
     purchasedItemInvoiceNumber: '',
     purchasedItemStore: '',
@@ -427,89 +431,118 @@ export const handleEditPurchaseReqItemBuyer = createAsyncThunk(
         dispatch(RsetCurrentReqItems(allItems));
     }
 );
-export const handleAcceptPurchaseReq = createAsyncThunk(
-    "purchase/handleAcceptPurchaseReq",
+export const handleSelectedPurchaseItem = createAsyncThunk(
+    "purchase/handleResetPurchaseReq",
+    async ({ e, request }, { dispatch, getState }) => {
+        const { selectedPurchaseItems } = getState().purchase;
+        var items = [...selectedPurchaseItems];
+        if (e.target.checked === true) {
+            items.push(request);
+        } else if (e.target.checked === false) {
+            items = items.filter(item => item.itemId !== e.target.value);
+        }
+        dispatch(RsetSelectedPurchaseItems(items));
+    }
+);
+export const handleUsersBySupportSupervisorRole = createAsyncThunk(
+    "mainHome/handleUsersBySupportSupervisorRole",
+    async ({ roles, location, company, exist, dep, task }, { dispatch, getState }) => {
+      try {
+        const usersByRoleRes = await getToPersonByRole(roles, location, company, exist, dep, task);
+        if (usersByRoleRes.data.code === 415) {
+          dispatch(RsetUsersBySupportSupervisorOptions(usersByRoleRes.data.list));
+        } else {
+          errorMessage("اطلاعات یافت نشد!");
+          dispatch(RsetUsersBySupportSupervisorOptions([]));
+        }
+      } catch (ex) {
+        console.log(ex);
+      }
+    }
+  );
+export const handleAcceptPurchaseItem = createAsyncThunk(
+    "purchase/handleAcceptPurchaseItem",
     async (obj, { dispatch, getState }) => {
         dispatch(RsetLoading(true));
         try {
-            const { user } = getState().mainHome;
-            const { currentReqInfo, currentReqItems } = getState().currentReq;
-            const { acceptReqComment } = getState().modals;
-            const checkDateRes = await checkReqUpdateDate(currentReqInfo.requestId, currentReqInfo.lastActionId, 9);
-            if(checkDateRes.data.type === "accepted"){
-                var toPersons = '';
-                var actionCode = '';
-                if(currentReqInfo.lastActionCode === 0){
-                    toPersons = await getToPersonByRole('38', user.Location, user.CompanyCode, 1, null, '0');
-                    actionCode = 26;
-                }
-                if (toPersons !== '' && toPersons.data.code === 415) {
-                    if (toPersons.data.list.length > 0) {
-                        var toPersonsArr = [];
-                        toPersons.data.list.map(async (person) => {
-                            toPersonsArr.push(person.value)
-                        })
-                        const actionValues = {
-                            actionCode: actionCode,
-                            actionId: currentReqInfo.requestId,
-                            userId: localStorage.getItem('id'),
-                            toPersons: String(toPersonsArr),
-                            comment: acceptReqComment !== '' ? acceptReqComment : null,
-                            typeId: 9
-                        }
-                        const postActionRes = await postAction(actionValues);
-                        if(postActionRes.data.code === 415){
-                            currentReqItems.map(async item =>{
-                                const itemActionValues ={
-                                    actionCode: 26,
-                                    userId: localStorage.getItem('id'),
-                                    itemId: item.itemId,
-                                    toPersons: String(toPersonsArr),
-                                }
-                                const itemActionRes = await postPurchaseItemAction(itemActionValues);
-                            })
-                            dispatch(RsetAcceptReqComment(''));
-                            dispatch(RsetAcceptReqModal(false));
-                            successMessage('درخواست با موفقیت تایید شد!');
-                            dispatch(RsetLoading(false));
-                            if (window.location.pathname === '/AllNewRequests') {
-                                // const filterParams = {
-                                //     applicantId: localStorage.getItem('id'),
-                                //     memberId: '',
-                                //     type: '',
-                                //     status: '',
-                                //     fromDate: 'null',
-                                //     toDate: 'null',
-                                // }
-                                // handleGetAllNewReqsList(filterParams);
-                            } else if (window.location.pathname === '/PurchaseReqsList') {
-                                const filterValues = {
-                                    applicantId: localStorage.getItem('id'),
-                                    memberId: '',
-                                    serial: '',
-                                    status: '',
-                                    fromDate: 'null',
-                                    toDate: 'null',
-                                    type: 9
-                                }
-                                dispatch(handleReqsList(filterValues));
+            const { usersByRole, user } = getState().mainHome;
+            const { selectedPurchaseItems } = getState().purchase;
+            var checkedItems = 0;
+            selectedPurchaseItems.map(async item => {
+                const checkDateRes = await checkItemUpdateDate(item.itemId, item.id);
+                if (checkDateRes.data.type === "accepted") {
+                    checkedItems = checkedItems + 1;
+                    if (checkedItems === selectedPurchaseItems.length) {
+                        var postedActions = 0;
+                        selectedPurchaseItems.map(async itemAction => {
+                            const itemActionValues = {
+                                actionCode: 26,
+                                userId: localStorage.getItem('id'),
+                                itemId: itemAction.itemId,
+                                toPersons: usersByRole.value,
                             }
-                        }else{
-                            errorMessage('تایید درخواست با خطا مواجه شد!');
-                            dispatch(RsetLoading(false));
-                        }
-                    }else{
-                        errorMessage('شخص دریافت کننده ای یافت نشد!');
-                        dispatch(RsetLoading(false));
+                            const itemActionRes = await postPurchaseItemAction(itemActionValues);
+                            if (itemActionRes.data.code === 415) {
+                                postedActions = postedActions + 1;
+                                if (postedActions === selectedPurchaseItems.length) {
+                                    if(user.Roles.some(role => role === '37')){
+                                        successMessage('آیتم ها با موفقیت ارسال شدند!');
+                                        dispatch(RsetLoading(false));
+                                        dispatch(RsetUsersByRole(''));
+                                        dispatch(RsetPurchaseSendItemsModal(false));
+                                        dispatch(RsetSelectedPurchaseItems([]));
+                                        dispatch(RsetPurchaseSendItemsModal(false));
+                                        const filterValues = {
+                                            memberId: '',
+                                            serial: '',
+                                            invCode: '',
+                                            status: '',
+                                            fromDate: 'null',
+                                            toDate: 'null',
+                                        }
+                                        dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
+                                    }else if(user.Roles.some(role => role === '40')){
+                                        
+                                        // send to kamzaniyan
+
+                                        successMessage('آیتم ها با موفقیت ارسال شدند!');
+                                        dispatch(RsetLoading(false));
+                                        dispatch(RsetUsersByRole(''));
+                                        dispatch(RsetPurchaseSendItemsModal(false));
+                                        dispatch(RsetSelectedPurchaseItems([]));
+                                        dispatch(RsetPurchaseSendItemsModal(false));
+                                        const filterValues = {
+                                            memberId: '',
+                                            serial: '',
+                                            invCode: '',
+                                            status: '',
+                                            fromDate: 'null',
+                                            toDate: 'null',
+                                        }
+                                        dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
+                                    }
+                                }
+                            }
+                        })
                     }
-                }else{
-                    errorMessage('دریافت کاربر با خطا مواجه شد!');
+                } else {
                     dispatch(RsetLoading(false));
+                    dispatch(RsetUsersByRole(''));
+                    dispatch(RsetPurchaseSendItemsModal(false));
+                    dispatch(RsetSelectedPurchaseItems([]));
+                    dispatch(RsetPurchaseSendItemsModal(false));
+                    errorMessage('وضعیت یا اطلاعات آیتم ها تغییر کرده است. لطفا لیست آیتم ها را بروزرسانی کنید!');
+                    const filterValues = {
+                        memberId: '',
+                        serial: '',
+                        invCode: '',
+                        status: '',
+                        fromDate: 'null',
+                        toDate: 'null',
+                    }
+                    dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
                 }
-            }else{
-                errorMessage('وضعیت یا اطلاعات این درخواست تغییر کرده است. لطفا لیست درخواست را بروزرسانی کنید!');
-                dispatch(RsetLoading(false));
-            }
+            })
         } catch (ex) {
             console.log(ex);
             dispatch(RsetLoading(false));
@@ -521,7 +554,7 @@ export const handlePurchaseReqItemSendToBuy = createAsyncThunk(
     async (item, { dispatch, getState }) => {
         dispatch(RsetLoading(true));
         try {
-            const {currentReqInfo, currentReqItem} = getState().currentReq;
+            const { currentReqInfo, currentReqItem } = getState().currentReq;
             if (item.buyerId !== null) {
                 const updateReqValues = {
                     userId: localStorage.getItem('id'),
@@ -531,20 +564,20 @@ export const handlePurchaseReqItemSendToBuy = createAsyncThunk(
                     buyerId: item.buyerId !== null ? item.buyerId.value : undefined,
                 }
                 const itemUpdateRes = await editPurchaseReqItem(item.itemId, updateReqValues);
-                if(itemUpdateRes.data.code === 415){
-                    const itemActionValues ={
+                if (itemUpdateRes.data.code === 415) {
+                    const itemActionValues = {
                         actionCode: 27,
                         userId: localStorage.getItem('id'),
                         itemId: item.itemId,
                         toPersons: item.buyerId.value,
                     }
                     const itemActionRes = await postPurchaseItemAction(itemActionValues);
-                    if(itemActionRes.data.code === 415){
+                    if (itemActionRes.data.code === 415) {
                         successMessage('درخواست با موفقیت ارسال شد!');
                         dispatch(RsetLoading(false));
-                        if(currentReqInfo !== ''){
-                            dispatch(handleCurrentReqItems({reqId: currentReqInfo.requestId, reqType: 9}));
-                        }else{
+                        if (currentReqInfo !== '') {
+                            dispatch(handleCurrentReqItems({ reqId: currentReqInfo.requestId, reqType: 9 }));
+                        } else {
                             dispatch(RsetPurchaseItemModal(false));
                             const filterValues = {
                                 memberId: '',
@@ -557,11 +590,11 @@ export const handlePurchaseReqItemSendToBuy = createAsyncThunk(
                             dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
                         }
                     }
-                }else{
+                } else {
                     errorMessage('خطا در ارسال آیتم!');
                     dispatch(RsetLoading(false));
                 }
-            }else{
+            } else {
                 errorMessage('مامور خرید مشخص نشده است!');
                 dispatch(RsetLoading(false));
             }
@@ -588,14 +621,14 @@ export const handleResetPurchasedItem = createAsyncThunk(
 );
 export const handlePurchasedReqItem = createAsyncThunk(
     "purchase/handlePurchasedReqItem",
-    async ({purchaseValues, files}, { dispatch, getState }) => {
+    async ({ purchaseValues, files }, { dispatch, getState }) => {
         dispatch(RsetLoading(true));
         try {
             const purchasedItemRes = await purchasedItem(purchaseValues, files);
-            if(purchasedItemRes.data.code === 415){
+            if (purchasedItemRes.data.code === 415) {
                 dispatch(RsetLoading(false));
                 dispatch(handleResetPurchasedItem());
-            }else{
+            } else {
                 errorMessage('');
                 dispatch(RsetLoading(false));
             }
@@ -648,6 +681,21 @@ const purchaseSlice = createSlice({
             return { ...state, purchaseItemModal: payload };
         },
 
+
+        RsetSelectedPurchaseItems: (state, { payload }) => {
+            return { ...state, selectedPurchaseItems: payload };
+        },
+        RsetPurchaseSendItemsModal: (state, { payload }) => {
+            return { ...state, purchaseSendItemsModal: payload };
+        },
+        RsetUsersBySupportSupervisor: (state, { payload }) => {
+            return { ...state, usersBySupportSupervisor: payload };
+        },
+        RsetUsersBySupportSupervisorOptions: (state, { payload }) => {
+            return { ...state, usersBySupportSupervisorOptions: payload };
+        },
+
+
         RsetPurchasedItemModal: (state, { payload }) => {
             return { ...state, purchasedItemModal: payload };
         },
@@ -695,6 +743,11 @@ export const {
     RsetPurchaseDeletedReqItems,
     RsetPurchaseItemModal,
 
+    RsetSelectedPurchaseItems,
+    RsetPurchaseSendItemsModal,
+    RsetUsersBySupportSupervisor,
+    RsetUsersBySupportSupervisorOptions,
+
     RsetPurchasedItemModal,
     RsetPurchasedItemInvoiceNumber,
     RsetPurchasedItemStore,
@@ -718,6 +771,11 @@ export const selectPurchaseReqItemMapCode = (state) => state.purchase.purchaseRe
 export const selectPurchaseReqItemProjectCode = (state) => state.purchase.purchaseReqItemProjectCode;
 export const selectPurchaseReqItemId = (state) => state.purchase.purchaseReqItemId;
 export const selectPurchaseItemModal = (state) => state.purchase.purchaseItemModal;
+
+export const selectSelectedPurchaseItems = (state) => state.purchase.selectedPurchaseItems;
+export const selectPurchaseSendItemsModal = (state) => state.purchase.purchaseSendItemsModal;
+export const selectUsersBySupportSupervisor = (state) => state.purchase.usersBySupportSupervisor;
+export const selectUsersBySupportSupervisorOptions = (state) => state.purchase.usersBySupportSupervisorOptions;
 
 export const selectPurchasedItemModal = (state) => state.purchase.purchasedItemModal;
 export const selectPurchasedItemInvoiceNumber = (state) => state.purchase.purchasedItemInvoiceNumber;

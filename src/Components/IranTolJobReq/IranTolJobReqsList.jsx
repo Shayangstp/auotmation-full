@@ -329,7 +329,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           >
             <FontAwesomeIcon icon={faEye} />
           </Button>
-          {/* <Button
+          <Button
             title="ثبت متریال و مراحل کار"
             className="btn btn-primary d-flex align-items-center"
             size="sm"
@@ -351,7 +351,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
             }}
           >
             <FontAwesomeIcon icon={faPlus} />
-          </Button> */}
+          </Button>
         </section>
       );
     }

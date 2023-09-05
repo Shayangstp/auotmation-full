@@ -8,7 +8,6 @@ export const upSupervisors = (company, location) => {
     { timeout: 30000 }
   );
 };
-//first api
 export const postWarehouseReq = (ReqValues) => {
   return http.post(`${config.localapi}/inventory`, ReqValues, {
     timeout: 30000,
@@ -34,7 +33,6 @@ export const postAction = (ActionValues) => {
     timeout: 30000,
   });
 };
-//second api items
 export const postWarehouseReqItems = (reqItems) => {
   return http.post(`${config.localapi}/inventory/item`, reqItems, {
     timeout: 30000,
@@ -111,6 +109,15 @@ export const editWarehouseItem = (itemId, patchItemValues) => {
 export const getItemReceivedDetails = (itemId) => {
   return http.get(
     `${config.localapi}/inventory/item/receivedDetail/` + itemId,
+    { timeout: 30000 }
+  );
+};
+
+export const sendToWarehousePermission = (typeId) => {
+  return http.get(
+    `${config.localapi}/global/enoughAcception/${localStorage.getItem(
+      "id"
+    )}/${typeId}`,
     { timeout: 30000 }
   );
 };

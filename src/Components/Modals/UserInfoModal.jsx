@@ -26,7 +26,6 @@ const UserInfoModal = () => {
     <Modal
       show={userInfo}
       onHide={() => { dispatch(RsetUserInfoModal(false)) }}
-      backdrop="static"
       centered
       size="md"
     >

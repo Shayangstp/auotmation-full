@@ -62,7 +62,6 @@ import {
   handlesoftwareReqProcess,
 } from "../Slices/softwareSlice";
 import {
-  RsetIrantoolAddMaterialWorkFlowModal,
   handleIrtUsersByRole,
   handleOperatorList,
 } from "../Slices/irantoolSlices";
@@ -103,6 +102,8 @@ const initialState = {
   disableField: false,
   companyNames: "",
   companiesOption: [],
+
+  sendOptions: "1",
 
   usersByRole: "",
   usersByRoleOptions: [],
@@ -1145,6 +1146,9 @@ const mainSlices = createSlice({
     RsetCompaniesOption: (state, { payload }) => {
       return { ...state, companiesOption: payload };
     },
+    RsetSendOptions: (state, { payload }) => {
+      return { ...state, sendOptions: payload };
+    },
 
     RsetUsersByRole: (state, { payload }) => {
       return { ...state, usersByRole: payload };
@@ -1219,6 +1223,7 @@ export const {
   RsetRequestsList,
   RsetCompanyNames,
   RsetCompaniesOption,
+  RsetSendOptions,
 
   RsetUsersByRole,
   RsetUsersByRoleOptions,
@@ -1269,6 +1274,7 @@ export const selectHistories = (state) => state.mainHome.histories;
 export const selectAllDeps = (state) => state.mainHome.allDepartment;
 export const selectReqsList = (state) => state.mainHome.reqsList;
 export const selectRequestMemb = (state) => state.mainHome.requestMembs;
+export const selectSendOptions = (state) => state.mainHome.sendOptions;
 // -> select disable fields
 export const selectDisableFields = (state) => state.mainHome.disableField;
 

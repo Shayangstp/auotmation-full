@@ -51,7 +51,7 @@ const AllNewReqsList = ({ columns, data, onSort, fetchData, loading, pageCount: 
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map((column) => (
-                            <th className="col-2 bg-secondary text-white fw-normal" {...column.getHeaderProps(column.getSortByToggleProps())} title='' /*title={`مرتب سازی براساس ${column.render("Header")}`} */>
+                            <th className="bg-secondary text-white fw-normal" {...column.getHeaderProps(column.getSortByToggleProps())} title='' /*title={`مرتب سازی براساس ${column.render("Header")}`} */>
                             {column.render("Header")}
                             <span>
                                 {column.isSorted
