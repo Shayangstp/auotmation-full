@@ -291,7 +291,7 @@ const LoginAndRegister = () => {
                     <h2 className="fw-bold font24 mb-4 headersPhoneFontSize">
                       {showChangePassCom === false ? (
                         <Fragment>
-                          {accountMode === "login" ? "ورود" : "ثبت نام"}
+                          {accountMode === "login" ? "" : "ثبت نام"}
                         </Fragment>
                       ) : (
                         <span className="font16 fw-normal">
@@ -327,9 +327,35 @@ const LoginAndRegister = () => {
                               </p>
                             )}
                           </Form.Group>
+                          {/* <Form.Group className="mb-4">
+                            <Form.Control
+                              autocomplete="off"
+                              dir="ltr"
+                              id="passInput"
+                              placeholder="رمزعبور"
+                              type={passType}
+                              value={password}
+                              name="password"
+                              onChange={(e) => {
+                                dispatch(RsetPassword(e.target.value));
+                              }}
+                              ref={passwordRef}
+                            />
+                            <FontAwesomeIcon
+                              className="position-absolute cursorPointe"
+                              icon={passType === "text" ? faEye : faEyeSlash}
+                              onClick={handlePassType}
+                            />
+                            {!password && (
+                              <p className="font12 text-warning  mb-0 mt-1">
+                                {formErrors.password}
+                              </p>
+                            )}
+                          </Form.Group> */}
                           <Form.Group className="mb-4">
                             <div className="position-relative">
                               <Form.Control
+                                className="p-5"
                                 autocomplete="off"
                                 dir="ltr"
                                 id="passInput"
@@ -343,8 +369,8 @@ const LoginAndRegister = () => {
                                 ref={passwordRef}
                               />
                               <FontAwesomeIcon
-                                className="position-absolute cursorPointer text-dark start-0 top-0 mt-3 ms-3 h5"
                                 icon={passType === "text" ? faEye : faEyeSlash}
+                                className=" position-absolute cursorPointer end-0 top-0 eyeInputPass"
                                 onClick={handlePassType}
                               />
                               {!password && (
@@ -354,6 +380,7 @@ const LoginAndRegister = () => {
                               )}
                             </div>
                           </Form.Group>
+
                           <button
                             type="button"
                             className="btn w-100 text-white border-0 buttonDesign"

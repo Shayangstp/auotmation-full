@@ -52,15 +52,13 @@ import ProcessModal from "../Modals/ProcessModal";
 import { selectProcessModal } from "../Slices/modalsSlice";
 import UserInfoModal from "../Modals/UserInfoModal";
 import { selectShowFilter, RsetShowFilter } from "../Slices/filterSlices";
-import { selectWarehouseReqFilterActions } from "../Slices/warehouseSlice";
+import { selectActionsFilter } from "../Slices/filterSlices";
 
 const WarehouseReqPage = ({ setPageTitle }) => {
   const processModal = useSelector(selectProcessModal);
   const userInfoModal = useSelector(selectUserInfoModal);
   const showFilter = useSelector(selectShowFilter);
-  const warehouseReqFilterActions = useSelector(
-    selectWarehouseReqFilterActions
-  );
+  const warehouseReqFilterActions = useSelector(selectActionsFilter);
 
   const mainContext = useContext(rootContext);
   const {

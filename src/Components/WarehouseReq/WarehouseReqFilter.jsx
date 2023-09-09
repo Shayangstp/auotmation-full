@@ -12,10 +12,7 @@ import {
   selectRequestMemb,
 } from "../Slices/mainSlices";
 import { checkAccOrRejRequest } from "../../Services/warehouseReqService";
-import {
-  RsetWarehouseReqfilterActions,
-  selectWarehouseReqFilterActions,
-} from "../Slices/warehouseSlice";
+import { RsetActionsFilter, selectActionsFilter } from "../Slices/filterSlices";
 
 const ReqItem = () => {
   const dispatch = useDispatch();
@@ -23,9 +20,7 @@ const ReqItem = () => {
   const requestMemb = useSelector(selectRequestMemb);
   const mainContext = useContext(rootContext);
 
-  const warehouseReqFilterActions = useSelector(
-    selectWarehouseReqFilterActions
-  );
+  const actionsFilter = useSelector(selectActionsFilter);
 
   const {
     handleAllStatuses,
@@ -93,6 +88,7 @@ const ReqItem = () => {
                     ? toDateFilter.format("YYYY/MM/DD")
                     : "null",
                 type: 2,
+                all: actionsFilter ? 0 : 1,
               };
               dispatch(handleReqsList(filterValues));
             }
@@ -132,6 +128,7 @@ const ReqItem = () => {
                     ? toDateFilter.format("YYYY/MM/DD")
                     : "null",
                 type: 2,
+                all: actionsFilter ? 0 : 1,
               };
               dispatch(handleReqsList(filterValues));
             }
@@ -171,6 +168,7 @@ const ReqItem = () => {
                     ? toDateFilter.format("YYYY/MM/DD")
                     : "null",
                 type: 2,
+                all: actionsFilter ? 0 : 1,
               };
               dispatch(handleReqsList(filterValues));
             }
@@ -212,6 +210,7 @@ const ReqItem = () => {
                     ? toDateFilter.format("YYYY/MM/DD")
                     : "null",
                 type: 2,
+                all: actionsFilter ? 0 : 1,
               };
               dispatch(handleReqsList(filterValues));
             }
@@ -253,6 +252,7 @@ const ReqItem = () => {
                     : "null",
                 toDate: value !== null ? value.format("YYYY/MM/DD") : "null",
                 type: 2,
+                all: actionsFilter ? 0 : 1,
               };
               dispatch(handleReqsList(filterValues));
             }
@@ -282,12 +282,10 @@ const ReqItem = () => {
               className=""
               type="checkbox"
               name="realFilterReq"
-              value={warehouseReqFilterActions}
-              checked={warehouseReqFilterActions ? true : false}
+              value={actionsFilter}
+              checked={actionsFilter ? true : false}
               onChange={() => {
-                dispatch(
-                  RsetWarehouseReqfilterActions(!warehouseReqFilterActions)
-                );
+                dispatch(RsetActionsFilter(!actionsFilter));
               }}
             />
 
@@ -322,6 +320,7 @@ const ReqItem = () => {
                     ? toDateFilter.format("YYYY/MM/DD")
                     : "null",
                 type: 2,
+                all: actionsFilter ? 0 : 1,
               };
               dispatch(handleReqsList(filterValues));
             }}

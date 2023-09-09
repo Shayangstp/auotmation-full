@@ -1,4 +1,10 @@
-import React, { Fragment, useContext, useEffect, useCallback } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import xssFilters from "xss-filters";
 import {
   Container,
@@ -185,6 +191,76 @@ const IranTolJobMaterialWorkflow = () => {
   const currentReqInfo = useSelector(selectCurrentReqInfo);
   const formErrors = useSelector(selectFormErrors);
   const user = useSelector(selectUser);
+
+  //refs
+  const materialCodeRef = useRef(null);
+  const materialNameRef = useRef(null);
+  const materialCountRef = useRef(null);
+  const materialUnitRef = useRef(null);
+  const materialDescriptionRef = useRef(null);
+
+  const toolCodeRef = useRef(null);
+  const toolNameRef = useRef(null);
+  const toolCountRef = useRef(null);
+  const toolUnitRef = useRef(null);
+  const toolDescriptionRef = useRef(null);
+
+  const actionDeptRef = useRef(null);
+  const actionOprationRef = useRef(null);
+  const actionOpratorRef = useRef(null);
+  const actionDeviceRef = useRef(null);
+  const actionWorkTimeRef = useRef(null);
+  const actionCountRef = useRef(null);
+  const actionDescriptionRef = useRef(null);
+
+  //handle Enter
+  const handleNextMaterialInput = (e) => {
+    e.preventDefault();
+    if (
+      e.target.id === materialCodeRef.current.id &&
+      materialCodeRef.current.value !== ""
+    ) {
+      materialCountRef.current.focus();
+    } else if (
+      e.target.id === materialCountRef.current.id &&
+      materialCountRef.current.value !== ""
+    ) {
+      materialUnitRef.current.focus();
+    } else if (
+      e.target.id.trim() === materialDescriptionRef.current.id.trim()
+    ) {
+      handleIrantoolMaterial();
+      materialCodeRef.current.focus();
+    } else if (materialUnitRef.current.props.value !== "") {
+      materialDescriptionRef.current.focus();
+    }
+  };
+  const handleNextToolInput = (e) => {
+    e.preventDefault();
+    if (
+      e.target.id === toolCodeRef.current.id &&
+      toolCodeRef.current.value !== ""
+    ) {
+      toolCountRef.current.focus();
+    } else if (
+      e.target.id === toolCountRef.current.id &&
+      toolCountRef.current.value !== ""
+    ) {
+      toolUnitRef.current.focus();
+    } else if (e.target.id.trim() === toolDescriptionRef.current.id.trim()) {
+      handleIrantoolTool();
+      toolCodeRef.current.focus();
+    } else if (toolUnitRef.current.props.value !== "") {
+      toolDescriptionRef.current.focus();
+    }
+  };
+  const handleNextActionInput = (e) => {
+    e.preventDefault();
+
+    if (actionDeptRef.current.props.value !== "") {
+      actionOprationRef.current.focus();
+    }
+  };
 
   //end of useSelector
 
@@ -629,83 +705,89 @@ const IranTolJobMaterialWorkflow = () => {
         ) : (
           <Fragment>
             <Row>
-              <Table striped bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th>نام و نام خانوادگی</th>
-                    <th>شرکت</th>
-                    <th>نام پروژه</th>
-                    <th>نوع فرایند</th>
-                    <th>نوع پروژه</th>
-                    <th>تعداد</th>
-                    <th>تاریخ مدنظر مشتری</th>
-                    <th>توضیحات</th>
-                    <th>پیوست</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{xssFilters.inHTMLData(currentReqInfo.fullName)}</td>
-                    <td>{xssFilters.inHTMLData(currentReqCo)}</td>
-                    <td>{xssFilters.inHTMLData(currentReqInfo.projectName)}</td>
-                    <td>
-                      {xssFilters.inHTMLData(currentReqInfo.requestTypeName)}
-                    </td>
-                    <td>
-                      {xssFilters.inHTMLData(currentReqInfo.toolTypeName)}
-                    </td>
-                    <td>{xssFilters.inHTMLData(currentReqInfo.amount)}</td>
-                    <td>
-                      {currentReqInfo.deadline !== null
-                        ? momentJalaali
-                            .utc(
-                              xssFilters.inHTMLData(currentReqInfo.deadline),
-                              "YYYY/MM/DD"
-                            )
-                            .locale("fa")
-                            .format("jYYYY/jMM/jDD")
-                        : ""}
-                    </td>
-                    <td>{xssFilters.inHTMLData(currentReqInfo.description)}</td>
-                    <td>
-                      {currentReqFiles.length !== 0 ? (
-                        <Fragment>
-                          <ul className="d-flex list-unstyled">
-                            <li
-                              key={file.path}
-                              className="mx-2"
-                              onClick={() => {
-                                handleReqFiles(
-                                  currentReqInfo.requestId,
-                                  file.row,
-                                  0,
-                                  0,
-                                  file.id
-                                );
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faFile}
-                                className="font24 cursorPointer"
-                              />
-                            </li>
-                          </ul>
-                        </Fragment>
-                      ) : (
-                        <p>فایلی آپلود نشده است!</p>
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
+              <div>
+                <Table bordered responsive className="shadow-sm">
+                  <thead className="bg-secondary text-white">
+                    <tr>
+                      <th>نام و نام خانوادگی</th>
+                      <th>شرکت</th>
+                      <th>نام پروژه</th>
+                      <th>نوع فرایند</th>
+                      <th>نوع پروژه</th>
+                      <th>تعداد</th>
+                      <th>تاریخ مدنظر مشتری</th>
+                      <th>توضیحات</th>
+                      <th>پیوست</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-light">
+                    <tr>
+                      <td>{xssFilters.inHTMLData(currentReqInfo.fullName)}</td>
+                      <td>{xssFilters.inHTMLData(currentReqCo)}</td>
+                      <td>
+                        {xssFilters.inHTMLData(currentReqInfo.projectName)}
+                      </td>
+                      <td>
+                        {xssFilters.inHTMLData(currentReqInfo.requestTypeName)}
+                      </td>
+                      <td>
+                        {xssFilters.inHTMLData(currentReqInfo.toolTypeName)}
+                      </td>
+                      <td>{xssFilters.inHTMLData(currentReqInfo.amount)}</td>
+                      <td>
+                        {currentReqInfo.deadline !== null
+                          ? momentJalaali
+                              .utc(
+                                xssFilters.inHTMLData(currentReqInfo.deadline),
+                                "YYYY/MM/DD"
+                              )
+                              .locale("fa")
+                              .format("jYYYY/jMM/jDD")
+                          : ""}
+                      </td>
+                      <td>
+                        {xssFilters.inHTMLData(currentReqInfo.description)}
+                      </td>
+                      <td>
+                        {currentReqFiles.length !== 0 ? (
+                          <Fragment>
+                            <ul className="d-flex list-unstyled">
+                              <li
+                                key={file.path}
+                                className="mx-2"
+                                onClick={() => {
+                                  handleReqFiles(
+                                    currentReqInfo.requestId,
+                                    file.row,
+                                    0,
+                                    0,
+                                    file.id
+                                  );
+                                }}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faFile}
+                                  className="font24 cursorPointer"
+                                />
+                              </li>
+                            </ul>
+                          </Fragment>
+                        ) : (
+                          <p>فایلی آپلود نشده است!</p>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
             </Row>
             <hr className="mt-5 mb-4" />
-            <div className="lightGray-bg p-4 rounded shadow">
+            <div className="lightGray2-bg p-4 borderRadius shadow ">
               <Row>
-                <h3 className="fw-bold font16 mb-4 lightBlue-bg p-4 rounded text-dark mb-4 shadow ">
+                <h3 className="fw-bold font16 mb-4 lightGray-bg p-4 borderRadius text-dark mb-5 shadow ">
                   ثبت مواد اولیه
                 </h3>
-                <Form.Group as={Col} md="2" className="mb-4">
+                <Form.Group as={Col} md="3" lg="2" className="mb-4">
                   <Form.Label className="required-field">
                     کد متریال :{" "}
                   </Form.Label>
@@ -715,11 +797,13 @@ const IranTolJobMaterialWorkflow = () => {
                       id="materialCode"
                       type="text"
                       maxLength={10}
+                      getInputRef={materialCodeRef}
                       className="form-control"
                       value={irantoolMaterialCode}
                       onKeyDown={(e) => {
                         if (e.keyCode === 13) {
                           dispatch(handleGetProWithCode(e));
+                          handleNextMaterialInput(e);
                         }
                       }}
                       onChange={(e) => {
@@ -727,6 +811,7 @@ const IranTolJobMaterialWorkflow = () => {
                       }}
                       onBlur={(e) => {
                         dispatch(handleGetProWithCode(e));
+                        handleNextMaterialInput(e);
                       }}
                     />
                     {/* validation */}
@@ -749,12 +834,13 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="2" className="mb-3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="required-field">
                     نام متریال :{" "}
                   </Form.Label>
                   <Form.Control
                     readOnly
+                    ref={materialNameRef}
                     value={irantoolMaterialName}
                     onChange={(e) => {
                       dispatch(RsetIrantoolMaterialName(e.target.value));
@@ -766,18 +852,24 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="2" className="mb-3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="required-field">
                     تعداد / مقدار :{" "}
                   </Form.Label>
                   <NumberFormat
                     dir="ltr"
-                    id="materialCode"
+                    id="materialCount"
+                    getInputRef={materialCountRef}
                     type="text"
                     maxLength={10}
-                    // ref={materialCode}
                     className="form-control"
                     value={irantoolMaterialCount}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextMaterialInput(e);
+                      }
+                    }}
+                    onBlur={(e) => handleNextMaterialInput(e)}
                     onChange={(e) => {
                       dispatch(RsetIrantoolMaterialCount(e.target.value));
                     }}
@@ -788,17 +880,24 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="2">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="required-field">
                     واحد شمارش:{" "}
                   </Form.Label>
                   <Select
                     value={irantoolMaterialUnit}
-                    name="units"
-                    id="units"
+                    ref={materialUnitRef}
+                    name="materialUnits"
+                    id="materialUnit"
                     onChange={(e) => {
                       dispatch(RsetIrantoolMaterialUnit(e));
                     }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextMaterialInput(e);
+                      }
+                    }}
+                    onBlur={(e) => handleNextMaterialInput(e)}
                     placeholder=" انتخاب..."
                     options={irantoolMaterialUnitOptions}
                     isSearchable={true}
@@ -809,14 +908,20 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="2" className="mb-2">
+                <Form.Group as={Col} md="3" lg="2" className="mb-2">
                   <Form.Label className="">توضیحات: </Form.Label>
                   <Form.Control
                     as="textarea"
+                    id="materialDescription"
                     rows={1}
-                    maxLength={2000}
+                    ref={materialDescriptionRef}
                     name="softwareReqDescription"
                     value={irantoolMaterialDescription}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextMaterialInput(e);
+                      }
+                    }}
                     onChange={(e) => {
                       dispatch(RsetIrantoolMaterialDescription(e.target.value));
                     }}
@@ -826,16 +931,20 @@ const IranTolJobMaterialWorkflow = () => {
                   <Button
                     className="mt30 font12"
                     onClick={handleIrantoolMaterial}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextMaterialInput(e);
+                      }
+                    }}
                   >
                     افزودن آیتم
                   </Button>
                 </Form.Group>
               </Row>
-              <Row></Row>
               <Row>
                 {irantoolMaterialItem.length !== 0 && (
                   <Table striped bordered hover responsive className="mt-5">
-                    <thead className="lightBlue-bg light-dark">
+                    <thead className="bg-secondary text-light">
                       <tr>
                         <th>ردیف</th>
                         <th>کد متریال</th>
@@ -846,10 +955,10 @@ const IranTolJobMaterialWorkflow = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody style={{ backgroundColor: "#f0f8ff" }}>
+                    <tbody>
                       {irantoolMaterialItem.map((item, idx) => {
                         return (
-                          <tr key={idx}>
+                          <tr key={idx} style={{ background: "#fff" }}>
                             <td className="font12">{idx + 1}</td>
                             <td className="font12">{item.itemCode}</td>
                             <td className="font12">{item.itemName}</td>
@@ -874,27 +983,28 @@ const IranTolJobMaterialWorkflow = () => {
               </Row>
             </div>
             <hr className="mt-5 mb-4" />
-            <div className="lightGray-bg p-4 rounded shadow">
+            <div className="lightGray2-bg p-4 borderRadius shadow ">
               <Row>
-                <h3 className="fw-bold font16 mb-4 lightYellow  p-4 rounded text-black mb-2 shadow">
+                <h3 className="fw-bold font16 mb-4 lightGray-bg p-4 borderRadius text-dark mb-5 shadow">
                   ثبت ابزارآلات
                 </h3>
-                <Form.Group as={Col} md="2" className="mb-4">
+                <Form.Group as={Col} md="3" lg="2" className="mb-4">
                   <Form.Label className="mb-1 required-field">
                     کد ابزار :{" "}
                   </Form.Label>
                   <div className="d-flex flex-row justify-content-center align-items-center">
                     <NumberFormat
                       dir="ltr"
-                      id="materialCode"
+                      id="toolCode"
                       type="text"
                       maxLength={10}
                       className="form-control"
+                      getInputRef={toolCodeRef}
                       value={irantoolToolCode}
                       onKeyDown={(e) => {
                         if (e.keyCode === 13) {
                           dispatch(handleGetProWithCode(e));
-                          // handleNextInput(e);
+                          handleNextToolInput(e);
                         }
                       }}
                       onChange={(e) => {
@@ -906,15 +1016,15 @@ const IranTolJobMaterialWorkflow = () => {
                     />
                     {/* validation */}
                     <Button
-                      title="جستوجوی متریال"
-                      className="font12 ms-1 bg-warning border border-warning"
+                      title="جستوجوی ابزار"
+                      className="font12 ms-1"
                       onClick={() => {
                         dispatch(RsetIrantoolModalSearch(true));
                         dispatch(RsetIrantoolMaterialList([]));
                         dispatch(RsetIrantoolMaterialToolSearch(true));
                       }}
                     >
-                      <FontAwesomeIcon icon={faSearch} className="text-dark" />
+                      <FontAwesomeIcon icon={faSearch} />
                     </Button>
                   </div>
                   {!irantoolToolCodeIsValid && (
@@ -923,15 +1033,22 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3" className="mb-3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="mb-1 required-field">
                     نام ابزار :{" "}
                   </Form.Label>
                   <Form.Control
                     readOnly
+                    id="toolName"
+                    ref={toolNameRef}
                     value={irantoolToolName}
                     onChange={(e) => {
                       dispatch(RsetIrantoolToolName(e.target.value));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextToolInput(e);
+                      }
                     }}
                   />
                   {!irantoolToolNameIsValid && (
@@ -940,20 +1057,25 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="2" className="mb-3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="mb-1 required-field">
                     تعداد / مقدار :{" "}
                   </Form.Label>
                   <NumberFormat
                     dir="ltr"
-                    id="materialCode"
+                    id="toolCount"
                     type="text"
                     maxLength={10}
-                    // ref={materialCode}
                     className="form-control"
+                    getInputRef={toolCountRef}
                     value={irantoolToolCount}
                     onChange={(e) => {
                       dispatch(RsetIrantoolToolCount(e.target.value));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextToolInput(e);
+                      }
                     }}
                   />
                   {!irantoolToolCountIsValid && (
@@ -962,17 +1084,24 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3">
-                  <Form.Label className="mb-1 required-field">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
+                  <Form.Label className="required-field">
                     واحد شمارش:{" "}
                   </Form.Label>
                   <Select
                     value={irantoolToolUnit}
-                    name="units"
-                    id="units"
+                    ref={toolUnitRef}
+                    name="toolUnit"
+                    id="toolUnit"
                     onChange={(e) => {
                       dispatch(RsetIrantoolToolUnit(e));
                     }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextToolInput(e);
+                      }
+                    }}
+                    onBlur={(e) => handleNextToolInput(e)}
                     placeholder=" انتخاب..."
                     options={irantoolMaterialUnitOptions}
                     isSearchable={true}
@@ -983,31 +1112,37 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
+                <Form.Group as={Col} md="3" lg="2" className="mt-1 mb-2">
+                  <Form.Label className="mb-1">توضیحات: </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    id="toolDescription"
+                    rows={1}
+                    maxLength={2000}
+                    ref={toolDescriptionRef}
+                    name="softwareReqDescription"
+                    value={irantoolToolDescription}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextToolInput(e);
+                      }
+                    }}
+                    onChange={(e) => {
+                      dispatch(RsetIrantoolToolDescription(e.target.value));
+                    }}
+                  />
+                </Form.Group>
                 <Form.Group as={Col} md="2">
                   <Button className="mt30 font12" onClick={handleIrantoolTool}>
                     افزودن آیتم
                   </Button>
                 </Form.Group>
               </Row>
-              <Row>
-                <Form.Group as={Col} md="12" className="mt-1 mb-2">
-                  <Form.Label className="mb-1">توضیحات: </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    maxLength={2000}
-                    name="softwareReqDescription"
-                    value={irantoolToolDescription}
-                    onChange={(e) => {
-                      dispatch(RsetIrantoolToolDescription(e.target.value));
-                    }}
-                  />
-                </Form.Group>
-              </Row>
+              <Row></Row>
               <Row>
                 {irantoolToolItem.length !== 0 && (
                   <Table striped bordered hover responsive className="mt-5">
-                    <thead className="bg-warning light-black">
+                    <thead className="bg-secondary text-light">
                       <tr>
                         <th>ردیف</th>
                         <th>کد متریال</th>
@@ -1018,7 +1153,7 @@ const IranTolJobMaterialWorkflow = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody style={{ backgroundColor: "#e3d598" }}>
+                    <tbody style={{ backgroundColor: "#fff" }}>
                       {irantoolToolItem.map((item, idx) => {
                         return (
                           <tr key={idx}>
@@ -1046,25 +1181,28 @@ const IranTolJobMaterialWorkflow = () => {
               </Row>
             </div>
             <hr className="mt-4 mb-4" />
-            <div className="lightGray-bg p-4 rounded">
-              <h3 className="fw-bold font16 mb-4 bg-success p-4 rounded text-white">
+            <div className="lightGray2-bg p-4 borderRadius shadow ">
+              <h3 className="fw-bold font16 mb-4 lightGray-bg p-4 borderRadius text-dark mb-5 shadow">
                 ثبت برنامه های عملیاتی
               </h3>
               <Row>
-                <Form.Group as={Col} md="3">
-                  <Form.Label className="mb-1 required-field">
-                    واحد :{" "}
-                  </Form.Label>
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
+                  <Form.Label className="required-field">واحد : </Form.Label>
                   <Select
                     value={irantoolActionDept}
-                    name="units"
-                    id="units"
+                    name="actionDept"
+                    id="actionDept"
                     onChange={(e) => {
                       dispatch(RsetIrantoolActionDept(e));
                     }}
                     placeholder=" انتخاب..."
                     options={irantoolActionDeptOptions}
                     isSearchable={true}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
+                    }}
                   />
                   {!irantoolActionDeptIsValid && (
                     <p className="font12 text-danger mb-0 mt-1">
@@ -1072,20 +1210,25 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="mb-1 required-field">
                     نوع عملیات:{" "}
                   </Form.Label>
                   <Select
                     value={irantoolActionOpration}
-                    name="units"
-                    id="units"
+                    name="actionOpration"
+                    id="actionOpration"
                     onChange={(e) => {
                       dispatch(RsetIrantoolActionOpration(e));
                     }}
                     placeholder=" انتخاب..."
                     options={irantoolActionOprationOptions}
                     isSearchable={true}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
+                    }}
                   />
                   {!irantoolActionOpration && (
                     <p className="font12 text-danger mb-0 mt-1">
@@ -1093,7 +1236,7 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="mb-1 required-field">
                     اپراتور:{" "}
                   </Form.Label>
@@ -1107,6 +1250,12 @@ const IranTolJobMaterialWorkflow = () => {
                     placeholder=" انتخاب..."
                     options={irantoolActionOpratorOptions}
                     isSearchable={true}
+                    ref={actionOprationRef}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
+                    }}
                   />
                   {!irantoolActionOpratorIsValid && (
                     <p className="font12 text-danger mb-0 mt-1">
@@ -1114,20 +1263,26 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
                   <Form.Label className="mb-1 required-field">
                     دستگاه:{" "}
                   </Form.Label>
                   <Select
                     value={irantoolActionDevice}
-                    name="units"
-                    id="units"
+                    name="actionDevice"
+                    id="actionDevice"
                     onChange={(e) => {
                       dispatch(RsetIrantoolActionDevice(e));
                     }}
+                    ref={actionDeviceRef}
                     placeholder=" انتخاب..."
                     options={deviceOptions}
                     isSearchable={true}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
+                    }}
                   />
                   {!irantoolActionDeviceIsValid && (
                     <p className="font12 text-danger mb-0 mt-1">
@@ -1136,13 +1291,14 @@ const IranTolJobMaterialWorkflow = () => {
                   )}
                 </Form.Group>
 
-                <Form.Group as={Col} md="3" className="mt-3">
+                <Form.Group as={Col} md="4" lg="3" xl="3" xxl="2" className="mb-3">
                   <Form.Label className="mb-1 required-field">
                     زمان انجام کار(دقیقه) :{" "}
                   </Form.Label>
                   <NumberFormat
                     dir="ltr"
                     id="workTime"
+                    ref={actionWorkTimeRef}
                     className="form-control"
                     value={irantoolActionWorkTime}
                     onChange={(e) => {
@@ -1154,6 +1310,11 @@ const IranTolJobMaterialWorkflow = () => {
                         )
                       );
                     }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
+                    }}
                   />
                   {!irantoolActionWorkTimeIsValid && (
                     <p className="font12 text-danger mb-0 mt-1">
@@ -1161,19 +1322,25 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="3" className="mb-4 mt-3">
+                <Form.Group as={Col} md="3"  xl="2" className="mb-3">
                   <Form.Label className="mb-1 required-field">
                     تعداد :{" "}
                   </Form.Label>
                   <NumberFormat
                     dir="ltr"
-                    id="materialCode"
+                    id="actionsCount"
                     type="text"
+                    ref={actionCountRef}
                     maxLength={10}
                     className="form-control"
                     value={irantoolActionCount}
                     onChange={(e) => {
                       dispatch(RsetIrantoolActionCount(e.target.value));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
                     }}
                   />
 
@@ -1184,32 +1351,42 @@ const IranTolJobMaterialWorkflow = () => {
                     </p>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="2" className="mt-3">
+                <Form.Group as={Col} md="3" lg="2" className="mb-3">
+                  <Form.Label className="mb-1">توضیحات: </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={1}
+                    maxLength={2000}
+                    ref={actionDescriptionRef}
+                    name="actionsDescription"
+                    value={irantoolActionDescription}
+                    onChange={(e) => {
+                      dispatch(RsetIrantoolActionDescription(e.target.value));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
+                    }}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} md="3" lg="2" className="">
                   <Button
-                    className="mt-4 ms-2 font12 bg-success border border-success text-white"
+                    className="font12 mt30"
                     onClick={() => {
                       handleIrantoolActionItem();
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.keyCode === 13) {
+                        handleNextActionInput(e);
+                      }
                     }}
                   >
                     افزودن آیتم
                   </Button>
                 </Form.Group>
               </Row>
-              <Row>
-                <Form.Group as={Col} md="12" className="mt-1 mb-2">
-                  <Form.Label className="mb-1">توضیحات: </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    maxLength={2000}
-                    name="softwareReqDescription"
-                    value={irantoolActionDescription}
-                    onChange={(e) => {
-                      dispatch(RsetIrantoolActionDescription(e.target.value));
-                    }}
-                  />
-                </Form.Group>
-              </Row>
+              <Row className="mt-2"></Row>
               <Row>
                 {irantoolActionItem.length !== 0 && (
                   <Table striped bordered hover responsive className="mt-5">
@@ -1226,9 +1403,7 @@ const IranTolJobMaterialWorkflow = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody
-                      style={{ backgroundColor: "#acd49b", color: "black" }}
-                    >
+                    <tbody style={{ backgroundColor: "#fff" }}>
                       {irantoolActionItem.map((item, idx) => {
                         return (
                           <tr key={idx}>
@@ -1281,7 +1456,7 @@ const IranTolJobMaterialWorkflow = () => {
             </div>
 
             <hr className="mt-4 mb-5" />
-            <Row>
+            <Row className="mb-5">
               <Col
                 md="5"
                 xl="4"

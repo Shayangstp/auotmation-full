@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllStatuses } from '../../Services/rootServices';
-import { handleReqsList, handleAllItems } from '../Slices/mainSlices';
+import { getAllStatuses } from "../../Services/rootServices";
+import { handleReqsList, handleAllItems } from "../Slices/mainSlices";
 
 const initialState = {
   serialFilter: "",
@@ -12,8 +12,8 @@ const initialState = {
   statusOptions: [],
   filterData: [],
   membersOption: [],
-  yearFilter: '',
-  depFilter: '',
+  yearFilter: "",
+  depFilter: "",
   depOptions: [],
   showFilter: false,
 
@@ -22,6 +22,8 @@ const initialState = {
   machineCategory: "",
   machineCode: "",
   machineNumOfShift: "",
+  //
+  actionsFilter: true,
 };
 
 export const handleAllStatuses = createAsyncThunk(
@@ -32,7 +34,7 @@ export const handleAllStatuses = createAsyncThunk(
       if (statusesRes.data.code === 415) {
         dispatch(RsetStatusOptions(statusesRes.data.list));
       } else {
-        dispatch(RsetStatusOptions(''));
+        dispatch(RsetStatusOptions(""));
       }
     } catch (ex) {
       console.log(ex);
@@ -44,45 +46,47 @@ export const handleCancelFilter = createAsyncThunk(
   "filter/handleCancelFilter",
   async (type, { dispatch, getState }) => {
     dispatch(RsetRealFilter(false));
-    dispatch(RsetSerialFilter(''));
-    dispatch(RsetUserFilter(''));
-    dispatch(RsetStatusFilter(''));
+    dispatch(RsetSerialFilter(""));
+    dispatch(RsetUserFilter(""));
+    dispatch(RsetStatusFilter(""));
     dispatch(RsetFromDateFilter(null));
     dispatch(RsetToDateFilter(null));
     dispatch(RsetShowFilter(false));
-    if (type === 'leave') {
-      dispatch(RsetYearFilter(''));
+    if (type === "leave") {
+      dispatch(RsetYearFilter(""));
       const filterParams = {
-        applicantId: localStorage.getItem('id'),
-        serial: '',
-        memberId: '',
-        status: '',
-        fromDate: 'null',
-        toDate: 'null',
-        year: new Date().toLocaleDateString('fa-IR', { numberingSystem: 'latn' }).slice(0, 4),
-        type: 4
-      }
+        applicantId: localStorage.getItem("id"),
+        serial: "",
+        memberId: "",
+        status: "",
+        fromDate: "null",
+        toDate: "null",
+        year: new Date()
+          .toLocaleDateString("fa-IR", { numberingSystem: "latn" })
+          .slice(0, 4),
+        type: 4,
+      };
       dispatch(handleReqsList(filterParams));
-    } else if (type === 'purchase') {
+    } else if (type === "purchase") {
       const filterValues = {
-        applicantId: localStorage.getItem('id'),
-        memberId: '',
-        serial: '',
-        status: '',
-        fromDate: 'null',
-        toDate: 'null',
-        type: 9
-      }
+        applicantId: localStorage.getItem("id"),
+        memberId: "",
+        serial: "",
+        status: "",
+        fromDate: "null",
+        toDate: "null",
+        type: 9,
+      };
       dispatch(handleReqsList(filterValues));
-    } else if (type === 'purchaseItems') {
+    } else if (type === "purchaseItems") {
       const filterValues = {
-        memberId: '',
-        serial: '',
-        invCode: '',
-        status: '',
-        fromDate: 'null',
-        toDate: 'null',
-      }
+        memberId: "",
+        serial: "",
+        invCode: "",
+        status: "",
+        fromDate: "null",
+        toDate: "null",
+      };
       dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
     }
   }
@@ -140,6 +144,10 @@ const filterSlices = createSlice({
     RsetShowFilter: (state, { payload }) => {
       return { ...state, showFilter: payload };
     },
+    //
+    RsetActionsFilter: (state, { payload }) => {
+      return { ...state, actionsFilter: payload };
+    },
   },
 });
 
@@ -160,7 +168,9 @@ export const {
   RsetIrantoolRealFilter,
   RsetDepFilter,
   RsetDepOptions,
-  RsetShowFilter
+  RsetShowFilter,
+  //
+  RsetActionsFilter,
 } = filterSlices.actions;
 
 export const selectSerialFilter = (state) => state.filter.serialFilter;
@@ -175,10 +185,13 @@ export const selectMembersOption = (state) => state.filter.membersOption;
 export const selectYearFilter = (state) => state.filter.yearFilter;
 export const selectMachineCategory = (state) => state.filter.machineCategory;
 export const selectMachineCode = (state) => state.filter.machineCode;
-export const selectMachineNumOfShift = (state) => state.filter.machineNumOfShift;
-export const selectIrantoolRealFilter = (state) => state.filter.irantoolRealFilter;
+export const selectMachineNumOfShift = (state) =>
+  state.filter.machineNumOfShift;
+export const selectIrantoolRealFilter = (state) =>
+  state.filter.irantoolRealFilter;
 export const selectDepFilter = (state) => state.filter.depFilter;
 export const selectDepOptions = (state) => state.filter.depOptions;
 export const selectShowFilter = (state) => state.filter.showFilter;
+export const selectActionsFilter = (state) => state.filter.actionsFilter;
 
 export default filterSlices.reducer;

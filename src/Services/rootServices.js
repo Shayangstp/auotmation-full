@@ -202,7 +202,7 @@ export const getCurrentReqHistory = (commentsStatus, reqId, type) => {
 
 export const getRequestsList = (filterValues) => {
   return http.get(
-    `${config.localapi}/action/reqList2`,
+    `${config.localapi}/action/reqList`,
     { params: filterValues },
     { timeout: 30000 }
   );

@@ -74,6 +74,7 @@ import {
   selectCurrentReqInfo,
   selectCurrentReqItems,
 } from "../Slices/currentReqSlice";
+import { selectActionsFilter } from "../Slices/filterSlices";
 
 const MainContext = ({ children }) => {
   const dispatch = useDispatch();
@@ -96,6 +97,8 @@ const MainContext = ({ children }) => {
   //         setCookie(localStorage.getItem('personalCode'), 'expired', 0);
   //     }
   // });
+
+  const actionsFilter = useSelector(selectActionsFilter);
 
   const generateRanHex = (size) => {
     let result = [];
@@ -1710,6 +1713,7 @@ const MainContext = ({ children }) => {
         fromDate: "null",
         toDate: "null",
         type: 2,
+        all: actionsFilter ? 0 : 1,
       };
       dispatch(handleReqsList(filterValues));
     } else if (filter === "purchase") {

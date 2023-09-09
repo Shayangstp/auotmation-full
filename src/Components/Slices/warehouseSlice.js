@@ -52,8 +52,6 @@ const initialState = {
   warehouseReqItemId: "",
   warehouseDeletedReqItems: [],
   sendDirectlyToWarehouse: false,
-  //
-  warehouseReqFilterActions: true,
 };
 
 export const handleSendToWarehousePermission = createAsyncThunk(
@@ -726,11 +724,6 @@ const warehouseSlice = createSlice({
     RsetSendDirectlyToWarehouse: (state, { payload }) => {
       return { ...state, sendDirectlyToWarehouse: payload };
     },
-
-    //
-    RsetWarehouseReqfilterActions: (state, { payload }) => {
-      return { ...state, warehouseReqFilterActions: payload };
-    },
   },
 });
 
@@ -754,8 +747,6 @@ export const {
   RsetWarehouseReqItemId,
   RsetWarehouseDeletedReqItems,
   RsetSendDirectlyToWarehouse,
-  //
-  RsetWarehouseReqfilterActions,
 } = warehouseSlice.actions;
 
 export const selectWarehouseReqMyRequest = (state) =>
@@ -798,8 +789,5 @@ export const selectWarehouseDeletedReqItems = (state) =>
   state.warehouse.warehouseDeletedReqItems;
 export const selectSendDirectlyToWarehouse = (state) =>
   state.warehouse.sendDirectlyToWarehouse;
-//
-export const selectWarehouseReqFilterActions = (state) =>
-  state.warehouse.warehouseReqFilterActions;
 
 export default warehouseSlice.reducer;
