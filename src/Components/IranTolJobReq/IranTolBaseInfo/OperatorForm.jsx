@@ -59,6 +59,7 @@ const OperatorForm = () => {
                     onChange={(option) => {
                         dispatch(RsetUsersByRole(option));
                     }}
+                    placeholder= "انتخاب..."
                 />
                 {!usersByRole && (
                     <p className="font12 text-danger mb-0 mt-1">
@@ -66,7 +67,7 @@ const OperatorForm = () => {
                     </p>
                 )}
             </Form.Group>
-            <Col className='d-flex mt-3 mt-md-0'>
+            <Col className='d-flex mt-0 mt-md-0'>
                 <div className="d-flex justify-content-end">
                     <Button variant='success' className='font12' onClick={(e) => {
                         submitFormBtn(e)

@@ -62,7 +62,7 @@ const OperationForm = () => {
                     </p>
                 )}
             </Form.Group>
-            <Col className='d-flex mt-3 mt-md-0'>
+            <Col className='d-flex mt-0 mt-md-3'>
                 <div className="d-flex justify-content-end">
                     <Button variant='success' className='font12' onClick={(e) => {
                         submitFormBtn(e)

@@ -622,7 +622,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
   }, [proDetailsModal]);
 
   return (
-    <Container fluid className="pb-4">
+    <Container className="pb-4">
       {/* {menuPermission? */}
       <Fragment>
         {showFilter ? (
@@ -632,7 +632,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
             </Col>
           </Row>
         ) : null}
-        <div className="lightGray2-bg p-3 rounded border shadow">
+        <div className="lightGray2-bg p-4 borderRadius shadow borderWhite">
           <div className="d-flex align-items-center justify-content-between">
             <div>
               <Link to="/WarehouseNewRequest">

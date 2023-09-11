@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Row, Col, Button, Form } from "react-bootstrap";
+import { Row, Col, Button, Form, Container } from "react-bootstrap";
 import NumberFormat from "react-number-format";
 import Select from "react-select";
 import { reqContext } from "../context/warehouseReqsContext/reqContext";
@@ -208,7 +208,7 @@ const WarehouseReqNewItem = () => {
             </p>
           )}
         </Form.Group>
-        <Form.Group as={Col} md="6" lg="4" xl="3" xxl="3" className="mb-4">
+        <Form.Group as={Col} md="6" lg="4" xl="4" xxl="3" className="mb-4">
           <Form.Label className="mb-1">
             {" "}
             محل مصرف فرعی <span className="font12">(واحد درخواست کننده)</span>:{" "}

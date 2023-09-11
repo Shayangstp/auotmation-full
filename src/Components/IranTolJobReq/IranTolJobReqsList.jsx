@@ -24,6 +24,7 @@ import {
   faWarning,
   faPaperPlane,
   faPlus,
+  faFilter,
 } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment-jalaali";
 import xssFilters from "xss-filters";
@@ -40,6 +41,7 @@ import {
   selectIrantoolMaterialWorkFlowModal,
 } from "../Slices/irantoolSlices";
 import AddMaterialWorkFlowModal from "../Modals/ITJReqModals/AddMaterialWorkflowModal";
+import { RsetShowFilter, selectShowFilter } from "../Slices/filterSlices";
 
 const IranTolJobReqsList = ({ setPageTitle }) => {
   const dispatch = useDispatch();
@@ -66,6 +68,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
   const irantoolAddMaterialWorkFlowModal = useSelector(
     selectIrantoolMaterialWorkFlowModal
   );
+  const showFilter = useSelector(selectShowFilter);
 
   const [data, setData] = useState([]);
   const [load, setload] = useState(false);
@@ -444,43 +447,71 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
     };
     handleGetRequestList(filterParams);
   }, []);
+
+  useEffect(() => {
+    dispatch(RsetShowFilter(false));
+  }, []);
+
   return (
-    <Container fluid className="pb-4">
-      {/* {menuPermission ? */}
+    <Container className="pb-4">
       <Fragment>
-        <Row>
-          <Col md="12">
-            <IranTolJobReqsFilter />
-          </Col>
-        </Row>
-        {localStorage.getItem("id") ? (
-          <section className="position-relative">
-            {loading ? <Loading /> : null}
+        {showFilter ? (
+          <Row>
+            <Col md="12">
+              <IranTolJobReqsFilter />
+            </Col>
+          </Row>
+        ) : null}
+        <div className="lightGray2-bg p-4 borderRadius borderWhite shadow ">
+          <div className="d-flex align-items-center justify-content-between">
             <div>
-              <Fragment>
-                <Button
-                  size="sm"
-                  variant="primary"
-                  className="mb-2"
-                  onClick={() => {
-                    const filterParams = {
-                      applicantId: localStorage.getItem("id"),
-                      serial: "",
-                      memberId: "",
-                      company: "",
-                      requestType: "",
-                      toolType: "",
-                      status: "",
-                      fromDate: "null",
-                      toDate: "null",
-                      type: 1,
-                    };
-                    handleGetRequestList(filterParams);
-                  }}
-                >
-                  <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
-                  به روزرسانی
+              <Link to="/IrtReqRegistration">
+                <Button size="sm" variant="success" className="mb-2 font12">
+                  <FontAwesomeIcon icon={faPlus} className="me-2" />
+                  افزودن درخواست جدید
                 </Button>
+              </Link>
+              <Button
+                size="sm"
+                variant="warning"
+                className="mb-2 ms-2 font12"
+                onClick={() => {
+                  dispatch(RsetShowFilter(!showFilter));
+                }}
+              >
+                <FontAwesomeIcon icon={faFilter} className="me-2" />
+                فیلتر
+              </Button>
+            </div>
+
+            <Button
+              size="sm"
+              variant="primary"
+              className="mb-2 "
+              onClick={() => {
+                const filterParams = {
+                  applicantId: localStorage.getItem("id"),
+                  serial: "",
+                  memberId: "",
+                  company: "",
+                  requestType: "",
+                  toolType: "",
+                  status: "",
+                  fromDate: "null",
+                  toDate: "null",
+                  type: 1,
+                };
+                handleGetRequestList(filterParams);
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
+              به روزرسانی
+            </Button>
+          </div>
+          {localStorage.getItem("id") ? (
+            <section className="position-relative">
+              {loading ? <Loading /> : null}
+              <div>
                 <IranTolJobReqItem
                   requests={requestList}
                   notVisited={notVisited}
@@ -492,12 +523,12 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                   pageCount={pageCount}
                   handleNotVisited={handleNotVisited}
                 />
-              </Fragment>
-            </div>
-          </section>
-        ) : (
-          <Redirect push to="/" />
-        )}
+              </div>
+            </section>
+          ) : (
+            <Redirect push to="/" />
+          )}
+        </div>
       </Fragment>
       {/* :
                 <Row>

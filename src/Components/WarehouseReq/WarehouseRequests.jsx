@@ -113,7 +113,7 @@ const Requests = ({
             return (
               <tr
                 {...row.getRowProps()}
-                className={findNoVisited() !== undefined ? "fw-bold" : ""}
+                className={findNoVisited() !== undefined ? "fw-bold " : ""}
                 key={i}
               >
                 {row.cells.map((cell, index) => {

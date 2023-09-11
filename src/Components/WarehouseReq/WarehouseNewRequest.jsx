@@ -227,8 +227,11 @@ const WarehouseNewRequest = ({ setPageTitle, setLocklinks }) => {
     }
   }, [user]);
   return (
-    <Container fluid className="pb-4">
+    <Container className="px-5 py-3 shadow lightGray2-bg mb-5 borderRadius borderWhite">
       {/* {menuPermission ? */}
+      <div className="shadow p-4 mb-5 borderRadius lightGray-bg borderWhite font16">
+        ثبت برگه درخواست انبار
+      </div>
       <div className="position-relative">
         {loading ? <Loading /> : null}
         <Fragment>
@@ -401,7 +404,7 @@ const WarehouseNewRequest = ({ setPageTitle, setLocklinks }) => {
                     />
                   </Form.Group>
                   <Col md="12" className="py-5">
-                    <Row className="rounded lightGray2-bg border p-3 shadow">
+                    <Row className="lightGray2-bg p-4 shadow borderRadius borderWhite">
                       <Col md="12">
                         <h3 className="fw-bold mb-4">ارسال درخواست به:</h3>
                       </Col>
