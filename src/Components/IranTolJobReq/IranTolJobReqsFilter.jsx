@@ -49,7 +49,7 @@ const IranTolJobReqsFilter = () => {
   } = jobContext;
 
   return (
-    <div className="d-flex flex-column  mb-5 lightGray2-bg p-3 borderRadius m-auto shadow borderWhite">
+    <div className="d-flex flex-column  mb-5 lightGray2-bg p-3 borderRadius m-auto shadow border border-white border-2">
       <Row className="justify-content-start py-2">
         <Form.Group className="d-flex align-items-center mb-3">
           <Form.Switch
@@ -212,7 +212,7 @@ const IranTolJobReqsFilter = () => {
           as={Col}
           md="4"
           lg="3"
-          xl="3"
+          xl="2"
           className="mb-4"
           onKeyUp={(option) => {
             option.which = option.which || option.keyCode;
@@ -497,7 +497,7 @@ const IranTolJobReqsFilter = () => {
           as={Col}
           md="4"
           lg="3"
-          xl="3"
+          xl="2"
           className="mb-4 mb-lg-0 mb-xl-4"
           onKeyUp={(option) => {
             option.which = option.which || option.keyCode;
@@ -588,7 +588,7 @@ const IranTolJobReqsFilter = () => {
             }}
           />
         </Form.Group>
-        <Form.Group as={Col} md="4" lg="3" className="mb-4 mb-lg-0 mb-xl-0">
+        <Form.Group as={Col} md="4" lg="2" className="mb-4 mb-lg-0 mb-xl-0">
           <Form.Label id="fromDate" className="mb-1">
             از تاریخ درخواست :
           </Form.Label>
@@ -643,7 +643,7 @@ const IranTolJobReqsFilter = () => {
         <Form.Group
           as={Col}
           md="4"
-          lg="3"
+          lg="2"
           className="mb-4 mb-md-0  mb-lg-0 mb-xl-0"
         >
           <Form.Label id="toDate" className="mb-1">

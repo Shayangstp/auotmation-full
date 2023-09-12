@@ -329,7 +329,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
         <div className="d-flex justify-content-between flex-wrap">
           <Button
             title="تایید"
-            className="btn btn-success d-flex align-items-center me-2 mb-2 mb-md-0"
+            className="btn btn-success d-flex align-items-center mb-2"
             size="sm"
             active
             onClick={() => {
@@ -351,7 +351,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
           {request.lastActionCode !== 29 ? (
             <Button
               title="ابطال"
-              className="btn btn-danger d-flex align-items-center me-2 mb-2 mb-md-0"
+              className="btn btn-danger d-flex align-items-center mb-2"
               size="sm"
               active
               onClick={() => {
@@ -374,7 +374,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
           {edit(request, request.serial)}
           <Button
             title="تاریخچه"
-            className="btn btn-info d-flex align-items-center ms-2 mb-2 mb-md-0"
+            className="btn btn-info d-flex align-items-center mb-2"
             size="sm"
             active
             onClick={() => {
@@ -399,7 +399,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
         <div className="d-flex justify-content-between flex-wrap">
           <Button
             title="تایید"
-            className="btn btn-success d-flex align-items-center me-2 mb-2 mb-md-0"
+            className="btn btn-success d-flex align-items-center mb-2"
             size="sm"
             active
             onClick={() => {
@@ -420,7 +420,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
           </Button>
           <Button
             title="ابطال"
-            className="btn btn-danger d-flex align-items-center me-2 mb-2 mb-md-0"
+            className="btn btn-danger d-flex align-items-center mb-2"
             size="sm"
             active
             onClick={() => {
@@ -441,7 +441,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
           </Button>
           <Button
             title="تاریخچه"
-            className="btn btn-info d-flex align-items-center me-2 mb-2 mb-md-0"
+            className="btn btn-info d-flex align-items-center mb-2"
             size="sm"
             active
             onClick={() => {
@@ -466,7 +466,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
         <div className="d-flex justify-content-between flex-wrap">
           <Button
             title="مشاهده"
-            className="btn btn-warning d-flex me-2 align-items-center"
+            className="btn btn-warning d-flex me-2 align-items-center mb-2"
             size="sm"
             active
             onClick={() => {
@@ -487,7 +487,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
           </Button>
           <Button
             title="تاریخچه"
-            className="btn btn-info d-flex align-items-center mb-2 mb-md-0"
+            className="btn btn-info d-flex align-items-center mb-2"
             size="sm"
             active
             onClick={() => {
@@ -622,7 +622,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
   }, [proDetailsModal]);
 
   return (
-    <Container className="pb-4">
+    <Container fluid className="pb-4">
       {/* {menuPermission? */}
       <Fragment>
         {showFilter ? (

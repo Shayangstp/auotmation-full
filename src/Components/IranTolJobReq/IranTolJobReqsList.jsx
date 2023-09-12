@@ -453,7 +453,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
   }, []);
 
   return (
-    <Container className="pb-4">
+    <Container fluid className="pb-4">
       <Fragment>
         {showFilter ? (
           <Row>
@@ -462,7 +462,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
             </Col>
           </Row>
         ) : null}
-        <div className="lightGray2-bg p-4 borderRadius borderWhite shadow ">
+        <div className="lightGray2-bg p-4 borderRadius border border-white border-2 shadow ">
           <div className="d-flex align-items-center justify-content-between">
             <div>
               <Link to="/IrtReqRegistration">

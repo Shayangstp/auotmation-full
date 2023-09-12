@@ -252,7 +252,7 @@ const Background = ({ entered }) => {
       links: {
         blink: false,
         color: {
-          value: "#ffffff",
+          value: "#949494",
         },
         consent: false,
         distance: 150,
