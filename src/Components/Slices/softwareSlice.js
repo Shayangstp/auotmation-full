@@ -303,6 +303,7 @@ export const handleAcceptSoftwareReq = createAsyncThunk(
             toDate: "null",
             type: 6,
             mDep: '',
+            group: 0
           };
           dispatch(handleReqsList(filterValues));
         }else{

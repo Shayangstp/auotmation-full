@@ -26,15 +26,14 @@ import {
   RsetIrantoolAddMaterialWorkFlowModal,
   selectIrantoolMaterialWorkFlowModal,
 } from "../../Slices/irantoolSlices";
-import { selectCurrentReqInfo } from "../../Slices/currentReqSlice";
+import { selectCurrentReqInfo, handleReqFiles, selectCurrentReqFiles } from "../../Slices/currentReqSlice";
 
 const ViewRequestModal = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const viewReqModal = useSelector(selectViewReqModal);
-  const irantoolAddMaterialWorkFlowModal = useSelector(
-    selectIrantoolMaterialWorkFlowModal
-  );
+  const currentReqFiles = useSelector(selectCurrentReqFiles);
+  const irantoolAddMaterialWorkFlowModal = useSelector(selectIrantoolMaterialWorkFlowModal);
   const currentReqInfo = useSelector(selectCurrentReqInfo);
 
   const mainContext = useContext(rootContext);
@@ -45,12 +44,11 @@ const ViewRequestModal = () => {
   } = mainContext;
 
   const jobContext = useContext(iranTolJobCntxt);
-  const { handleDownloadReqPlans, handleReqFiles, currentReqFiles } =
-    jobContext;
+  const { handleDownloadReqPlans } =jobContext;
 
   useEffect(() => {
     if (currentReqInfo.requestId !== undefined) {
-      handleReqFiles(currentReqInfo.requestId, 0, 0, 1, "");
+      dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, multi: 0, multi: 1, fileName: ""}));
     }
   }, [currentReqInfo]);
 
@@ -157,13 +155,7 @@ const ViewRequestModal = () => {
                       <td
                         className="border p-2 mx-2 cursorPointer text-center"
                         onClick={() => {
-                          handleReqFiles(
-                            currentReqInfo.requestId,
-                            file.row,
-                            0,
-                            0,
-                            file.name
-                          );
+                          dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                         }}
                       >
                         <FontAwesomeIcon icon={faFile} className="font24" />
@@ -193,7 +185,7 @@ const ViewRequestModal = () => {
             <div
               className="my-4 cursorPointer"
               onClick={() => {
-                handleReqFiles(currentReqInfo.requestId, 0, 1, 0, "allFiles");
+                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, multi: 1, justShow: 0, fileName: "allFiles"}));
               }}
             >
               <span>دانلود همه فایل های درخواست</span>

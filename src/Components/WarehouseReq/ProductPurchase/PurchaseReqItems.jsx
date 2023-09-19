@@ -67,7 +67,7 @@ const PurchaseReqItems = ({ reqItemsOperation, edit }) => {
                         <Select className="font12" defaultValue={{ label: item.itemPriorityName, value: item.itemPriorityCode }} onChange={(e) => {
                             dispatch(handleEditPurchaseReqItemAcceptedPriority({ event: e, reqItemId: item.itemId }));
                         }}
-                            placeholder='انتخاب' options={[{ label: 'عادی', value: 1 }, { label: 'فوری', value: 0 }]}
+                            placeholder='انتخاب' options={[{ label: 'عادی', value: 1 }, { label: 'فوری', value: 2 }]}
                             menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
                     </td>
                     <td>
@@ -127,7 +127,7 @@ const PurchaseReqItems = ({ reqItemsOperation, edit }) => {
                             ? <Fragment>
                                 <th className="bg-secondary text-white fw-normal font12 w-110">تعداد/مقدار مورد تایید</th>
                                 <th className="bg-secondary text-white fw-normal font12 w-110">اولویت مورد تایید</th>
-                                <th className="bg-secondary text-white fw-normal font12 w-110">مامور خرید</th>
+                                <th className="bg-secondary text-white fw-normal font12 w-110">واحد شمارش مورد تایید</th>
                             </Fragment>
                             : null}
                         {(acceptReqModal && currentReqInfo.lastActionCode === 26)

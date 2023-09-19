@@ -1,93 +1,49 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  getLastNewReqs,
-  getMyReqsList,
-  getRequestsList,
-  getUnits,
-  companiesList,
-  getToPersonByRole,
-  changeUserRole,
-  getUserInfo,
-  getUserImage,
-  getAllItems,
+  getLastNewReqs, getMyReqsList, getRequestsList, getUnits, companiesList, getToPersonByRole, changeUserRole,
+  getUserInfo, getUserImage, getAllItems, getAllStatuses, getMenu
 } from "../../Services/rootServices";
 import { login, userData } from "../../Services/accountService";
 import {
-  getAllDepartment,
-  permisionChanged,
-  permisionPresent,
-  postAction,
-  getMenu,
-  checkPassCompleted,
-  actionAddPerson,
+  getAllDepartment, permisionChanged,
+  permisionPresent, postAction, checkPassCompleted, actionAddPerson
 } from "../../Services/r-ghanavatian/mainApi";
-import {
-  checkDate,
-  findToPerson,
-  getCurrentReqHistory,
-  getCurrentReqInfo,
-} from "../../Services/r-ghanavatian/tableListServices";
-import {
-  errorMessage,
-  successMessage,
-  warningMessage,
-} from "../../utils/message";
+import { checkDate, findToPerson, getCurrentReqHistory, getCurrentReqInfo } from "../../Services/r-ghanavatian/tableListServices";
+import { errorMessage, successMessage, warningMessage } from "../../utils/message";
 import { handleResetOvertimeForm } from "./OverTimeSlice";
 
-import {
-  RsetAcceptReqModal,
-  RsetCancelReqModal,
-  RsetEditReqModal,
-  RsetViewReqModal,
-  RsetDeleteReqModal,
-  RsetReqHistoryModal,
-  RsetViewReqComment,
-  RsetAcceptReqComment,
-  RsetCancelReqComment,
-} from "./modalsSlice";
-import {
-  RsetCurrentReqInfo,
-  RsetCurrentReqId,
-  RsetCurrentReqType,
-  RsetCurrentReqCo,
-  RsetCurrentReqDep,
-  handleCurrentReqComments,
-  RsetCurrentReqItems,
-  handleCurrentReqItems,
-} from "./currentReqSlice";
-import { RsetDepOptions } from "../Slices/filterSlices";
+import { RsetAcceptReqModal, RsetCancelReqModal, RsetEditReqModal, RsetViewReqModal, RsetDeleteReqModal, RsetReqHistoryModal, RsetViewReqComment, RsetAcceptReqComment, RsetCancelReqComment } from "./modalsSlice";
+import { RsetCurrentReqInfo, RsetCurrentReqId, RsetCurrentReqType, RsetCurrentReqCo, RsetCurrentReqDep, handleCurrentReqComments, RsetCurrentReqItems, handleCurrentReqItems } from "./currentReqSlice";
+import { RsetDepOptions } from '../Slices/filterSlices';
 
-import {
-  handleSoftwareReqItem,
-  handlesoftwareReqProcess,
-} from "../Slices/softwareSlice";
-import {
-  handleIrtUsersByRole,
-  handleOperatorList,
-} from "../Slices/irantoolSlices";
+import { handleSoftwareReqItem, handlesoftwareReqProcess } from '../Slices/softwareSlice';
+import { handleIrtUsersByRole, handleOperatorList } from '../Slices/irantoolSlices';
 
 import { handleGetWarehouseReqItems } from "../Slices/warehouseSlice";
 
 const initialState = {
-  unit: "",
+  unit: '',
   unitsOption: [],
+  typesOption: [],
 
-  userName: "",
-  password: "",
+  activeTab: '',
+
+  userName: '',
+  password: '',
   loading: false,
   menu: [],
   loggedIn: false,
-  lastNewReqs: "",
+  lastNewReqs: '',
   userInfoChanged: false,
   userNotFoundModal: false,
-  allDepartmentsSelect: [{ value: "", label: "همه" }],
+  allDepartmentsSelect: [{ value: '', label: 'همه' }],
   userInfoModal: false,
   realFilter: false,
   actionToPersonsModal: false,
   formErrors: {},
-  leaveTypeFilterSelect: "",
-  leaveTypeeFilterSelect: "",
-  leaveAddOrSubFilterSelect: "",
+  leaveTypeFilterSelect: '',
+  leaveTypeeFilterSelect: '',
+  leaveAddOrSubFilterSelect: '',
 
   userInformation: {},
   userImage: "",
@@ -100,16 +56,16 @@ const initialState = {
   reqsList: [],
   requestMembs: [],
   disableField: false,
-  companyNames: "",
+  companyNames: '',
   companiesOption: [],
 
-  sendOptions: "1",
+  sendOptions: '1',
 
-  usersByRole: "",
+  usersByRole: '',
   usersByRoleOptions: [],
   roles: [],
-  rolesOptions: [{ value: 26, label: "تاییدکننده QC" }],
-  addRole: null,
+  rolesOptions: [{ value: 26, label: 'تاییدکننده QC' }],
+  addRole: null
 };
 
 export const handleUnits = createAsyncThunk(
@@ -121,6 +77,21 @@ export const handleUnits = createAsyncThunk(
         dispatch(RsetUnitsOption(unitsRes.data.list));
       } else {
         dispatch(RsetUnitsOption([]));
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  }
+);
+export const handleTypes = createAsyncThunk(
+  "mainHome/handleTypes",
+  async (obj, { dispatch, getState }) => {
+    try {
+      const typesRes = await getAllStatuses(0);
+      if (typesRes.data.code === 415) {
+        dispatch(RsetTypesOption(typesRes.data.list))
+      } else {
+        dispatch(RsetTypesOption([]));
       }
     } catch (ex) {
       console.log(ex);
@@ -152,9 +123,7 @@ export const handleDepartments = createAsyncThunk(
     try {
       const allDep = await getAllDepartment(user.CompanyCode, user.Location);
       if (allDep.data.code === 415) {
-        dispatch(
-          RsetDepOptions([...allDepartmentsSelect, ...allDep.data.deps])
-        );
+        dispatch(RsetDepOptions([...allDepartmentsSelect, ...allDep.data.deps]))
         return allDep.data;
       } else {
         dispatch(RsetDepOptions([]));
@@ -170,8 +139,12 @@ export const handleMenu = createAsyncThunk(
   "mainHome/handleMenu",
   async (event, { dispatch, getState }) => {
     try {
-      const { data } = await getMenu("62aad59dbe423590c073977c");
-      dispatch(RsetMenu(data));
+      const menuRes = await getMenu();
+      if(menuRes.data.code === 415){
+        dispatch(RsetMenu(menuRes.data.list));
+      }else{
+        dispatch(RsetMenu([]));
+      }
     } catch (ex) {
       console.log(ex);
     }
@@ -192,17 +165,11 @@ export const handleLastNewReqs = createAsyncThunk(
 );
 
 const parseJwt = (token) => {
-  var base64Url = token.split(".")[1];
-  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  var jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
   return JSON.parse(jsonPayload);
 };
 // Login info
@@ -214,58 +181,52 @@ export const handleLogin = createAsyncThunk(
     event.preventDefault();
     dispatch(RsetLoading(true));
     try {
-      const loginRes = await login({
-        username: userName.replace(/ /g, ""),
-        password,
-      });
+      const loginRes = await login({ username: userName.replace(/ /g, ''), password });
       if (loginRes.data.code === 415) {
         const userInfo = parseJwt(loginRes.data.token);
         if (userInfo.Approved === true) {
-          const checkUserInfoCompletedRes = await checkPassCompleted(
-            userInfo._id,
-            "all"
-          );
+          const checkUserInfoCompletedRes = await checkPassCompleted(userInfo._id, 'all');
           const loginProcess = async () => {
             localStorage.setItem("token", loginRes.data.token);
             localStorage.setItem("id", userInfo._id);
             dispatch(RsetLoggedIn(true));
             if (userInfo.Roles !== null) {
-              userInfo.Roles = userInfo.Roles.split(",");
+              userInfo.Roles = userInfo.Roles.split(',');
             }
             dispatch(RsetUser(userInfo));
             dispatch(RsetLoading(false));
             dispatch(handleMenu());
             dispatch(handleLastNewReqs());
             if (userData.changedPer === true) {
-              if (getCookie(localStorage.getItem("id")) !== null) {
-                setCookie(localStorage.getItem("id"), "expired", 0);
+              if (getCookie(localStorage.getItem('id')) !== null) {
+                setCookie(localStorage.getItem('id'), 'expired', 0);
               }
             }
             successMessage("ورود موفقیت آمیز بود.");
-          };
+          }
           dispatch(RsetUserInfoChanged(checkUserInfoCompletedRes.data));
           if (checkUserInfoCompletedRes.data === true) {
             loginProcess();
             //handleGetNSeenCounters();
           } else if (checkUserInfoCompletedRes.data === false) {
             loginProcess();
-            errorMessage("اطلاعات کاربری خود را تغییر دهید!");
+            errorMessage('اطلاعات کاربری خود را تغییر دهید!');
           }
         } else if (userInfo.Approved === false) {
           dispatch(RsetLoading(false));
-          errorMessage("حساب کاربری شما تایید نشده است!");
+          errorMessage('حساب کاربری شما تایید نشده است!');
         } else if (loginRes.data.code === 408) {
           dispatch(RsetLoading(false));
-          errorMessage("شرکت یا واحد کاربر یافت نشد!");
+          errorMessage('شرکت یا واحد کاربر یافت نشد!');
         } else if (loginRes.data.code === 409) {
           dispatch(RsetLoading(false));
-          errorMessage("رمز عبور نادرست است!");
+          errorMessage('رمز عبور نادرست است!');
         } else if (loginRes.data.code === 410) {
           dispatch(RsetLoading(false));
-          errorMessage("کدملی مورد نظر یافت نشد!");
+          errorMessage('کدملی مورد نظر یافت نشد!');
         } else {
           dispatch(RsetLoading(false));
-          errorMessage("خطایی رخ داده است!");
+          errorMessage('خطایی رخ داده است!');
         }
       } else {
         dispatch(RsetLoading(false));
@@ -296,17 +257,14 @@ export const handleUserData = createAsyncThunk(
   "mainHome/handleUserData",
   async (event, { dispatch, getState }) => {
     try {
-      const userDataRes = await userData(localStorage.getItem("id"));
+      const userDataRes = await userData(localStorage.getItem('id'));
       if (userDataRes.data.code === 415) {
         if (userDataRes.data.user.Roles !== null) {
-          userDataRes.data.user.Roles = userDataRes.data.user.Roles.split(",");
+          userDataRes.data.user.Roles = userDataRes.data.user.Roles.split(',');
         }
         dispatch(RsetUser(userDataRes.data.user));
         dispatch(handleMenu());
-        const checkPassCompletedRes = await checkPassCompleted(
-          localStorage.getItem("id"),
-          "all"
-        );
+        const checkPassCompletedRes = await checkPassCompleted(localStorage.getItem('id'), 'all');
         if (checkPassCompletedRes.data === true) {
           //handleGetNSeenCounters();
         }
@@ -374,8 +332,8 @@ export const handleUserInformation = createAsyncThunk(
         dispatch(RsetUserInfoModal(true));
         dispatch(RsetUserInformation(userInfoRes.data.info));
       } else {
-        errorMessage("اطلاعات کاربر یافت نشد!");
-        dispatch(RsetUserInformation(""));
+        errorMessage('اطلاعات کاربر یافت نشد!');
+        dispatch(RsetUserInformation(''));
       }
     } catch (ex) {
       console.log(ex);
@@ -385,21 +343,20 @@ export const handleUserInformation = createAsyncThunk(
 
 // Picture user
 export const handleUserImage = createAsyncThunk(
-  "mainHome/handleUserImage",
-  async ({ userId, status }, { dispatch }) => {
-    dispatch(RsetUserImage(""));
+  "mainHome/handleUserImage", async ({ userId, status }, { dispatch }) => {
+    dispatch(RsetUserImage(''));
     try {
       const userImageRes = await getUserImage(userId, status);
       if (userImageRes.data.code === 415) {
-        if (userId !== localStorage.getItem("id")) {
+        if (userId !== localStorage.getItem('id')) {
           dispatch(RsetUserImage(userImageRes.data.photo));
         } else {
           dispatch(RsetLoggedInUserImage(userImageRes.data.photo));
           dispatch(RsetUserImage(userImageRes.data.photo));
         }
       } else {
-        errorMessage("تصویر کاربر یافت نشد!");
-        dispatch(RsetUserImage(""));
+        errorMessage('تصویر کاربر یافت نشد!');
+        dispatch(RsetUserImage(''));
       }
     } catch (ex) {
       console.log(ex);
@@ -414,8 +371,8 @@ export const handleReqVisited = createAsyncThunk(
       const visitedReqValues = {
         actionCode: 15,
         actionId: reqId,
-        userId: localStorage.getItem("id"),
-        typeId: reqType,
+        userId: localStorage.getItem('id'),
+        typeId: reqType
       };
       const sendActionRes = await postAction(visitedReqValues);
       if (sendActionRes.data.code === 415) {
@@ -430,10 +387,7 @@ export const handleReqVisited = createAsyncThunk(
 //  Request details
 export const handleCurrentReqInfo = createAsyncThunk(
   "mainHome/handleCurrentReqInfo",
-  async (
-    { reqId, reqType, reqSeen, company, dep, oprationType },
-    { dispatch, getState }
-  ) => {
+  async ({ reqId, reqType, reqSeen, company, dep, oprationType }, { dispatch, getState }) => {
     dispatch(RsetLoading(true));
     dispatch(RsetCurrentReqInfo({}));
     dispatch(RsetCurrentReqItems([]));
@@ -442,7 +396,7 @@ export const handleCurrentReqInfo = createAsyncThunk(
       if (reqInfoRes.data.code === 415) {
         if (reqInfoRes.data.code === 403) {
           dispatch(RsetLoading(false));
-          errorMessage("اطلاعات درخواست موردنظر یافت نشد!");
+          errorMessage('اطلاعات درخواست موردنظر یافت نشد!')
         } else {
           dispatch(RsetCurrentReqInfo(reqInfoRes.data.reqInfo));
           dispatch(RsetCurrentReqType(reqType));
@@ -468,15 +422,9 @@ export const handleCurrentReqInfo = createAsyncThunk(
           ) {
             dispatch(handleSoftwareReqItem(reqId));
           }
-          if (oprationType === "accept") {
+          if (oprationType === 'accept') {
             dispatch(RsetAcceptReqModal(true));
-            dispatch(
-              handleCurrentReqComments({
-                commentStatus: "detail",
-                reqId: reqId,
-                reqType: reqType,
-              })
-            );
+            dispatch(handleCurrentReqComments({ commentStatus: 'detail', reqId: reqId, reqType: reqType }));
             if (reqType === 2) {
               dispatch(handleGetWarehouseReqItems(reqId));
             }
@@ -485,53 +433,36 @@ export const handleCurrentReqInfo = createAsyncThunk(
             //   const toPersons = await getToPersonByRole('8', user.Location, user.CompanyCode, 1, null, '0');
             //   setCurrentReqToPersonsSelect(toPersons.data.list);
             // }
-          } else if (oprationType === "cancel") {
-            dispatch(
-              handleCurrentReqComments({
-                commentStatus: "detail",
-                reqId: reqId,
-                reqType: reqType,
-              })
-            );
+          } else if (oprationType === 'cancel') {
+            dispatch(handleCurrentReqComments({ commentStatus: 'detail', reqId: reqId, reqType: reqType }));
             dispatch(RsetCancelReqModal(true));
             if (reqType === 2) {
               dispatch(handleGetWarehouseReqItems(reqId));
             }
-          } else if (oprationType === "edit") {
+          } else if (oprationType === 'edit') {
             dispatch(RsetEditReqModal(true));
             if (reqType === 2) {
               dispatch(handleGetWarehouseReqItems(reqId));
             }
-          } else if (oprationType === "view") {
-            dispatch(
-              handleCurrentReqComments({
-                commentStatus: "detail",
-                reqId: reqId,
-                reqType: reqType,
-              })
-            );
+          } else if (oprationType === 'view') {
+            dispatch(handleCurrentReqComments({ commentStatus: 'detail', reqId: reqId, reqType: reqType }));
             dispatch(RsetViewReqModal(true));
             if (reqType === 2) {
               dispatch(handleGetWarehouseReqItems(reqId));
             }
-          } else if (oprationType === "delete") {
+          } else if (oprationType === 'delete') {
             dispatch(RsetDeleteReqModal(true));
-          } else if (oprationType === "history") {
-            dispatch(
-              handleCurrentReqComments({
-                commentStatus: "history",
-                reqId: reqId,
-                reqType: reqType,
-              })
-            );
+          } else if (oprationType === 'history') {
+            dispatch(handleCurrentReqComments({ commentStatus: 'history', reqId: reqId, reqType: reqType }));
             dispatch(RsetReqHistoryModal(true));
           } else {
+
           }
           dispatch(RsetLoading(false));
         }
       } else {
         dispatch(RsetLoading(false));
-        errorMessage("خطا در دریافت اطلاعات درخواست!");
+        errorMessage('خطا در دریافت اطلاعات درخواست!')
       }
     } catch (ex) {
       dispatch(RsetLoading(false));
@@ -574,8 +505,7 @@ export const handleHistories = createAsyncThunk(
 );
 
 export const handleAllItems = createAsyncThunk(
-  "mainHome/handleAllItems",
-  async ({ typeId, filterValues }, { dispatch }) => {
+  "mainHome/handleAllItems", async ({ typeId, filterValues }, { dispatch }) => {
     dispatch(RsetLoading(true));
     try {
       const allItemsRes = await getAllItems(typeId, filterValues);
@@ -584,7 +514,7 @@ export const handleAllItems = createAsyncThunk(
         dispatch(RsetRequestMembs(allItemsRes.data.members));
         dispatch(RsetLoading(false));
       } else {
-        errorMessage("تصویر کاربر یافت نشد!");
+        errorMessage('تصویر کاربر یافت نشد!');
         dispatch(RsetLoading(false));
       }
     } catch (ex) {
@@ -600,31 +530,28 @@ export const handlePostManagerForms = createAsyncThunk(
   async (obj, { dispatch, getState }) => {
     const { user } = getState().mainHome;
     const { currentReqInfo } = getState().currentReq;
-    if (user.Supervisor.fullName !== "نامشخص") {
-      const postOverTimeActionRes = await actionAddPerson(
-        currentReqInfo.requestId,
-        14,
-        user.Supervisor._id
-      );
+    if (user.Supervisor.fullName !== 'نامشخص') {
+      const postOverTimeActionRes = await actionAddPerson(currentReqInfo.requestId, 14, user.Supervisor._id);
       if (postOverTimeActionRes.data.code === 415) {
         dispatch(RsetActionToPersonsModal(false));
-        successMessage("درخواست شما با موفقیت ارسال شد.");
-        if (window.location.pathname === "/OverTimeReqRegistration") {
+        successMessage("درخواست شما با موفقیت ارسال شد.")
+        if (window.location.pathname === '/OverTimeReqRegistration') {
           dispatch(handleResetOvertimeForm());
-        } else if (window.location.pathname === "/OverTimeReqsList") {
+        } else if (window.location.pathname === '/OverTimeReqsList') {
           const filterParams = {
             applicantId: localStorage.getItem("id"),
-            memberId: "",
-            mDep: "",
-            status: "",
-            fromDate: "null",
-            toDate: "null",
+            memberId: '',
+            mDep: '',
+            status: '',
+            fromDate: 'null',
+            toDate: 'null',
             type: 14,
-          };
+            group: 0
+          }
           dispatch(handleReqsList(filterParams));
         }
       } else {
-        errorMessage("ارسال به سرپرست ناموفق بود!");
+        errorMessage("ارسال به سرپرست ناموفق بود!")
       }
     }
   }
@@ -639,17 +566,17 @@ export const handleSendViewComment = createAsyncThunk(
       const actionValues = {
         actionCode: 8,
         actionId: currentReqInfo.requestId,
-        userId: localStorage.getItem("id"),
-        comment: viewReqComment !== "" ? viewReqComment : null,
-        typeId: currentReqInfo.typeId,
-      };
+        userId: localStorage.getItem('id'),
+        comment: viewReqComment !== '' ? viewReqComment : null,
+        typeId: currentReqInfo.typeId
+      }
       const postActionRes = await postAction(actionValues);
       if (postActionRes.data.code === 415) {
-        dispatch(RsetViewReqComment(""));
+        dispatch(RsetViewReqComment(''));
         dispatch(RsetViewReqModal(false));
-        successMessage("نظر با موفقیت ثبت شد!");
+        successMessage('نظر با موفقیت ثبت شد!');
       } else {
-        errorMessage("خطا در ثبت نظر!");
+        errorMessage('خطا در ثبت نظر!');
       }
     } catch (ex) {
       console.log(ex);
@@ -670,12 +597,12 @@ export const handlePostAccept = createAsyncThunk(
       const postCheckDateRes = await checkDate(getLastActionId, getReqId, type);
       if (postCheckDateRes.data.type === "accepted") {
         const valuesAcceptBtn = {
-          role: "49, 50, 51, 52, 53",
+          role: '49, 50, 51, 52, 53',
           location: user.Location,
           company: user.CompanyCode,
           exist: 1,
           department: null,
-          task: "0",
+          task: '0'
         };
         const postHandlerRes = await findToPerson(valuesAcceptBtn);
         if (postHandlerRes.data.length !== 0) {
@@ -711,11 +638,7 @@ export const handlePostCancelModal = createAsyncThunk(
     const { user } = getState().mainHome;
     const { currentReqInfo } = getState().currentReq;
     const { descriptionModals } = getState().mainHome;
-    const postCheckDateRes = await checkDate(
-      currentReqInfo.process[currentReqInfo.process.length - 1]._id,
-      currentReqInfo.reqInfo._id,
-      type
-    );
+    const postCheckDateRes = await checkDate(currentReqInfo.process[currentReqInfo.process.length - 1]._id, currentReqInfo.reqInfo._id, type);
     if (postCheckDateRes.data.type === "accepted") {
       const actionValue = {
         actionId: currentReqInfo.reqInfo._id,
@@ -732,19 +655,20 @@ export const handlePostCancelModal = createAsyncThunk(
         successMessage("درخواست شما با موفقیت کنسل شد.");
         const filterValues = {
           applicantId: localStorage.getItem("id"),
-          memberId: "",
-          mDep: "",
-          status: "",
-          fromDate: "null",
-          toDate: "null",
+          memberId: '',
+          mDep: '',
+          status: '',
+          fromDate: 'null',
+          toDate: 'null',
           type: 14,
+          group: 0
         };
         dispatch(handleReqsList(filterValues));
       } else {
-        errorMessage("خطا در ابطال درخواست!");
+        errorMessage('خطا در ابطال درخواست!')
       }
     } else {
-      errorMessage("وضعیت درخواست تغییر کرده است!");
+      errorMessage('وضعیت درخواست تغییر کرده است!')
     }
   }
 );
@@ -753,24 +677,7 @@ export const generateRanHex = createAsyncThunk(
   "mainHome/generateRanHex",
   async (size) => {
     let result = [];
-    let hexRef = [
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "a",
-      "b",
-      "c",
-      "d",
-      "e",
-      "f",
-    ];
+    let hexRef = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
     for (let n = 0; n < size; n++) {
       result.push(hexRef[Math.floor(Math.random() * 16)]);
     }
@@ -806,17 +713,16 @@ export const handleMyReqsList = createAsyncThunk(
   async (filterValues, { dispatch }) => {
     dispatch(RsetLoading(true));
     try {
-      const reqsListRes = await getMyReqsList();
-      if (
-        reqsListRes.data.length !== undefined &&
-        reqsListRes.data.length !== 0
-      ) {
+      const reqsListRes = await getMyReqsList(filterValues);
+      if (reqsListRes.data.code === 415) {
         dispatch(RsetLoading(false));
-        dispatch(RsetRequestsList(reqsListRes.data));
+        dispatch(RsetRequestsList(reqsListRes.data.list));
+        dispatch(RsetRequestMembs(reqsListRes.data.members));
       } else {
         errorMessage("اطلاعات یافت نشد!");
         dispatch(RsetLoading(false));
         dispatch(RsetRequestsList([]));
+        dispatch(RsetRequestMembs([]));
       }
     } catch (ex) {
       console.log(ex);
@@ -837,7 +743,7 @@ export const handleCancelReq = createAsyncThunk(
         actionId: currentReqInfo.requestId,
         userId: localStorage.getItem("id"),
         typeId: 6,
-        comment: cancelReqComment !== "" ? cancelReqComment : null,
+        comment: cancelReqComment !== '' ? cancelReqComment : null,
       };
       const postActionRes = await postAction(actionValues);
       if (postActionRes.data.code === 415) {
@@ -847,13 +753,14 @@ export const handleCancelReq = createAsyncThunk(
         dispatch(RsetCancelReqComment(""));
         const filterValues = {
           applicantId: localStorage.getItem("id"),
-          serial: "",
-          memberId: "",
-          status: "",
+          serial: '',
+          memberId: '',
+          status: '',
           fromDate: "null",
           toDate: "null",
           type: 6,
-          mDep: "",
+          mDep: '',
+          group: 0
         };
         dispatch(handleReqsList(filterValues));
       } else {
@@ -950,6 +857,7 @@ export const handleCancelReq = createAsyncThunk(
 //             toDate: "null",
 //             type: 6,
 //             mDep: '',
+//             group: 0
 //           };
 //           dispatch(handleReqsList(filterValues));
 //         } else {
@@ -969,19 +877,9 @@ export const handleCancelReq = createAsyncThunk(
 
 export const handleUsersByRoles = createAsyncThunk(
   "mainHome/handleUsersByRoles",
-  async (
-    { roles, location, company, exist, dep, task },
-    { dispatch, getState }
-  ) => {
+  async ({ roles, location, company, exist, dep, task }, { dispatch, getState }) => {
     try {
-      const usersByRoleRes = await getToPersonByRole(
-        roles,
-        location,
-        company,
-        exist,
-        dep,
-        task
-      );
+      const usersByRoleRes = await getToPersonByRole(roles, location, company, exist, dep, task);
       if (usersByRoleRes.data.code === 415) {
         dispatch(RsetUsersByRoleOptions(usersByRoleRes.data.list));
       } else {
@@ -1001,14 +899,7 @@ export const handleUsersByRole = createAsyncThunk(
   async (exist, { dispatch, getState }) => {
     try {
       const { user } = getState().mainHome;
-      const usersByRoleRes = await getToPersonByRole(
-        "26",
-        user.Location,
-        user.CompanyCode,
-        exist,
-        null,
-        "0"
-      );
+      const usersByRoleRes = await getToPersonByRole('26', user.Location, user.CompanyCode, exist, null, '0');
       if (usersByRoleRes.data.code === 415) {
         dispatch(RsetUsersByRoleOptions(usersByRoleRes.data.list));
       } else {
@@ -1028,11 +919,11 @@ export const handleChangeUserRole = createAsyncThunk(
       const changeUserRoleRes = await changeUserRole(changedValues);
       if (changeUserRoleRes.data.code === 415) {
         dispatch(RsetLoading(false));
-        successMessage("نقش کاربر مورد نظر با موفقیت ثبت شد!");
+        successMessage('نقش کاربر مورد نظر با موفقیت ثبت شد!');
         dispatch(RsetAddRole(null));
-        dispatch(RsetUsersByRole(""));
+        dispatch(RsetUsersByRole(''));
         dispatch(RsetRoles([]));
-        if (changedValues.roles === "2") {
+        if (changedValues.roles === '2') {
           dispatch(handleOperatorList(1));
         } else {
           dispatch(handleIrtUsersByRole(1));
@@ -1051,12 +942,8 @@ export const handleChangeUserRole = createAsyncThunk(
 export const handleInputsEnter = createAsyncThunk(
   "mainHome/handleChangeUserRole",
   () => {
-    document.addEventListener("keydown", function (event) {
-      if (
-        event.keyCode === 13 &&
-        event.target.nodeName === "INPUT" &&
-        event.target.form.className === "enter-in-form"
-      ) {
+    document.addEventListener('keydown', function (event) {
+      if (event.keyCode === 13 && event.target.nodeName === 'INPUT' && event.target.form.className === 'enter-in-form') {
         var form = event.target.form;
         var index = Array.prototype.indexOf.call(form, event.target);
         form.elements[index + 1].focus();
@@ -1068,6 +955,7 @@ export const handleInputsEnter = createAsyncThunk(
   }
 );
 
+
 const mainSlices = createSlice({
   name: "mainHome",
   initialState,
@@ -1077,6 +965,13 @@ const mainSlices = createSlice({
     },
     RsetUnitsOption: (state, action) => {
       return { ...state, unitsOption: action.payload };
+    },
+    RsetTypesOption: (state, action) => {
+      return { ...state, typesOption: action.payload };
+    },
+
+    RsetActiveTab: (state, action) => {
+      return { ...state, activeTab: action.payload };
     },
 
     RsetUserName: (state, action) => {
@@ -1130,6 +1025,7 @@ const mainSlices = createSlice({
     RsetLeaveAddOrSubFilterSelect: (state, { payload }) => {
       return { ...state, leaveAddOrSubFilterSelect: payload };
     },
+
 
     RsetIsLoadingCheckout: (state, action) => {
       return { ...state, isLoading: action.payload };
@@ -1199,6 +1095,9 @@ const mainSlices = createSlice({
 export const {
   RsetUnit,
   RsetUnitsOption,
+  RsetTypesOption,
+
+  RsetActiveTab,
 
   RsetUserName,
   RsetPassword,
@@ -1235,11 +1134,14 @@ export const {
   RsetUserImage,
   RsetLoggedInUserImage,
 
-  RsetRequestMembs,
+  RsetRequestMembs
 } = mainSlices.actions;
 
 export const selectUnit = (state) => state.mainHome.unit;
 export const selectUnitsOption = (state) => state.mainHome.unitsOption;
+export const selectTypesOption = (state) => state.mainHome.typesOption;
+
+export const selectActiveTab = (state) => state.mainHome.activeTab;
 
 export const selectUserName = (state) => state.mainHome.userName;
 export const selectPassword = (state) => state.mainHome.password;
@@ -1247,27 +1149,20 @@ export const selectLoading = (state) => state.mainHome.loading;
 export const selectLoggedIn = (state) => state.mainHome.loggedIn;
 export const selectLastNewReqs = (state) => state.mainHome.lastNewReqs;
 export const selectUserInfoChanged = (state) => state.mainHome.userInfoChanged;
-export const selectUserNotFoundModal = (state) =>
-  state.mainHome.userNotFoundModal;
+export const selectUserNotFoundModal = (state) => state.mainHome.userNotFoundModal;
 export const selectMenu = (state) => state.mainHome.menu;
-export const selectAllDepartmentsSelect = (state) =>
-  state.mainHome.allDepartmentsSelect;
+export const selectAllDepartmentsSelect = (state) => state.mainHome.allDepartmentsSelect;
 export const selectUserInfoModal = (state) => state.mainHome.userInfoModal;
 export const selectRealFilter = (state) => state.mainHome.realFilter;
-export const selectActionToPersonsModal = (state) =>
-  state.mainHome.actionToPersonsModal;
+export const selectActionToPersonsModal = (state) => state.mainHome.actionToPersonsModal;
 export const selectFormErrors = (state) => state.mainHome.formErrors;
-export const selectLeaveTypeFilterSelect = (state) =>
-  state.mainHome.leaveTypeFilterSelect;
-export const selectLeaveTypeeFilterSelect = (state) =>
-  state.mainHome.leaveeTypeFilterSelect;
-export const selectLeaveAddOrSubFilterSelect = (state) =>
-  state.mainHome.leaveAddOrSubFilterSelect;
+export const selectLeaveTypeFilterSelect = (state) => state.mainHome.leaveTypeFilterSelect;
+export const selectLeaveTypeeFilterSelect = (state) => state.mainHome.leaveeTypeFilterSelect;
+export const selectLeaveAddOrSubFilterSelect = (state) => state.mainHome.leaveAddOrSubFilterSelect;
 
 export const selectUserInformations = (state) => state.mainHome.userInformation;
 export const selectUserImage = (state) => state.mainHome.userImage;
-export const selectLoggedInUserImage = (state) =>
-  state.mainHome.loggedInUserImage;
+export const selectLoggedInUserImage = (state) => state.mainHome.loggedInUserImage;
 export const selectIsLoadingCheckout = (state) => state.mainHome.isLoading;
 export const selectUser = (state) => state.mainHome.user;
 export const selectHistories = (state) => state.mainHome.histories;
@@ -1278,15 +1173,13 @@ export const selectSendOptions = (state) => state.mainHome.sendOptions;
 // -> select disable fields
 export const selectDisableFields = (state) => state.mainHome.disableField;
 
-export const selectDescriptionModals = (state) =>
-  state.mainHome.descriptionModals;
+export const selectDescriptionModals = (state) => state.mainHome.descriptionModals;
 
 export const selectCompanyNames = (state) => state.mainHome.companyNames;
 export const selectCompaniesOption = (state) => state.mainHome.companiesOption;
 
 export const selectUsersByRole = (state) => state.mainHome.usersByRole;
-export const selectUsersByRoleOptions = (state) =>
-  state.mainHome.usersByRoleOptions;
+export const selectUsersByRoleOptions = (state) => state.mainHome.usersByRoleOptions;
 export const selectRoles = (state) => state.mainHome.roles;
 export const selectRolesOptions = (state) => state.mainHome.rolesOptions;
 export const selectAddRole = (state) => state.mainHome.addRole;

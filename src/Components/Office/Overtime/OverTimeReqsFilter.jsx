@@ -3,8 +3,10 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import DatePicker from "react-datepicker2";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { handleReqsList, selectAllDepartmentsSelect, selectRequestMemb, handleDepartments,
-   selectUser, RsetRealFilter, selectRealFilter, } from "../../Slices/mainSlices";
+import {
+  handleReqsList, selectAllDepartmentsSelect, selectRequestMemb, handleDepartments,
+  selectUser, RsetRealFilter, selectRealFilter, selectActiveTab
+} from "../../Slices/mainSlices";
 import {
   RsetToDate,
   RsetFromDate,
@@ -20,6 +22,9 @@ import {
 } from "../../Slices/OverTimeSlice";
 import { handlStatusesCheckout, selectAllStatus } from "../../Slices/TableCheckoutSlice";
 const OverTimeReqsFilter = () => {
+
+  const dispatch = useDispatch();
+
   const realFilter = useSelector(selectRealFilter);
   const allDepartmentsSelect = useSelector(selectAllDepartmentsSelect);
   const requestMembs = useSelector(selectRequestMemb);
@@ -30,17 +35,27 @@ const OverTimeReqsFilter = () => {
   const dep = useSelector(selectDepartmant);
   const reqLists = useSelector(selectUserRequestFilter);
   const user = useSelector(selectUser);
-  const dispatch = useDispatch();
+  const activeTab = useSelector(selectActiveTab);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(handlStatusesCheckout());
-  },[])
+  }, [])
 
-  useEffect(()=>{
-    if(user.FirstName !== undefined){
+  useEffect(() => {
+    if (user.FirstName !== undefined) {
       dispatch(handleDepartments());
     }
-  },[user.FirstName !== undefined])
+  }, [user.FirstName !== undefined])
+
+  const handleFilterGroup = () => {
+    if (activeTab === 'myReqs') {
+        return 2
+    } else if (activeTab === 'inProcessReqs') {
+        return 0
+    } else if (activeTab === 'allReqs') {
+        return 1
+    }
+}
 
   return (
     <section>
@@ -54,16 +69,19 @@ const OverTimeReqsFilter = () => {
               onChange={(e) => {
                 dispatch(RsetUserListValue(e));
                 if (realFilter) {
-                  const filterValues = {
-                    applicantId: localStorage.getItem("id"),
-                    memberId: e !== "" ? e.value : e,
-                    mDep: dep !== "" ? dep.value : dep,
-                    status: status !== "" ? status.value : status,
-                    fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
-                    toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
-                    type: 14,
-                  };
-                  dispatch(handleReqsList(filterValues));
+                  if (activeTab !== '') {
+                      const filterValues = {
+                        applicantId: localStorage.getItem("id"),
+                        memberId: e !== "" ? e.value : e,
+                        mDep: dep !== "" ? dep.value : dep,
+                        status: status !== "" ? status.value : status,
+                        fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
+                        toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
+                        type: 14,
+                        group: handleFilterGroup()
+                      };
+                      dispatch(handleReqsList(filterValues));
+                  }
                 }
               }}
               options={requestMembs}
@@ -78,16 +96,19 @@ const OverTimeReqsFilter = () => {
               onChange={(e) => {
                 dispatch(RsetDepartemant(e));
                 if (realFilter) {
-                  const filterValues = {
-                    applicantId: localStorage.getItem("id"),
-                    memberId: reqLists !== "" ? reqLists.value : reqLists,
-                    mDep: e !== "" ? e.value : e,
-                    status: status !== "" ? status.value : status,
-                    fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
-                    toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
-                    type: 14,
-                  };
-                  dispatch(handleReqsList(filterValues));
+                  if (activeTab !== '') {
+                      const filterValues = {
+                        applicantId: localStorage.getItem("id"),
+                        memberId: reqLists !== "" ? reqLists.value : reqLists,
+                        mDep: e !== "" ? e.value : e,
+                        status: status !== "" ? status.value : status,
+                        fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
+                        toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
+                        type: 14,
+                        group: handleFilterGroup()
+                      };
+                      dispatch(handleReqsList(filterValues));
+                  }
                 }
               }}
               options={allDepartmentsSelect}
@@ -102,16 +123,19 @@ const OverTimeReqsFilter = () => {
               onChange={(e) => {
                 dispatch(RsetStatus(e));
                 if (realFilter) {
-                  const filterValues = {
-                    applicantId: localStorage.getItem("id"),
-                    memberId: reqLists !== "" ? reqLists.value : reqLists,
-                    mDep: dep !== "" ? dep.value : dep,
-                    status: e !== "" ? e.value : e,
-                    fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
-                    toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
-                    type: 14,
-                  };
-                  dispatch(handleReqsList(filterValues));
+                  if (activeTab !== '') {
+                      const filterValues = {
+                        applicantId: localStorage.getItem("id"),
+                        memberId: reqLists !== "" ? reqLists.value : reqLists,
+                        mDep: dep !== "" ? dep.value : dep,
+                        status: e !== "" ? e.value : e,
+                        fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
+                        toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
+                        type: 14,
+                        group: handleFilterGroup()
+                      };
+                      dispatch(handleReqsList(filterValues));
+                  }
                 }
               }}
               options={allStatuses}
@@ -128,16 +152,19 @@ const OverTimeReqsFilter = () => {
               onChange={(e) => {
                 dispatch(RsetFromDate(e));
                 if (realFilter) {
-                  const filterValues = {
-                    applicantId: localStorage.getItem("id"),
-                    memberId: reqLists !== "" ? reqLists.value : reqLists,
-                    mDep: dep !== "" ? dep.value : dep,
-                    status: status !== "" ? status.value : status,
-                    fromDate: e !== null ? e.format("YYYY/MM/DD") : 'null',
-                    toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
-                    type: 14,
-                  };
-                  dispatch(handleReqsList(filterValues));
+                  if (activeTab !== '') {
+                      const filterValues = {
+                        applicantId: localStorage.getItem("id"),
+                        memberId: reqLists !== "" ? reqLists.value : reqLists,
+                        mDep: dep !== "" ? dep.value : dep,
+                        status: status !== "" ? status.value : status,
+                        fromDate: e !== null ? e.format("YYYY/MM/DD") : 'null',
+                        toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
+                        type: 14,
+                        group: handleFilterGroup()
+                      };
+                      dispatch(handleReqsList(filterValues));
+                  }
                 }
               }}
               className="form-control mb-3"
@@ -150,16 +177,19 @@ const OverTimeReqsFilter = () => {
               onChange={(e) => {
                 dispatch(RsetToDate(e));
                 if (realFilter) {
-                  const filterValues = {
-                    applicantId: localStorage.getItem("id"),
-                    memberId: reqLists !== "" ? reqLists.value : reqLists,
-                    mDep: dep !== "" ? dep.value : dep,
-                    status: status !== "" ? status.value : status,
-                    fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
-                    toDate: e !== null ? e.format("YYYY/MM/DD") : 'null',
-                    type: 14,
-                  };
-                  dispatch(handleReqsList(filterValues));
+                  if (activeTab !== '') {
+                      const filterValues = {
+                        applicantId: localStorage.getItem("id"),
+                        memberId: reqLists !== "" ? reqLists.value : reqLists,
+                        mDep: dep !== "" ? dep.value : dep,
+                        status: status !== "" ? status.value : status,
+                        fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
+                        toDate: e !== null ? e.format("YYYY/MM/DD") : 'null',
+                        type: 14,
+                        group: handleFilterGroup()
+                      };
+                      dispatch(handleReqsList(filterValues));
+                  }
                 }
               }}
               persianDigits={false}
@@ -170,25 +200,28 @@ const OverTimeReqsFilter = () => {
           </Col>
           <Col lg="3">
             <Form.Group className="d-flex align-items-center mb-3 justify-content-end">
-              <input className="" type='checkbox' name='realFilter' value={realFilter} checked={realFilter} onChange={() => {dispatch(RsetRealFilter(!realFilter))}}/>
+              <input className="" type='checkbox' name='realFilter' value={realFilter} checked={realFilter} onChange={() => { dispatch(RsetRealFilter(!realFilter)) }} />
               <Form.Label className='ms-2 font12 mb-0'> فیلتر لحظه ای </Form.Label>
             </Form.Group>
             <div className="d-flex justify-content-end">
-              <Button onClick={()=>{
-                const filterValues = {
-                  applicantId: localStorage.getItem("id"),
-                  memberId: reqLists !== "" ? reqLists.value : reqLists,
-                  mDep: dep !== "" ? dep.value : dep,
-                  status: status !== "" ? status.value : status,
-                  fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
-                  toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
-                  type: 14,
-                };
-                dispatch(handleReqsList(filterValues));
+              <Button onClick={() => {
+                if (activeTab !== '') {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      memberId: reqLists !== "" ? reqLists.value : reqLists,
+                      mDep: dep !== "" ? dep.value : dep,
+                      status: status !== "" ? status.value : status,
+                      fromDate: fromDate !== null ? fromDate.format("YYYY/MM/DD") : 'null',
+                      toDate: toDate !== null ? toDate.format("YYYY/MM/DD") : 'null',
+                      type: 14,
+                      group: handleFilterGroup()
+                    };
+                    dispatch(handleReqsList(filterValues));
+                }
               }} className="me-1 font12" variant="success">
                 اعمال فیلتر
               </Button>
-              <Button onClick={()=>{
+              <Button onClick={() => {
                 dispatch(handleResetOverTimeFilter())
               }} variant="secondary" className='font12'>
                 لغو فیلتر

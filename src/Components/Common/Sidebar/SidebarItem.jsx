@@ -33,7 +33,7 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
         <Fragment>
             {item.children.length === 0 ?
                 <NavLink role='link' to={lockLinks && path !== '' ? path : userInfoChanged === false ? '/Home' :item.path}
-                    className={open === item._id 
+                    className={open === item.id 
                         ? 'sideMenuItem text-decoration-none p-3 open'
                         : 'sideMenuItem text-decoration-none p-3'
                     }        
@@ -45,8 +45,8 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                         if(toggleSidebar !== undefined){
                             toggleSidebar(false, item.children.length === 0 ? true : false);
                         }
-                        if (item._id !== open) {
-                            setOpen(item._id);
+                        if (item.id !== open) {
+                            setOpen(item.id);
                         } else {
                             //setOpen('');
                         }
@@ -55,7 +55,7 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                         }
                         setClickedLink(item.path);
                         if (lockLinks) { setLockLinksModal(true) }
-                        localStorage.setItem('lastLocation', item.perId);
+                        localStorage.setItem('lastLocation', item.permissionId);
         
                     }}
                         className={`d-flex justify-content-between align-items-center sideMenuIcon_center ${color}`}>
@@ -66,19 +66,19 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                         {item.children.length !== 0 ? <FontAwesomeIcon icon={faAngleDown} className='toggleAngleDown' /> : null}
                     </div>
         
-                    {/* {item.children.length !== 0 && open === item._id ?
+                    {/* {item.children.length !== 0 && open === item.id ?
                         <Nav className='sidebarSubMenu flex-column pt-2 ms-3'>
                             {item.children.map((item, index) => {
                                 return (
                                     <NavLink role='link' key={index} to={lockLinks && path !== '' ? path : item.path} 
-                                        className={open === item._id ? 
+                                        className={open === item.id ? 
                                             userInfoChanged === true ? 'sideSubMenuItem text-decoration-none py-3 d-flex align-items-center active' : 'sideSubMenuItem text-decoration-none py-3 d-flex align-items-center active cursorDefault'
                                         : userInfoChanged === true ? 'sideSubMenuItem text-decoration-none py-3 d-flex align-items-center' : 'sideSubMenuItem text-decoration-none py-3 d-flex align-items-center cursorDefault'}
                                         onClick={(event) => {
                                             if(toggleSidebar !== undefined){
                                                 toggleSidebar(false, true);
                                             }
-                                            localStorage.setItem('lastLocation', item.perId);
+                                            localStorage.setItem('lastLocation', item.permissionId);
                                             setClickedLink(item.path);
                                             if (lockLinks) { setLockLinksModal(true) }
                                             if (setShow !== undefined) { setShow(false) }
@@ -100,7 +100,7 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                 </NavLink>
             :
                 <div
-                    className={open === item._id 
+                    className={open === item.id 
                         ? 'sideMenuItem cursorPointer p-3 open'
                         : 'sideMenuItem cursorPointer p-3'
                     }      
@@ -109,8 +109,8 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                         if(toggleSidebar !== undefined){
                             toggleSidebar(false, item.children.length === 0 ? true : false);
                         }
-                        if (item._id !== open) {
-                            setOpen(item._id);
+                        if (item.id !== open) {
+                            setOpen(item.id);
                         } else {
                             //setOpen('');
                         }
@@ -120,7 +120,7 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                         }
                         setClickedLink(item.path);
                         if (lockLinks) { setLockLinksModal(true) }
-                        localStorage.setItem('lastLocation', item.perId);
+                        localStorage.setItem('lastLocation', item.permissionId);
 
                     }}
                         className={`d-flex justify-content-between align-items-center sideMenuIcon_center ${color}`}>
@@ -131,12 +131,12 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                         {item.children.length !== 0 ? <FontAwesomeIcon icon={faAngleDown} className='toggleAngleDown' /> : null}
                     </div>
 
-                    {item.children.length !== 0 && open === item._id ?
+                    {item.children.length !== 0 && open === item.id ?
                         <Nav className='sidebarSubMenu flex-column pt-2 ms-3'>
                             {item.children.map((item, index) => {
                                 return (
                                     <NavLink role='link' key={index} to={lockLinks && path !== '' ? path : userInfoChanged === false ? '/Home' :item.path} 
-                                        className={open === item._id 
+                                        className={open === item.id 
                                             ? 'sideSubMenuItem text-decoration-none py-3 d-flex align-items-center active'
                                             : 'sideSubMenuItem text-decoration-none py-3 d-flex align-items-center'
                                         }
@@ -147,7 +147,7 @@ const SidebarItem = ({ color, item, setClickedLink, lockLinks, setLockLinksModal
                                             if(toggleSidebar !== undefined){
                                                 toggleSidebar(false, true);
                                             }
-                                            localStorage.setItem('lastLocation', item.perId);
+                                            localStorage.setItem('lastLocation', item.permissionId);
                                             setClickedLink(item.path);
                                             if (lockLinks) { setLockLinksModal(true) }
                                             if (setShow !== undefined) { setShow(false) }

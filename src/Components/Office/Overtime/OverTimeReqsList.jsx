@@ -341,6 +341,7 @@ const OverTimeReqsList = ({setPageTitle}) => {
       fromDate: 'null',
       toDate: 'null',
       type: 14,
+      group: 0
     };
     dispatch(handleReqsList(filterValues));
   },[])
@@ -364,6 +365,7 @@ const OverTimeReqsList = ({setPageTitle}) => {
                 fromDate: 'null',
                 toDate: 'null',
                 type: 14,
+                group: 0
               };
               dispatch(handleReqsList(filterValues));
               dispatch(handleResetOverTimeFilter())

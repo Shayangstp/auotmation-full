@@ -142,7 +142,6 @@ const IranTolJobAction = () => {
 
   const handleNextActionInput = (e) => {
     e.preventDefault();
-    console.log(actionOpratorRef.current.props.id);
     if (
       e.target.id === actionWorkTimeRef.current.id &&
       actionWorkTimeRef.current.value !== ""
@@ -424,7 +423,6 @@ const IranTolJobAction = () => {
             }}
             onKeyDown={(e) => {
               if (e.keyCode === 13) {
-                console.log("hiu");
                 handleNextActionInput(e);
               }
             }}

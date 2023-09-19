@@ -5,11 +5,14 @@ import moment from 'moment-jalaali';
 import xssFilters from "xss-filters";
 import Select from 'react-select';
 
-import { selectUser, selectUsersByRoleOptions, handleUsersByRoles, selectUsersByRole, RsetUsersByRole } from '../../Slices/mainSlices';
-import { selectPurchaseSendItemsModal, RsetPurchaseSendItemsModal, selectSelectedPurchaseItems, handleAcceptPurchaseItem,
-    handleUsersBySupportSupervisorRole, selectUsersBySupportSupervisor, RsetUsersBySupportSupervisor, selectUsersBySupportSupervisorOptions
+import { selectUser, selectUsersByRoleOptions, handleUsersByRoles, selectUsersByRole, RsetUsersByRole, handleUnits, selectUnitsOption } from '../../Slices/mainSlices';
+import {
+    selectPurchaseSendItemsModal, RsetPurchaseSendItemsModal, selectSelectedPurchaseItems, handleAcceptPurchaseItem,
+    handleUsersBySupportSupervisorRole, selectUsersBySupportSupervisor, RsetUsersBySupportSupervisor, selectUsersBySupportSupervisorOptions, RsetSelectedPurchaseItems
 } from '../../Slices/purchaseSlice';
+import { selectCurrentReqItem, RsetCurrentReqItem } from './../../Slices/currentReqSlice';
 import { errorMessage } from "../../../utils/message";
+
 
 const PurchaseSendItemsModal = () => {
     const dispatch = useDispatch();
@@ -20,6 +23,12 @@ const PurchaseSendItemsModal = () => {
     const usersByRole = useSelector(selectUsersByRole);
     const usersBySupportSupervisor = useSelector(selectUsersBySupportSupervisor);
     const usersBySupportSupervisorOptions = useSelector(selectUsersBySupportSupervisorOptions);
+    const currentReqItem = useSelector(selectCurrentReqItem);
+    const unitsOption = useSelector(selectUnitsOption);
+
+    useEffect(() => {
+        dispatch(handleUnits());
+    }, [])
 
     useEffect(() => {
         if (user.Location !== undefined) {
@@ -28,62 +37,11 @@ const PurchaseSendItemsModal = () => {
             } else if (user.Roles.some(role => role === '40')) {
                 dispatch(handleUsersByRoles({ roles: '38', location: user.Location, company: user.CompanyCode, exist: 1, dep: null, task: '0' }));
                 dispatch(handleUsersBySupportSupervisorRole({ roles: '41', location: user.Location, company: user.CompanyCode, exist: 1, dep: null, task: '0' }));
+            } else if (user.Roles.some(role => role === '41')) {
+                dispatch(handleUsersByRoles({ roles: '39', location: user.Location, company: user.CompanyCode, exist: 1, dep: null, task: '0' }));
             }
         }
     }, [user])
-
-    // const acceptedAmount = (item) => {
-    //     return (
-    //         <input type="text" className="form-control font12" defaultValue={item.itemAmount} onChange={(e) => {
-    //             const item = { ...currentReqItem };
-    //             item.acceptedAmount = e.target.value;
-    //             dispatch(RsetCurrentReqItem(item));
-    //         }}
-    //             menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
-    //     )
-    // }
-    // const acceptedPriority = (item) => {
-    //     return (
-    //         <Select className="font12" defaultValue={{ label: item.itemPriorityName, value: item.itemPriorityCode }} onChange={(e) => {
-    //             const item = { ...currentReqItem };
-    //             item.acceptedPriorityCode = e;
-    //             dispatch(RsetCurrentReqItem(item));
-    //         }}
-    //             placeholder='انتخاب' options={[{ label: 'عادی', value: 1 }, { label: 'فوری', value: 0 }]}
-    //             menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
-    //     )
-    // }
-    // useEffect(() => {
-    //     if (user.Location !== undefined) {
-    //         dispatch(handleUsersByRoles({ roles: '39', location: user.Location, company: user.CompanyCode, exist: 1, dep: null, task: '0' }));
-    //     }
-    // }, [user])
-    // const buyer = (item) => {
-    //     return (
-    //         <Select defaultValue={item.buyerId} className="font12" onChange={(e) => {
-    //             const item = { ...currentReqItem };
-    //             item.buyerId = e;
-    //             dispatch(RsetCurrentReqItem(item));
-    //         }}
-    //             placeholder='انتخاب' options={usersByRoleOptions}
-    //             menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
-    //     )
-    // }
-    // const operation = () => {
-    //     if (currentReqItem.lastActionCode === 26) {
-    //         return (
-    //             <div className="d-flex align-items-center justify-content-center">
-    //                 <Button size="sm" title='ارسال' className='btn btn-primary' onClick={() => {
-    //                     dispatch(handlePurchaseReqItemSendToBuy(currentReqItem));
-    //                 }}>
-    //                     <FontAwesomeIcon icon={faPaperPlane} />
-    //                 </Button>
-    //             </div>
-    //         )
-    //     } else {
-    //         return null;
-    //     }
-    // }
 
     return (
         <Modal
@@ -121,10 +79,9 @@ const PurchaseSendItemsModal = () => {
                                 <th className="bg-secondary text-white fw-normal font12 w-110">کد نقشه</th>
                                 <th className="bg-secondary text-white fw-normal font12 w-110">کد پروژه</th>
                                 <th className="bg-secondary text-white fw-normal font12 w-110">وضعیت آیتم</th>
-                                {/* <th className="bg-secondary text-white fw-normal font12 w-110">تعداد/مقدار مورد تایید</th>
+                                <th className="bg-secondary text-white fw-normal font12 w-110">تعداد/مقدار مورد تایید</th>
+                                <th className="bg-secondary text-white fw-normal font12 w-110">واحد شمارش مورد تایید</th>
                                 <th className="bg-secondary text-white fw-normal font12 w-110">اولویت مورد تایید</th>
-                                <th className="bg-secondary text-white fw-normal font12 w-110">مامور خرید</th>
-                                <th className="bg-secondary text-white fw-normal font12 w-110">عملیات</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -144,10 +101,47 @@ const PurchaseSendItemsModal = () => {
                                         <td>{item.planNo !== null ? xssFilters.inHTMLData(item.planNo) : ''}</td>
                                         <td>{item.projectNo !== null ? xssFilters.inHTMLData(item.projectNo) : ''}</td>
                                         <td>{xssFilters.inHTMLData(item.statusName)}</td>
-                                        {/* <td>{item.lastActionCode === 26 ? acceptedAmount(item) : xssFilters.inHTMLData(item.acceptedAmount)}</td>
-                                        <td>{item.lastActionCode === 26 ? acceptedPriority(item) : xssFilters.inHTMLData(item.acceptedPriorityName)}</td>
-                                        <td>{item.lastActionCode === 26 ? buyer(item) : xssFilters.inHTMLData(item.buyerName)}</td>
-                                        <td>{operation()}</td> */}
+                                        <td>{item.lastActionCode === 46 ?
+                                            <input type="text" className="form-control font12" defaultValue={item.itemAmount} onChange={(e) => {
+                                                const items = [...selectedPurchaseItems];
+                                                const itemIndex = items.findIndex(tr => tr.itemId === item.itemId);
+                                                const thisItem = { ...items[itemIndex] };
+                                                thisItem.acceptedAmount = e.target.value;
+                                                const allItems = [...items];
+                                                allItems[itemIndex] = thisItem;
+                                                dispatch(RsetSelectedPurchaseItems(allItems));
+                                            }}
+                                                menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
+                                            : item.acceptedAmount !== null ? xssFilters.inHTMLData(item.acceptedAmount) : ''}
+                                        </td>
+                                        <td>{item.lastActionCode === 46 ?
+                                            <Select className="font12" defaultValue={{ label: item.itemUnitName, value: item.itemUnitCode }} onChange={(e) => {
+                                                const items = [...selectedPurchaseItems];
+                                                const itemIndex = items.findIndex(tr => tr.itemId === item.itemId);
+                                                const thisItem = { ...items[itemIndex] };
+                                                thisItem.acceptedUnitCode = e;
+                                                const allItems = [...items];
+                                                allItems[itemIndex] = thisItem;
+                                                dispatch(RsetSelectedPurchaseItems(allItems));
+                                            }}
+                                                placeholder='انتخاب' options={unitsOption}
+                                                menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
+                                            : item.acceptedUnitName !== null ? xssFilters.inHTMLData(item.acceptedUnitName) : ''}
+                                        </td>
+                                        <td>{item.lastActionCode === 46 ?
+                                            <Select className="font12" defaultValue={{ label: item.itemPriorityName, value: item.itemPriorityCode }} onChange={(e) => {
+                                                const items = [...selectedPurchaseItems];
+                                                const itemIndex = items.findIndex(tr => tr.itemId === item.itemId);
+                                                const thisItem = { ...items[itemIndex] };
+                                                thisItem.acceptedPriorityCode = e;
+                                                const allItems = [...items];
+                                                allItems[itemIndex] = thisItem;
+                                                dispatch(RsetSelectedPurchaseItems(allItems));
+                                            }}
+                                                placeholder='انتخاب' options={[{ label: 'عادی', value: 1 }, { label: 'فوری', value: 2 }]}
+                                                menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
+                                            : item.acceptedPriorityName !== null ? xssFilters.inHTMLData(item.acceptedPriorityName) : ''}
+                                        </td>
                                     </tr>
                                 )
                             })}
@@ -157,21 +151,23 @@ const PurchaseSendItemsModal = () => {
             </Modal.Body>
             <Modal.Footer className="d-flex justify-content-between flex-wrap">
                 <div className="d-flex align-items-center flex-wrap">
-                    {user.Roles.some(role => role === '37') || user.Roles.some(role => role === '40') ?
-                        <Select className="me-2 mb-2" value={usersByRole} name="usersByRole" onChange={(e) => { dispatch(RsetUsersByRole(e)) }} placeholder='ارسال به مدیر پشتیبانی' options={usersByRoleOptions} />
-                    : null}
+                    {user.Roles.some(role => role === '37') || user.Roles.some(role => role === '40') || user.Roles.some(role => role === '41') ?
+                        <Select className="me-2 mb-2" value={usersByRole} name="usersByRole" onChange={(e) => { dispatch(RsetUsersByRole(e)) }} placeholder={user.Roles.some(role => role === '37') ? 'ارسال به پشتیبانی' : user.Roles.some(role => role === '40') ? 'ارسال به مدیر پشتیبانی' : 'ارسال به مامور خرید'} options={usersByRoleOptions} />
+                        : null}
                     {user.Roles.some(role => role === '40') ?
                         <Select className="me-2 mb-2" value={usersBySupportSupervisor} name="usersBySupportSupervisor" onChange={(e) => { dispatch(RsetUsersBySupportSupervisor(e)) }} placeholder='ارسال به سرپرست خرید' options={usersBySupportSupervisorOptions} />
-                    : null}
+                        : null}
                     <Button
                         className="mb-2"
                         variant="success"
                         onClick={() => {
-                            if(user.Roles.some(role => role === '37') && usersByRole !== ''){
+                            if (user.Roles.some(role => role === '37' || role === '41') && usersByRole !== '') {
                                 dispatch(handleAcceptPurchaseItem());
-                            }else if(user.Roles.some(role => role === '40') && usersByRole !== '' && usersBySupportSupervisor === ''){
+                            } else if (user.Roles.some(role => role === '40') && usersByRole !== '' && usersBySupportSupervisor !== '') {
                                 dispatch(handleAcceptPurchaseItem());
-                            }else{
+                            } else if (user.Roles.some(role => role === '38')) {
+                                dispatch(handleAcceptPurchaseItem());
+                            } else {
                                 errorMessage('شخصی برای ارسال انتخاب نشده است!');
                             }
                         }}

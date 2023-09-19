@@ -139,7 +139,7 @@ const Home = () => {
                         </Link>
                     </Col>
                     <Col md='4' lg='3' xxl='3' className='mb-3 mb-lg-0'>
-                        <Link to={userInfoChanged !== false ? '/AllNewRequests' : '/Home'} className="bg-yellow p-2 rounded border d-flex
+                        <Link to={userInfoChanged !== false ? '/MyRequests' : '/Home'} className="bg-yellow p-2 rounded border d-flex
                          align-items-center flex-wrap shadow01 text-decoration-none text-white" onClick={() => {
                                 if (userInfoChanged === false) {
                                     dispatch(RsetChangeUserInfoModal(true));

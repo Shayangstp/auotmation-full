@@ -4,16 +4,16 @@ import { Modal, Button, Table } from "react-bootstrap";
 import momentJalaali from 'moment-jalaali';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faFileWord, faFilePdf, faFileImage, faFileExcel, faFilePowerpoint, faFileZipper } from '@fortawesome/free-solid-svg-icons';
-import { iranTolJobCntxt } from '../../context/iranTolJobContext/IranTolJobCntxt';
 import { rootContext } from "../../context/rootContext";
 import { useDispatch, useSelector } from "react-redux";
 import { selectViewReqModal, RsetViewReqModal } from "../../Slices/modalsSlice";
 import { handleUserInformation, handleUserImage } from "../../Slices/mainSlices";
+import { handleReqFiles, selectCurrentReqFiles } from '../../Slices/currentReqSlice';
 
 const ViewRequestModal = () => {
     const dispatch = useDispatch();
     const viewReqModal = useSelector(selectViewReqModal);
-
+    const currentReqFiles = useSelector(selectCurrentReqFiles);
     const mainContext = useContext(rootContext);
     const {
         currentReqInfo,
@@ -21,15 +21,13 @@ const ViewRequestModal = () => {
         currentReqComments,
     } = mainContext;
 
-    const jobContext = useContext(iranTolJobCntxt);
-    const {
-        handleDownloadReqPlans,
-        handleReqFiles,
-        currentReqFiles
-    } = jobContext;
+    // const jobContext = useContext(iranTolJobCntxt);
+    // const {
+    //     handleDownloadReqPlans,
+    // } = jobContext;
 
     useEffect(() => {
-        handleReqFiles(currentReqInfo.requestId, 0, 0, 1, '')
+        dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, multi: 0, justShow: 1, fileName: ''}));
     }, [])
 
     return (
@@ -91,7 +89,7 @@ const ViewRequestModal = () => {
                                     case "docx":
                                         return (
                                             <li key={file.path} className="mx-2" onClick={() => {
-                                                handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                             }}>
                                                 <FontAwesomeIcon icon={faFileWord} className='font24 cursorPointer' />
                                             </li>
@@ -100,7 +98,7 @@ const ViewRequestModal = () => {
                                     case "xltx":
                                         return (
                                             <li key={file.path} className="mx-2" onClick={() => {
-                                                handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                             }}>
                                                 <FontAwesomeIcon icon={faFileExcel} className='font24 cursorPointer' />
                                             </li>
@@ -109,7 +107,7 @@ const ViewRequestModal = () => {
                                     case "ppt":
                                         return (
                                             <li key={file.path} className="mx-2" onClick={() => {
-                                                handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                             }}>
                                                 <FontAwesomeIcon icon={faFilePowerpoint} className='font24 cursorPointer' />
                                             </li>
@@ -117,7 +115,7 @@ const ViewRequestModal = () => {
                                     case "pdf":
                                         return (
                                             <li key={file.path} className="mx-2" onClick={() => {
-                                                handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                             }}>
                                                 <FontAwesomeIcon icon={faFilePdf} className='font24 cursorPointer' />
                                             </li>
@@ -128,7 +126,7 @@ const ViewRequestModal = () => {
                                     case "gif":
                                         return (
                                             <li key={file.path} className="mx-2" onClick={() => {
-                                                handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                             }}>
                                                 <FontAwesomeIcon icon={faFileImage} className='font24 cursorPointer' />
                                             </li>
@@ -137,7 +135,7 @@ const ViewRequestModal = () => {
                                     case "rar":
                                         return (
                                             <li key={file.path} className="mx-2" onClick={() => {
-                                                handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                             }}>
                                                 <FontAwesomeIcon icon={faFileZipper} className='font24 cursorPointer' />
                                             </li>
@@ -145,7 +143,7 @@ const ViewRequestModal = () => {
                                     default:
                                         return (
                                             <li key={file.path} className="mx-2" onClick={() => {
-                                                handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                             }}>
                                                 <FontAwesomeIcon icon={faFile} className='font24 cursorPointer' />
                                             </li>
@@ -154,7 +152,7 @@ const ViewRequestModal = () => {
                             })}
                         </ul>
                         <div className="my-4 cursorPointer" onClick={() => {
-                            handleReqFiles(currentReqInfo.requestId, 0, 1, 0, 'allFiles')
+                            dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, justShow: 1, multi: 0, fileName: 'allFiles'}));
                         }}>
                             <span>دانلود همه فایل های درخواست</span>
                         </div>

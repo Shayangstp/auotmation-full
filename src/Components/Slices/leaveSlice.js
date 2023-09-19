@@ -259,7 +259,8 @@ export const handleDeleteReq = createAsyncThunk(
                     fromDate: 'null',
                     toDate: 'null',
                     year: new Date().toLocaleDateString('fa-IR', { numberingSystem: 'latn' }).slice(0, 4),
-                    type: 4
+                    type: 4,
+                    group: 0
                 }
                 dispatch(handleReqsList(filterValues));
                 successMessage('درخواست مرخصی با موفقیت حذف شد!')

@@ -502,8 +502,6 @@ export const handleChangeReasonOfDelay = createAsyncThunk(
   }
 );
 
-//irantool product plannig 
-
 export const handleIrantoolMaterialUnitOptions = createAsyncThunk(
   "irantool/handleIrantoolMaterialUnitOptions",
   async (obj, { dispatch, getState }) => {
@@ -554,7 +552,6 @@ export const handleIrantoolActionOpratorOptions = createAsyncThunk(
           RsetIrantoolActionOpratorOptions(getToPersonByRoleRes.data.list)
         );
       } else {
-        console.log("this is test");
         dispatch(RsetIrantoolActionOpratorOptions([]));
       }
     } catch (ex) {
@@ -835,7 +832,7 @@ const irantoolSlice = createSlice({
       return { ...state, irantoolToolUnitOptions: action.payload };
     },
     RsetIrantoolToolDescription: (state, action) => {
-      return { ...state, irantoolToolDescription: action.payload };
+      return { ...state, irantooToolDescription: action.payload };
     },
     RsetIrantoolToolItem: (state, action) => {
       return { ...state, irantoolToolItem: action.payload };

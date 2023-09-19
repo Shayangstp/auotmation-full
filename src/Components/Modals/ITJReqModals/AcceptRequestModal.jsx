@@ -16,6 +16,7 @@ import { isAccordionItemSelected } from "react-bootstrap/esm/AccordionContext";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAcceptReqModal, RsetAcceptReqModal, selectAcceptReqComment, RsetAcceptReqComment } from '../../Slices/modalsSlice';
 import { handleUnits, selectUnitsOption, selectUser, handleUserInformation, handleUserImage } from "../../Slices/mainSlices";
+import { handleReqFiles, selectCurrentReqFiles } from '../../Slices/currentReqSlice';
 
 
 const AcceptRequestModal = () => {
@@ -24,6 +25,7 @@ const AcceptRequestModal = () => {
     const acceptReqComment = useSelector(selectAcceptReqComment);
     const unitsOption = useSelector(selectUnitsOption);
     const user = useSelector(selectUser);
+    const currentReqFiles = useSelector(selectCurrentReqFiles);
 
     const mainContext = useContext(rootContext);
     const {
@@ -39,7 +41,6 @@ const AcceptRequestModal = () => {
     const jobContext = useContext(iranTolJobCntxt);
     const {
         handleDownloadReqPlans,
-        handleReqFiles,
         handleAcceptITJobReq,
 
         workDep,
@@ -93,15 +94,13 @@ const AcceptRequestModal = () => {
         setWorkItems,
         deleteItemFromWorks,
         deleteItemFromMaterials,
-
-        currentReqFiles
     } = jobContext;
 
     const [clickedPlusBtn, setClickedPlusBtn] = useState('');
 
     const withValueLimit = ({ floatValue }) => floatValue !== 0;
     useEffect(() => {
-        handleReqFiles(currentReqInfo.requestId, 0, 0, 1, '')
+        dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, multi: 0, justShow: 1, fileName: ''}));
         if (currentReqInfo.lastActionCode === 41) {
             handleWorkDeps();
             handleWorkTypes();
@@ -170,7 +169,7 @@ const AcceptRequestModal = () => {
                                         case "docx":
                                             return (
                                                 <li key={file.path} className="mx-2" onClick={() => {
-                                                    handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                    dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                                 }}>
                                                     <FontAwesomeIcon icon={faFileWord} className='font24 cursorPointer' />
                                                 </li>
@@ -179,7 +178,7 @@ const AcceptRequestModal = () => {
                                         case "xltx":
                                             return (
                                                 <li key={file.path} className="mx-2" onClick={() => {
-                                                    handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                    dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                                 }}>
                                                     <FontAwesomeIcon icon={faFileExcel} className='font24 cursorPointer' />
                                                 </li>
@@ -188,7 +187,7 @@ const AcceptRequestModal = () => {
                                         case "ppt":
                                             return (
                                                 <li key={file.path} className="mx-2" onClick={() => {
-                                                    handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                    dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                                 }}>
                                                     <FontAwesomeIcon icon={faFilePowerpoint} className='font24 cursorPointer' />
                                                 </li>
@@ -196,7 +195,7 @@ const AcceptRequestModal = () => {
                                         case "pdf":
                                             return (
                                                 <li key={file.path} className="mx-2" onClick={() => {
-                                                    handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                    dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                                 }}>
                                                     <FontAwesomeIcon icon={faFilePdf} className='font24 cursorPointer' />
                                                 </li>
@@ -207,7 +206,7 @@ const AcceptRequestModal = () => {
                                         case "gif":
                                             return (
                                                 <li key={file.path} className="mx-2" onClick={() => {
-                                                    handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                    dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                                 }}>
                                                     <FontAwesomeIcon icon={faFileImage} className='font24 cursorPointer' />
                                                 </li>
@@ -216,7 +215,7 @@ const AcceptRequestModal = () => {
                                         case "rar":
                                             return (
                                                 <li key={file.path} className="mx-2" onClick={() => {
-                                                    handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                    dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                                 }}>
                                                     <FontAwesomeIcon icon={faFileZipper} className='font24 cursorPointer' />
                                                 </li>
@@ -224,7 +223,7 @@ const AcceptRequestModal = () => {
                                         default:
                                             return (
                                                 <li key={file.path} className="mx-2" onClick={() => {
-                                                    handleReqFiles(currentReqInfo.requestId, file.row, 0, 0, file.name)
+                                                    dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: file.row, multi: 0, justShow: 0, fileName: file.name}));
                                                 }}>
                                                     <FontAwesomeIcon icon={faFile} className='font24 cursorPointer' />
                                                 </li>
@@ -233,7 +232,7 @@ const AcceptRequestModal = () => {
                                 })}
                             </ul>
                             <div className="my-4 cursorPointer" onClick={() => {
-                                handleReqFiles(currentReqInfo.requestId, 0, 1, 0, 'allFiles')
+                                dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, multi: 1, justShow: 0, fileName: 'allFiles'}));
                             }}>
                                 <span>دانلود همه فایل های درخواست</span>
                             </div>

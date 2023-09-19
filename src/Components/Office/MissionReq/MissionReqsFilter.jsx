@@ -12,7 +12,6 @@ const MissionReqsFilter = () => {
         allStatuses,
         serialFilter,
         setSerialFilter,
-        serialFilterRef,
         userIdFilterSelect,
         setUserIdFilterSelect,
         statusIdFilterSelect,
@@ -51,10 +50,9 @@ const MissionReqsFilter = () => {
             <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4'>
                 <Form.Label id='serial' className='mb-1'>سریال:</Form.Label>
                 <NumberFormat type="text" value={serialFilter} format="######" mask='-' dir='ltr' className='form-control'
-                    ref={serialFilterRef}
                     onChange={(option) => {
                         setSerialFilter(option.target.value);
-                        if (realFilter && serialFilterRef.current.state.numAsString.length === 5) {
+                        if (realFilter && option.target.value.replaceAll('-', '').length === 6) {
                             const filterParams = {
                                 applicantId: localStorage.getItem('id'),
                                 serial: option.target.value,

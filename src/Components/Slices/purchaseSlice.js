@@ -372,7 +372,8 @@ export const handleEditPurchaseReqItems = createAsyncThunk(
                             status: '',
                             fromDate: 'null',
                             toDate: 'null',
-                            type: 9
+                            type: 9,
+                            group: 0
                         }
                         dispatch(handleReqsList(filterValues));
                         successMessage('درخواست موردنظر با موفقیت ویرایش شد!');
@@ -466,61 +467,74 @@ export const handleAcceptPurchaseItem = createAsyncThunk(
         dispatch(RsetLoading(true));
         try {
             const { usersByRole, user } = getState().mainHome;
-            const { selectedPurchaseItems } = getState().purchase;
+            const { selectedPurchaseItems, usersBySupportSupervisor } = getState().purchase;
             var checkedItems = 0;
             selectedPurchaseItems.map(async item => {
-                const checkDateRes = await checkItemUpdateDate(item.itemId, item.id);
+                const checkDateRes = await checkItemUpdateDate(item.itemId, item.lastActionId);
                 if (checkDateRes.data.type === "accepted") {
                     checkedItems = checkedItems + 1;
                     if (checkedItems === selectedPurchaseItems.length) {
                         var postedActions = 0;
                         selectedPurchaseItems.map(async itemAction => {
-                            const itemActionValues = {
-                                actionCode: 26,
-                                userId: localStorage.getItem('id'),
-                                itemId: itemAction.itemId,
-                                toPersons: usersByRole.value,
+                            var itemActionValues = '';
+                            if(user.Roles.some(role => role === '37')){
+                                itemActionValues = {
+                                    actionCode: 26,
+                                    userId: localStorage.getItem('id'),
+                                    itemId: itemAction.itemId,
+                                    toPersons: usersByRole.value,
+                                }
+                            }else if(user.Roles.some(role => role === '40')){
+                                itemActionValues = {
+                                    actionCode: 45,
+                                    userId: localStorage.getItem('id'),
+                                    itemId: itemAction.itemId,
+                                    toPersons: usersByRole.value,
+                                    nextToPersons: usersBySupportSupervisor.value
+                                }
+                            }else if(user.Roles.some(role => role === '38')){
+                                itemActionValues = {
+                                    actionCode: 46,
+                                    userId: localStorage.getItem('id'),
+                                    itemId: itemAction.itemId,
+                                    toPersons: itemAction.nextToPersons
+                                }
+                            }else if(user.Roles.some(role => role === '41')){
+                                itemActionValues = {
+                                    actionCode: 27,
+                                    userId: localStorage.getItem('id'),
+                                    itemId: itemAction.itemId,
+                                    toPersons: usersByRole.value,
+                                }
+                                const updateReqValues = {
+                                    userId: localStorage.getItem('id'),
+                                    action: 3,
+                                    acceptedAmount: item.acceptedAmount !== '' && item.acceptedAmount > 0 && item.acceptedAmount !== null ? item.acceptedAmount : item.itemAmount,
+                                    acceptedUnit: item.acceptedUnitCode !== null ? item.acceptedUnitCode.value : item.itemUnitCode,
+                                    acceptedPriority: item.acceptedPriorityCode !== null ? item.acceptedPriorityCode.value : item.itemPriorityCode,
+                                    buyerId: usersByRole.value
+                                }
+                                const itemUpdateRes = await editPurchaseReqItem(item.itemId, updateReqValues);
                             }
                             const itemActionRes = await postPurchaseItemAction(itemActionValues);
                             if (itemActionRes.data.code === 415) {
                                 postedActions = postedActions + 1;
                                 if (postedActions === selectedPurchaseItems.length) {
-                                    if(user.Roles.some(role => role === '37')){
-                                        successMessage('آیتم ها با موفقیت ارسال شدند!');
-                                        dispatch(RsetLoading(false));
-                                        dispatch(RsetUsersByRole(''));
-                                        dispatch(RsetPurchaseSendItemsModal(false));
-                                        dispatch(RsetSelectedPurchaseItems([]));
-                                        dispatch(RsetPurchaseSendItemsModal(false));
-                                        const filterValues = {
-                                            memberId: '',
-                                            serial: '',
-                                            invCode: '',
-                                            status: '',
-                                            fromDate: 'null',
-                                            toDate: 'null',
-                                        }
-                                        dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
-                                    }else if(user.Roles.some(role => role === '40')){
-                                        
-                                        // send to kamzaniyan
-
-                                        successMessage('آیتم ها با موفقیت ارسال شدند!');
-                                        dispatch(RsetLoading(false));
-                                        dispatch(RsetUsersByRole(''));
-                                        dispatch(RsetPurchaseSendItemsModal(false));
-                                        dispatch(RsetSelectedPurchaseItems([]));
-                                        dispatch(RsetPurchaseSendItemsModal(false));
-                                        const filterValues = {
-                                            memberId: '',
-                                            serial: '',
-                                            invCode: '',
-                                            status: '',
-                                            fromDate: 'null',
-                                            toDate: 'null',
-                                        }
-                                        dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
+                                    successMessage('آیتم ها با موفقیت ارسال شدند!');
+                                    dispatch(RsetLoading(false));
+                                    dispatch(RsetUsersByRole(''));
+                                    dispatch(RsetPurchaseSendItemsModal(false));
+                                    dispatch(RsetSelectedPurchaseItems([]));
+                                    dispatch(RsetPurchaseSendItemsModal(false));
+                                    const filterValues = {
+                                        memberId: '',
+                                        serial: '',
+                                        invCode: '',
+                                        status: '',
+                                        fromDate: 'null',
+                                        toDate: 'null',
                                     }
+                                    dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
                                 }
                             }
                         })

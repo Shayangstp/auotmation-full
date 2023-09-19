@@ -146,17 +146,6 @@ const PurchaseReqsList = ({ setPageTitle }) => {
                     >
                         <FontAwesomeIcon icon={faPenToSquare} />
                     </Button>
-                    {/* <Button
-                        title='مشاهده'
-                        className='btn btn-warning d-flex align-items-center'
-                        size="sm"
-                        active
-                        onClick={() => {
-                            dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'view' }));
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faEye} />
-                    </Button> */}
                     <Button
                         title='تاریخچه'
                         className='btn btn-info d-flex align-items-center mb-2 mb-md-0'
@@ -169,72 +158,6 @@ const PurchaseReqsList = ({ setPageTitle }) => {
                         <FontAwesomeIcon icon={faClockRotateLeft} />
                     </Button>
                 </section>
-            )
-        }
-        else if (request.lastToPersons !== null && request.lastToPersons.split(',').some(elm => elm === localStorage.getItem('id')) && request.lastActionCode === 0) {
-            return (
-                <div className="d-flex justify-content-between flex-wrap">
-                    <Button
-                        title='تایید'
-                        className='btn btn-success d-flex align-items-center mb-2 mb-md-0'
-                        size="sm"
-                        active
-                        onClick={() => {
-                            dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'accept' }));
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faCheck} />
-                    </Button>
-                    <Button
-                        title='ابطال'
-                        className='btn btn-danger d-flex align-items-center mb-2 mb-md-0'
-                        size="sm"
-                        active
-                        onClick={() => {
-                            dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'cancel' }));
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faBan} />
-                    </Button>
-                    <Button
-                        title='تاریخچه'
-                        className='btn btn-info d-flex align-items-center mb-2 mb-md-0'
-                        size="sm"
-                        active
-                        onClick={() => {
-                            dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'history' }));
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faClockRotateLeft} />
-                    </Button>
-                </div>
-            )
-        } else if (request.lastToPersons !== null && request.lastToPersons.split(',').some(elm => elm === localStorage.getItem('id')) && request.lastActionCode !== 0) {
-            return (
-                <div className="d-flex justify-content-between flex-wrap">
-                    <Button
-                        title='تایید'
-                        className='btn btn-success d-flex align-items-center mb-2 mb-md-0'
-                        size="sm"
-                        active
-                        onClick={() => {
-                            dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'accept' }));
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faCheck} />
-                    </Button>
-                    <Button
-                        title='تاریخچه'
-                        className='btn btn-info d-flex align-items-center mb-2 mb-md-0'
-                        size="sm"
-                        active
-                        onClick={() => {
-                            dispatch(handleCurrentReqInfo({ reqId: request.requestId, reqType: request.typeId, reqSeen: request.seen, company: '', dep: request.deptName, oprationType: 'history' }));
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faClockRotateLeft} />
-                    </Button>
-                </div>
             )
         } else {
             return (
@@ -340,7 +263,8 @@ const PurchaseReqsList = ({ setPageTitle }) => {
             status: '',
             fromDate: 'null',
             toDate: 'null',
-            type: 9
+            type: 9,
+            group: 0
         }
         dispatch(handleReqsList(filterValues));
     }, [])
@@ -375,7 +299,8 @@ const PurchaseReqsList = ({ setPageTitle }) => {
                             status: '',
                             fromDate: 'null',
                             toDate: 'null',
-                            type: 9
+                            type: 9,
+                            group: 0
                         }
                         dispatch(handleReqsList(filterValues));
                     }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button>

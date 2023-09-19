@@ -125,6 +125,7 @@ export const handleResetOverTimeFilter = createAsyncThunk(
       fromDate: 'null',
       toDate: 'null',
       type: 14,
+      group: 0
     };
     dispatch(handleReqsList(filterValues));
   }
@@ -161,7 +162,7 @@ export const handleSendOverTimeReqToManager = createAsyncThunk(
             fromDate: 'null',
             toDate: 'null',
             type: 14,
-            
+            group: 0
           };
           dispatch(handleReqsList(filterValues));
         } else {
@@ -180,6 +181,7 @@ export const handleSendOverTimeReqToManager = createAsyncThunk(
           fromDate: 'null',
           toDate: 'null',
           type: 14,
+          group: 0
         };
         dispatch(handleReqsList(filterValues));
       }
@@ -228,6 +230,7 @@ export const handleSendOverTimeReqToOffice = createAsyncThunk(
               fromDate: 'null',
               toDate: 'null',
               type: 14,
+              group: 0
             };
             dispatch(handleReqsList(filterValues));
           } else {
@@ -250,7 +253,8 @@ export const handleSendOverTimeReqToOffice = createAsyncThunk(
           fromDate: 'null',
           toDate: 'null',
           type: 14,
-          comment: desModals
+          comment: desModals,
+          group: 0
         };
         dispatch(handleReqsList(filterValues));
       }
@@ -288,6 +292,7 @@ export const handleOverTimeLastAccept = createAsyncThunk(
             fromDate: 'null',
             toDate: 'null',
             type: 14,
+            group: 0
           };
           dispatch(handleReqsList(filterValues));
         } else {
@@ -305,6 +310,7 @@ export const handleOverTimeLastAccept = createAsyncThunk(
           fromDate: 'null',
           toDate: 'null',
           type: 14,
+          group: 0
         };
         dispatch(handleReqsList(filterValues));
       }
@@ -338,6 +344,7 @@ export const handleEditReqOverTime = createAsyncThunk(
           fromDate: 'null',
           toDate: 'null',
           type: 14,
+          group: 0
         }
         dispatch(handleReqsList(filterParams));
         dispatch(RsetEditReqModal(false));

@@ -1,12 +1,4 @@
-import React, {
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-  useState,
-  useContext,
-  Fragment,
-} from "react";
+import React, { useEffect, useMemo, useCallback, useRef, useState, useContext, Fragment} from "react";
 import { Container, Row, Col, Button, Alert } from "react-bootstrap";
 import { Redirect, Link } from "react-router-dom";
 import IranTolJobReqsFilter from "./IranTolJobReqsFilter";
@@ -14,34 +6,16 @@ import { rootContext } from "../context/rootContext";
 import { iranTolJobCntxt } from "../context/iranTolJobContext/IranTolJobCntxt";
 import IranTolJobReqItem from "./IranTolJobReqItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBan,
-  faCheck,
-  faEye,
-  faArrowsRotate,
-  faSpinner,
-  faHome,
-  faWarning,
-  faPaperPlane,
-  faPlus,
-  faFilter,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBan, faCheck, faEye, faArrowsRotate, faFilter, faHome, faWarning, faPaperPlane, faPlus } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment-jalaali";
 import xssFilters from "xss-filters";
 import Loading from "../Common/Loading";
-import {
-  handleCurrentReqInfo,
-  handleUserInformation,
-  handleUserImage,
-} from "../Slices/mainSlices";
+import { handleCurrentReqInfo, handleUserInformation, handleUserImage } from "../Slices/mainSlices";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import {
-  RsetIrantoolAddMaterialWorkFlowModal,
-  selectIrantoolMaterialWorkFlowModal,
-} from "../Slices/irantoolSlices";
+import { RsetIrantoolAddMaterialWorkFlowModal, selectIrantoolMaterialWorkFlowModal } from "../Slices/irantoolSlices";
 import AddMaterialWorkFlowModal from "../Modals/ITJReqModals/AddMaterialWorkflowModal";
-import { RsetShowFilter, selectShowFilter } from "../Slices/filterSlices";
+import { selectShowFilter, RsetShowFilter } from "../Slices/filterSlices";
 
 const IranTolJobReqsList = ({ setPageTitle }) => {
   const dispatch = useDispatch();
@@ -65,9 +39,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
     setPageTitle("لیست درخواست کار ایرانتول");
   }, [setPageTitle]);
 
-  const irantoolAddMaterialWorkFlowModal = useSelector(
-    selectIrantoolMaterialWorkFlowModal
-  );
+  const irantoolAddMaterialWorkFlowModal = useSelector(selectIrantoolMaterialWorkFlowModal);
   const showFilter = useSelector(selectShowFilter);
 
   const [data, setData] = useState([]);
@@ -148,9 +120,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
 
   const link = (reqItem, serialNumber) => {
     return (
-      <a
-        className="text-dark text-decoration-none cursorPointer serialHover"
-        title={"مشاهده درخواست " + xssFilters.inHTMLData(serialNumber)}
+      <a className="text-dark text-decoration-none cursorPointer serialHover" title={"مشاهده درخواست " + xssFilters.inHTMLData(serialNumber)}
         onClick={() => {
           dispatch(
             handleCurrentReqInfo({
@@ -171,9 +141,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
   };
   const userInfo = (request) => {
     return (
-      <div
-        className="text-dark cursorPointer"
-        title="مشاهده اطلاعات کاربر "
+      <div className="text-dark cursorPointer" title="مشاهده اطلاعات کاربر "
         onClick={() => {
           dispatch(handleUserInformation(request.userId));
           dispatch(handleUserImage({ userId: request.userId, status: 1 }));
@@ -187,11 +155,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
     if (request.lastToPersons === null && request.lastActionCode !== 2) {
       return (
         <section className="d-flex justify-content-between flex-wrap">
-          <Button
-            title="ارسال"
-            className="btn btn-primary d-flex align-items-center"
-            size="sm"
-            active
+          <Button title="ارسال" className="d-flex align-items-center" size="sm" active
             onClick={() => {
               setActionToPersonsModal(true);
               setActionReqId(request.requestId);
@@ -201,19 +165,10 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           </Button>
         </section>
       );
-    } else if (
-      request.lastToPersons !== null &&
-      request.lastToPersons
-        .split(",")
-        .some((elem) => elem === localStorage.getItem("id")) === true
-    ) {
+    } else if (request.lastToPersons !== null && request.lastToPersons.split(",").some((elem) => elem === localStorage.getItem("id")) === true) {
       return (
         <div className="d-flex justify-content-between flex-wrap">
-          <Button
-            title="تایید"
-            className="btn btn-success d-flex align-items-center mb-2 mb-md-0"
-            size="sm"
-            active
+          <Button title="تایید" variant="success" className="d-flex align-items-center mb-2 mb-md-0" size="sm" active
             onClick={() => {
               dispatch(
                 handleCurrentReqInfo({
@@ -230,11 +185,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           >
             <FontAwesomeIcon icon={faCheck} />
           </Button>
-          <Button
-            title="ابطال"
-            className="btn btn-danger d-flex align-items-center mb-2 mb-md-0"
-            size="sm"
-            active
+          <Button title="ابطال" variant="danger" className="d-flex align-items-center mb-2 mb-md-0" size="sm" active
             onClick={() => {
               dispatch(
                 handleCurrentReqInfo({
@@ -254,20 +205,10 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
         </div>
       );
       // this is for when tolid seen second time
-    } else if (
-      request.lastToPersons !== null &&
-      request.lastToPersons
-        .split(",")
-        .some((elem) => elem === localStorage.getItem("id")) === true &&
-      request.lastActionCode === 41
-    ) {
+    } else if (request.lastToPersons !== null && request.lastToPersons.split(",").some((elem) => elem === localStorage.getItem("id")) === true && request.lastActionCode === 41) {
       return (
         <section className="d-flex justify-content-between flex-wrap">
-          <Button
-            title="مشاهده"
-            className="btn btn-warning d-flex align-items-center"
-            size="sm"
-            active
+          <Button title="مشاهده" variant="warning" className="d-flex align-items-center" size="sm" active
             onClick={() => {
               dispatch(
                 handleCurrentReqInfo({
@@ -311,11 +252,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
     } else {
       return (
         <section className="d-flex justify-content-between flex-wrap">
-          <Button
-            title="مشاهده"
-            className="btn btn-warning d-flex align-items-center"
-            size="sm"
-            active
+          <Button title="مشاهده" variant="warning" className="d-flex align-items-center" size="sm" active
             onClick={() => {
               dispatch(
                 handleCurrentReqInfo({
@@ -332,11 +269,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           >
             <FontAwesomeIcon icon={faEye} />
           </Button>
-          <Button
-            title="ثبت متریال و مراحل کار"
-            className="btn btn-primary d-flex align-items-center"
-            size="sm"
-            active
+          <Button title="ثبت متریال و مراحل کار" className="d-flex align-items-center" size="sm" active
             onClick={() => {
               dispatch(
                 handleCurrentReqInfo({
@@ -365,10 +298,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
       for (var i = 0; i < requests.length; i++) {
         var tableItem = {
           reqSerial: link(requests[i], requests[i].serial),
-          reqDate: moment
-            .utc(requests[i].createdDate, "YYYY/MM/DD")
-            .locale("fa")
-            .format("jYYYY/jMM/jDD"),
+          reqDate: moment.utc(requests[i].createdDate, "YYYY/MM/DD").locale("fa").format("jYYYY/jMM/jDD"),
           reqUser: userInfo(requests[i]),
           reqCo: xssFilters.inHTMLData(requests[i].companyName),
           projectType: xssFilters.inHTMLData(requests[i].requestTypeName),
@@ -396,10 +326,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
         for (var i = 0; i < requests.length; i++) {
           var tableItem = {
             reqSerial: link(requests[i], requests[i].serial),
-            reqDate: moment
-              .utc(requests[i].createdDate, "YYYY/MM/DD")
-              .locale("fa")
-              .format("jYYYY/jMM/jDD"),
+            reqDate: moment.utc(requests[i].createdDate, "YYYY/MM/DD").locale("fa").format("jYYYY/jMM/jDD"),
             reqUser: userInfo(requests[i]),
             reqCo: xssFilters.inHTMLData(requests[i].companyName),
             projectType: xssFilters.inHTMLData(requests[i].requestTypeName),
@@ -455,13 +382,14 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
   return (
     <Container fluid className="pb-4">
       <Fragment>
-        {showFilter ? (
-          <Row>
+        {showFilter
+          ? <Row>
             <Col md="12">
               <IranTolJobReqsFilter />
             </Col>
           </Row>
-        ) : null}
+          : null
+        }
         <div className="lightGray2-bg p-4 borderRadius border border-white border-2 shadow ">
           <div className="d-flex align-items-center justify-content-between">
             <div>
@@ -471,10 +399,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                   افزودن درخواست جدید
                 </Button>
               </Link>
-              <Button
-                size="sm"
-                variant="warning"
-                className="mb-2 ms-2 font12"
+              <Button size="sm" variant="warning" className="mb-2 ms-2 font12"
                 onClick={() => {
                   dispatch(RsetShowFilter(!showFilter));
                 }}
@@ -483,11 +408,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                 فیلتر
               </Button>
             </div>
-
-            <Button
-              size="sm"
-              variant="primary"
-              className="mb-2 "
+            <Button size="sm" variant="primary" className="mb-2"
               onClick={() => {
                 const filterParams = {
                   applicantId: localStorage.getItem("id"),
@@ -508,52 +429,24 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
               به روزرسانی
             </Button>
           </div>
-          {localStorage.getItem("id") ? (
-            <section className="position-relative">
-              {loading ? <Loading /> : null}
-              <div>
-                <IranTolJobReqItem
-                  requests={requestList}
-                  notVisited={notVisited}
-                  columns={columns}
-                  data={data}
-                  onSort={handleSort}
-                  fetchData={fetchData}
-                  loading={load}
-                  pageCount={pageCount}
-                  handleNotVisited={handleNotVisited}
-                />
-              </div>
-            </section>
-          ) : (
-            <Redirect push to="/" />
-          )}
+          <section className="position-relative">
+            {loading ? <Loading /> : null}
+            <div>
+              <IranTolJobReqItem
+                requests={requestList}
+                notVisited={notVisited}
+                columns={columns}
+                data={data}
+                onSort={handleSort}
+                fetchData={fetchData}
+                loading={load}
+                pageCount={pageCount}
+                handleNotVisited={handleNotVisited}
+              />
+            </div>
+          </section>
         </div>
       </Fragment>
-      {/* :
-                <Row>
-                    <Col>
-                        <Alert variant="warning">
-                            <Alert.Heading>
-                                <FontAwesomeIcon icon={faWarning} className='me-2 font24'/>
-                                <span className="font24">عدم دسترسی!</span>
-                            </Alert.Heading>
-                            <p>
-                            کاربر گرامی شما به این بخش دسترسی ندارید. 
-                            </p>
-                            <hr />
-                            <div className="d-flex justify-content-end">   
-                                <Link to='/Home'>
-                                    <Button variant="outline-success">
-                                        <FontAwesomeIcon icon={faHome} className='me-2'/>
-                                        صفحه اصلی
-                                    </Button>
-                                </Link>
-                            </div>
-                        </Alert>
-                    </Col>
-                </Row>
-            } */}
       {irantoolAddMaterialWorkFlowModal && <AddMaterialWorkFlowModal />}
     </Container>
   );

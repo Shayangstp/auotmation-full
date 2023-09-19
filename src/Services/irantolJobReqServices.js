@@ -44,22 +44,15 @@ export const getITJReqFileList = (reqId, index, multi, justShow) => {
 };
 
 // download req file
-export const downloadITJReqFile = (reqId, index, multi, justShow) => {
+export const downloadITJReqFile = (reqId, index, multi) => {
   return http.get(
-    `${config.localapi}/work/irantool/download/` + reqId,
-    // "/" +
-    // index +
-    // "/" +
-    // multi,
-
-    {
-      responseType: "blob",
-      params: {
-        muliple: multi,
-        index: index,
-        justShow: 0,
-      },
-    },
+    `${config.localapi}/work/irantool/download/` +
+      reqId +
+      "/" +
+      index +
+      "/" +
+      multi,
+    { responseType: "blob" },
     { timeout: 30000 }
   );
 };
@@ -74,21 +67,15 @@ export const addITJReqFile = (reqSerial, reqId, files) => {
 };
 
 // download req file
-export const downloadITJReqPlans = (reqId, index, multi, justShow) => {
+export const downloadITJReqPlans = (reqId, index, multi) => {
   return http.get(
-    `${config.localapi}/work/irantool/download/plans/` + reqId,
-
-    {
-      // responseType: "blob",
-      params: {
-        //when you want download 1 just put index
-        index: index,
-        //for all dl 1 for show 0
-        multiple: multi,
-        //for dl 0 for show 1
-        justShow: justShow,
-      },
-    },
+    `${config.localapi}/work/irantool/download/plans/` +
+      reqId +
+      "/" +
+      index +
+      "/" +
+      multi,
+    { responseType: "blob" },
     { timeout: 30000 }
   );
 };
@@ -108,9 +95,9 @@ export const getWorkDevices = () => {
     timeout: 30000,
   });
 };
+
 //opration step
 export const postWorkAndMaterials = (reqId, reqValues) => {
-  console.log(reqId);
   return http.post(
     `${config.localapi}/work/irantool/programming/` + reqId,
     reqValues,

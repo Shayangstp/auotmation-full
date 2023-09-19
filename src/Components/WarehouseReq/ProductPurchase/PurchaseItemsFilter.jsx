@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from "react";
-import { rootContext } from "../../context/rootContext";
+import React, { useEffect } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import DatePicker from 'react-datepicker2';
 import Select from 'react-select';
@@ -23,24 +22,18 @@ const PurchaseItemsFilter = () => {
     const statusOptions = useSelector(selectStatusOptions);
     const userFilter = useSelector(selectUserFilter);
 
-
-    const mainContext = useContext(rootContext);
-    const {
-        serialFilterRef,
-    } = mainContext;
-
     useEffect(() => {
         dispatch(handleAllStatuses(9));
     }, [])
+    
     return (
         <Row className='align-items-center mb-5'>
             <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4 mb-xl-0'>
                 <Form.Label id='serial' className='mb-1'>سریال:</Form.Label>
                 <NumberFormat type="text" value={serialFilter} format="######" mask='-' dir='ltr' className='form-control'
-                    ref={serialFilterRef}
                     onChange={(option) => {
                         dispatch(RsetSerialFilter(option.target.value));
-                        if (realFilter && serialFilterRef.current.state.numAsString.length === 5) {
+                        if (realFilter && option.target.value.replaceAll('-', '').length === 6) {
                             const filterValues = {
                                 memberId: userFilter !== '' ? userFilter.value : userFilter,
                                 serial: option.target.value,

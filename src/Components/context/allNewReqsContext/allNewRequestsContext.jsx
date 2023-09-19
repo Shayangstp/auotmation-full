@@ -40,16 +40,6 @@ const AllNewRequestsContext = ({ children, currentRequest, setCurrentRequest }) 
         currentReqType,
     } = mainContext;
 
-    const [reqCategoriesList, setReqCategoriesList] = useState([]);
-    const handleReqCategories = async () => {
-        try{
-            const {data} = await getReqCategories();
-            setReqCategoriesList(data);
-        }catch(ex){
-            console.log(ex);
-        }
-    }
-
     const user = useSelector(selectUser);
 
     const [updateReqValuesModal, setUpdateReqValuesModal] = useState(false);
@@ -67,8 +57,6 @@ const AllNewRequestsContext = ({ children, currentRequest, setCurrentRequest }) 
     return (
         <allNewReqsContext.Provider
             value={{
-                handleReqCategories,
-                reqCategoriesList,
                 currentRequest,
             }}
         >

@@ -33,12 +33,11 @@ const AllNewReqsFilter = () => {
 
     const allNewRequestContext = useContext(allNewReqsContext);
     const {
-        handleReqCategories,
         reqCategoriesList,
     } = allNewRequestContext;
 
     useEffect(()=>{
-        handleReqCategories();
+        // dispatch(handleTypes());
     },[])
 
     return (

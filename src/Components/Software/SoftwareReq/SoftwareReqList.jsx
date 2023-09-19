@@ -1,5 +1,13 @@
-import React, { useEffect, useMemo, useCallback, useRef, useState, Fragment } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+  useState,
+  Fragment,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Redirect, Link } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import SoftwareReqFilter from "./SoftwareReqFilter";
 import SoftwareReqItem from "./SoftwareReqItem";
@@ -12,18 +20,53 @@ import NextAcceptRequestModal from "../../Modals/SoftwareReqModals/NextAcceptReq
 import CancelRequestModal from "../../Modals/SoftwareReqModals/CancelRequestModal";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import HistoryRequestModal from "../../Modals/SoftwareReqModals/HistoryRequestModal";
-import { faArrowsRotate, faCheck, faBan, faClockRotateLeft, faEye } from "@fortawesome/free-solid-svg-icons";
-import { selectUserImage, handleUserInformation, selectUserInfoModal, handleReqsList, handleUserData, handleCurrentReqInfo, selectReqsList } from "../../Slices/mainSlices";
-import { selectAcceptReqModal, selectCancelReqModal, selectViewReqModal, selectReqHistoryModal, RsetReqHistoryModal, RsetViewReqModal, selectNextAcceptReqModal } from "../../Slices/modalsSlice";
-import {  selectSerialFilter, selectUserFilter, selectStatusFilter,
-  selectDepFilter, selectFromDateFilter, RsetFromDateFilter, selectToDateFilter , selectStatusOptions, selectDepOptions, selectStatusFilterOption,
+import {
+  faArrowsRotate,
+  faCheck,
+  faBan,
+  faClockRotateLeft,
+  faEye,
+  faFilter,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  selectUserImage,
+  handleUserInformation,
+  selectUserInfoModal,
+  handleReqsList,
+  handleUserData,
+  handleCurrentReqInfo,
+  selectReqsList,
+} from "../../Slices/mainSlices";
+import {
+  selectAcceptReqModal,
+  selectCancelReqModal,
+  selectViewReqModal,
+  selectReqHistoryModal,
+  RsetReqHistoryModal,
+  RsetViewReqModal,
+  selectNextAcceptReqModal,
+} from "../../Slices/modalsSlice";
+import {
+  selectSerialFilter,
+  selectUserFilter,
+  selectStatusFilter,
+  selectDepFilter,
+  selectFromDateFilter,
+  RsetFromDateFilter,
+  selectToDateFilter,
+  selectStatusOptions,
+  selectDepOptions,
+  selectStatusFilterOption,
+  RsetShowFilter,
+  selectShowFilter,
 } from "../../Slices/filterSlices";
 
-const SoftwareReqList = ({setPageTitle}) => {
+const SoftwareReqList = ({ setPageTitle }) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    setPageTitle('لیست درخواست نرم افزار');
-}, [setPageTitle])
+    setPageTitle("لیست درخواست نرم افزار");
+  }, [setPageTitle]);
   const acceptReqModal = useSelector(selectAcceptReqModal);
   const nextAcceptReqModal = useSelector(selectNextAcceptReqModal);
   const cancelReqModal = useSelector(selectCancelReqModal);
@@ -41,6 +84,7 @@ const SoftwareReqList = ({setPageTitle}) => {
   const depOptions = useSelector(selectDepOptions);
 
   const reqsList = useSelector(selectReqsList);
+  const showFilter = useSelector(selectShowFilter);
 
   const [data, setData] = useState([]);
   const [load, setload] = useState(false);
@@ -58,6 +102,7 @@ const SoftwareReqList = ({setPageTitle}) => {
       toDate: "null",
       type: 6,
       mDep: "",
+      group: 0,
     };
     dispatch(handleReqsList(filterValues));
   }, []);
@@ -97,7 +142,8 @@ const SoftwareReqList = ({setPageTitle}) => {
 
   const link = (request) => {
     return (
-      <a className="text-dark text-decoration-none cursorPointer serialHover"
+      <a
+        className="text-dark text-decoration-none cursorPointer serialHover"
         title={"مشاهده درخواست " + request.serial}
         onClick={() => {
           dispatch(
@@ -332,18 +378,41 @@ const SoftwareReqList = ({setPageTitle}) => {
     []
   );
 
+  useEffect(() => {
+    dispatch(RsetShowFilter(false));
+  }, []);
+
   return (
     <Container fluid className="pb-4">
       {/* {menuPermission ? */}
       <Fragment>
-        <SoftwareReqFilter />
+        {showFilter ? <SoftwareReqFilter /> : null}
         <section className="position-relative">
-          <div>
-            <Fragment>
+          <div className="lightGray2-bg p-4 borderRadius border border-white border-2 shadow ">
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <Link to="/IrtReqRegistration">
+                  <Button size="sm" variant="success" className="mb-2 font12">
+                    <FontAwesomeIcon icon={faPlus} className="me-2" />
+                    افزودن درخواست جدید
+                  </Button>
+                </Link>
+                <Button
+                  size="sm"
+                  variant="warning"
+                  className="mb-2 ms-2 font12"
+                  onClick={() => {
+                    dispatch(RsetShowFilter(!showFilter));
+                  }}
+                >
+                  <FontAwesomeIcon icon={faFilter} className="me-2" />
+                  فیلتر
+                </Button>
+              </div>
               <Button
                 size="sm"
                 variant="primary"
-                className="mb-2"
+                className="mb-2 font12"
                 onClick={() => {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
@@ -360,6 +429,7 @@ const SoftwareReqList = ({setPageTitle}) => {
                         : "null",
                     type: 6,
                     mDep: depFilter.value,
+                    group: 0,
                   };
                   dispatch(handleReqsList(filterValues));
                 }}
@@ -367,28 +437,32 @@ const SoftwareReqList = ({setPageTitle}) => {
                 <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
                 به روزرسانی
               </Button>
-              {reqsList !== undefined ? (
-                <Fragment>
-                  <SoftwareReqItem
-                    requests={reqsList}
-                    // notVisited={notVisited}
-                    columns={columns}
-                    data={data}
-                    onSort={handleSort}
-                    fetchData={fetchData}
-                    loading={load}
-                    pageCount={pageCount}
-                    // handleNotVisited={handleNotVisited}
-                  />
-                  {acceptReqModal && <AcceptRequestModal />}
-                  {nextAcceptReqModal && <NextAcceptRequestModal />}
-                  {cancelReqModal && <CancelRequestModal />}
-                  {viewReqModal && <ViewRequestModal />}
-                  {ReqHistoryModal && <HistoryRequestModal />}
-                  {userInfoModal && <UserInfoModal />}
-                </Fragment>
-              ) : null}
-            </Fragment>
+            </div>
+            <div>
+              <Fragment>
+                {reqsList !== undefined ? (
+                  <Fragment>
+                    <SoftwareReqItem
+                      requests={reqsList}
+                      // notVisited={notVisited}
+                      columns={columns}
+                      data={data}
+                      onSort={handleSort}
+                      fetchData={fetchData}
+                      loading={load}
+                      pageCount={pageCount}
+                      // handleNotVisited={handleNotVisited}
+                    />
+                    {acceptReqModal && <AcceptRequestModal />}
+                    {nextAcceptReqModal && <NextAcceptRequestModal />}
+                    {cancelReqModal && <CancelRequestModal />}
+                    {viewReqModal && <ViewRequestModal />}
+                    {ReqHistoryModal && <HistoryRequestModal />}
+                    {userInfoModal && <UserInfoModal />}
+                  </Fragment>
+                ) : null}
+              </Fragment>
+            </div>
           </div>
         </section>
         {/* : 

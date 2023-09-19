@@ -52,14 +52,10 @@ const OperatorForm = () => {
         <Row className='align-items-center mb-5'>
             <Form.Group as={Col} md='4' lg='3' xl='3' className='mb-4'>
                 <Form.Label className='mb-1'>کاربر:</Form.Label>
-                <Select
-                    isSearchable
-                    value={usersByRole}
-                    options={irantoolOperatorOption}
+                <Select placeholder= "انتخاب..." isSearchable value={usersByRole} options={irantoolOperatorOption}
                     onChange={(option) => {
                         dispatch(RsetUsersByRole(option));
                     }}
-                    placeholder= "انتخاب..."
                 />
                 {!usersByRole && (
                     <p className="font12 text-danger mb-0 mt-1">

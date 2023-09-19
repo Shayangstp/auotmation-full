@@ -42,7 +42,7 @@ const Background = ({ entered }) => {
       detectsOn: "canvas",
       events: {
         onClick: {
-          enable: true,
+          enable: false,
           mode: "push",
         },
         onDiv: {
@@ -73,7 +73,7 @@ const Background = ({ entered }) => {
         },
         bubble: {
           distance: 400,
-          duration: 2,
+          duration: 1,
           opacity: 0.8,
           size: 40,
         },
@@ -87,7 +87,7 @@ const Background = ({ entered }) => {
         grab: {
           distance: 400,
           links: {
-            blink: false,
+            blink: true,
             consent: false,
             opacity: 1,
           },
@@ -123,7 +123,7 @@ const Background = ({ entered }) => {
           speed: 1,
         },
         slow: {
-          factor: 3,
+          factor: 30,
           radius: 200,
         },
         trail: {
@@ -252,10 +252,10 @@ const Background = ({ entered }) => {
       links: {
         blink: false,
         color: {
-          value: "#949494",
+          value: "#979998",
         },
         consent: false,
-        distance: 150,
+        distance: 110,
         enable: true,
         frequency: 1,
         opacity: 0.4,
@@ -315,7 +315,7 @@ const Background = ({ entered }) => {
         },
         random: false,
         size: false,
-        speed: 0.75,
+        speed: 0.3,
         straight: false,
         trail: {
           enable: false,
@@ -421,7 +421,7 @@ const Background = ({ entered }) => {
           frequency: 0.05,
           opacity: 1,
           color: {
-            value: "#ffff00",
+            value: "#000",
           },
         },
       },
@@ -433,7 +433,6 @@ const Background = ({ entered }) => {
   };
 
   const particlesInit = useCallback(async (engine) => {
-    console.log(engine);
     // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
     // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
     // starting from v2 you can add only the features you need reducing the bundle size
@@ -441,15 +440,11 @@ const Background = ({ entered }) => {
     await loadSlim(engine);
   }, []);
 
-  const particlesLoaded = useCallback(async (container) => {
-    await console.log(container);
-  }, []);
   return (
     <div>
       <Particles
         id="tsparticles"
         init={particlesInit}
-        loaded={particlesLoaded}
         options={options}
       />
     </div>

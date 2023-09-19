@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from "react";
-import { rootContext } from "../../context/rootContext";
+import React, { useEffect } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import DatePicker from 'react-datepicker2';
 import Select from 'react-select';
@@ -7,10 +6,10 @@ import NumberFormat from "react-number-format";
 import xssFilters from "xss-filters";
 
 import { useDispatch, useSelector } from "react-redux";
-import { handleReqsList, selectRequestMemb } from '../../Slices/mainSlices';
+import { handleReqsList, selectRequestMemb, selectActiveTab } from '../../Slices/mainSlices';
 import { selectSerialFilter, RsetSerialFilter, selectUserFilter, RsetUserFilter, selectStatusFilter, RsetStatusFilter,
     selectFromDateFilter, RsetFromDateFilter, selectToDateFilter, RsetToDateFilter,
-    selectRealFilter, RsetRealFilter, handleAllStatuses, selectStatusOptions, handleCancelFilter, 
+    selectRealFilter, RsetRealFilter, handleAllStatuses, selectStatusOptions, handleCancelFilter
 } from '../../Slices/filterSlices';
 
 const PurchaseReqsFilter = () => {
@@ -24,50 +23,61 @@ const PurchaseReqsFilter = () => {
     const toDateFilter = useSelector(selectToDateFilter);
     const realFilter = useSelector(selectRealFilter);
     const statusOptions = useSelector(selectStatusOptions);
-    
-    const mainContext = useContext(rootContext);
-    const {
-        serialFilterRef,
-    } = mainContext;
-
+    const activeTab = useSelector(selectActiveTab);
 
     useEffect(() => {
         dispatch(handleAllStatuses(9));
     }, [])
+
+    const handleFilterGroup = () => {
+        if (activeTab === 'myReqs') {
+            return 2
+        } else if (activeTab === 'inProcessReqs') {
+            return 0
+        } else if (activeTab === 'allReqs') {
+            return 1
+        }
+    }
 
     return (
         <Row className='align-items-center mb-5'>
             <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4 mb-xl-0'>
                 <Form.Label id='serial' className='mb-1'>سریال:</Form.Label>
                 <NumberFormat type="text" value={serialFilter} format="######" mask='-' dir='ltr' className='form-control'
-                    ref={serialFilterRef}
                     onChange={(option) => {
                         dispatch(RsetSerialFilter(option.target.value));
-                        if (realFilter && serialFilterRef.current.state.numAsString.length === 5) {
-                            const filterValues = {
-                                applicantId: localStorage.getItem('id'),
-                                memberId: userFilter !== '' ? userFilter.value : userFilter,
-                                serial: option.target.value,
-                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-                                type: 9
+                        if (realFilter && option.target.value.replaceAll('-', '').length === 6) {
+                            if (activeTab !== '') {
+                                const filterValues = {
+                                    applicantId: localStorage.getItem('id'),
+                                    memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                    serial: option.target.value,
+                                    status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                    fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                    toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                    type: 9,
+                                    group: handleFilterGroup()
+                                }
+                                dispatch(handleReqsList(filterValues));
                             }
-                            dispatch(handleReqsList(filterValues));
                         }
                     }}
                     onKeyUp={(option) => {
                         option.which = option.which || option.keyCode;
                         if (option.which === 13) {
-                            const filterValues = {
-                                applicantId: localStorage.getItem('id'),
-                                memberId: userFilter !== '' ? userFilter.value : userFilter,
-                                serial: option.target.value,
-                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                            if (activeTab !== '') {
+                                const filterValues = {
+                                    applicantId: localStorage.getItem('id'),
+                                    memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                    serial: option.target.value,
+                                    status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                    fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                    toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                    type: 9,
+                                    group: handleFilterGroup()
+                                }
+                                dispatch(handleReqsList(filterValues));
                             }
-                            dispatch(handleReqsList(filterValues));
                         }
                     }}
                 />
@@ -76,16 +86,19 @@ const PurchaseReqsFilter = () => {
                 onKeyUp={(option) => {
                     option.which = option.which || option.keyCode;
                     if (option.which === 13) {
-                        const filterValues = {
-                            applicantId: localStorage.getItem('id'),
-                            memberId: userFilter !== '' ? userFilter.value : userFilter,
-                            serial: serialFilter,
-                            status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                            fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                            toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-                            type: 9
+                        if (activeTab !== '') {
+                            const filterValues = {
+                                applicantId: localStorage.getItem('id'),
+                                memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                serial: serialFilter,
+                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                type: 9,
+                                group: handleFilterGroup()
+                            }
+                            dispatch(handleReqsList(filterValues));
                         }
-                        dispatch(handleReqsList(filterValues));
                     }
                 }}
             >
@@ -99,16 +112,19 @@ const PurchaseReqsFilter = () => {
                     onChange={(option) => {
                         dispatch(RsetUserFilter(option));
                         if (realFilter) {
-                            const filterValues = {
-                                applicantId: localStorage.getItem('id'),
-                                memberId: option !== '' ? option.value : option,
-                                serial: serialFilter,
-                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-                                type: 9
+                            if (activeTab !== '') {
+                                const filterValues = {
+                                    applicantId: localStorage.getItem('id'),
+                                    memberId: option !== '' ? option.value : option,
+                                    serial: serialFilter,
+                                    status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                    fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                    toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                    type: 9,
+                                    group: handleFilterGroup()
+                                }
+                                dispatch(handleReqsList(filterValues));
                             }
-                            dispatch(handleReqsList(filterValues));
                         }
                     }}
                 />
@@ -117,16 +133,19 @@ const PurchaseReqsFilter = () => {
                 onKeyUp={(option) => {
                     option.which = option.which || option.keyCode;
                     if (option.which === 13) {
-                        const filterValues = {
-                            applicantId: localStorage.getItem('id'),
-                            memberId: userFilter !== '' ? userFilter.value : userFilter,
-                            serial: serialFilter,
-                            status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                            fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                            toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-                            type: 9
+                        if (activeTab !== '') {
+                            const filterValues = {
+                                applicantId: localStorage.getItem('id'),
+                                memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                serial: serialFilter,
+                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                type: 9,
+                                group: handleFilterGroup()
+                            }
+                            dispatch(handleReqsList(filterValues));
                         }
-                        dispatch(handleReqsList(filterValues));
                     }
                 }}
             >
@@ -140,16 +159,19 @@ const PurchaseReqsFilter = () => {
                     onChange={(option) => {
                         dispatch(RsetStatusFilter(option));
                         if (realFilter) {
-                            const filterValues = {
-                                applicantId: localStorage.getItem('id'),
-                                memberId: userFilter !== '' ? userFilter.value : userFilter,
-                                serial: serialFilter,
-                                status: option !== '' ? option.value : option,
-                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-                                type: 9
+                            if (activeTab !== '') {
+                                const filterValues = {
+                                    applicantId: localStorage.getItem('id'),
+                                    memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                    serial: serialFilter,
+                                    status: option !== '' ? option.value : option,
+                                    fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                    toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                    type: 9,
+                                    group: handleFilterGroup()
+                                }
+                                dispatch(handleReqsList(filterValues));
                             }
-                            dispatch(handleReqsList(filterValues));
                         }
                     }}
                 />
@@ -167,16 +189,19 @@ const PurchaseReqsFilter = () => {
                     onChange={value => {
                         dispatch(RsetFromDateFilter(value));
                         if (realFilter) {
-                            const filterValues = {
-                                applicantId: localStorage.getItem('id'),
-                                memberId: userFilter !== '' ? userFilter.value : userFilter,
-                                serial: serialFilter,
-                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                                fromDate: value !== null ? value.format('YYYY/MM/DD') : 'null',
-                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-                                type: 9
+                            if (activeTab !== '') {
+                                const filterValues = {
+                                    applicantId: localStorage.getItem('id'),
+                                    memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                    serial: serialFilter,
+                                    status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                    fromDate: value !== null ? value.format('YYYY/MM/DD') : 'null',
+                                    toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                    type: 9,
+                                    group: handleFilterGroup()
+                                }
+                                dispatch(handleReqsList(filterValues));
                             }
-                            dispatch(handleReqsList(filterValues));
                         }
                     }}
                 />
@@ -194,16 +219,19 @@ const PurchaseReqsFilter = () => {
                     onChange={value => {
                         dispatch(RsetToDateFilter(value));
                         if (realFilter) {
-                            const filterValues = {
-                                applicantId: localStorage.getItem('id'),
-                                memberId: userFilter !== '' ? userFilter.value : userFilter,
-                                serial: serialFilter,
-                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                                toDate: value !== null ? value.format('YYYY/MM/DD') : 'null',
-                                type: 9
+                            if (activeTab !== '') {
+                                const filterValues = {
+                                    applicantId: localStorage.getItem('id'),
+                                    memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                    serial: serialFilter,
+                                    status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                    fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                    toDate: value !== null ? value.format('YYYY/MM/DD') : 'null',
+                                    type: 9,
+                                    group: handleFilterGroup()
+                                }
+                                dispatch(handleReqsList(filterValues));
                             }
-                            dispatch(handleReqsList(filterValues));
                         }
                     }}
                 />
@@ -211,20 +239,23 @@ const PurchaseReqsFilter = () => {
             <Col md='4' lg='3' xl='2' className=''>
                 <Form.Group className="d-flex align-items-center mb-3 justify-content-end">
                     <input className="" type='checkbox' name='realFilterReq' value={realFilter} checked={realFilter} onChange={() => { dispatch(RsetRealFilter(!realFilter)) }} />
-                    <Form.Label className='ms-2 font12 mb-0'> فیلتر لحظه ای </Form.Label>
+                    <Form.Label className='ms-2 font10 mb-0'> فیلتر لحظه ای </Form.Label>
                 </Form.Group>
                 <div className="d-flex justify-content-end">
                     <Button variant='success' className='font12' onClick={() => {
-                        const filterValues = {
-                            applicantId: localStorage.getItem('id'),
-                            memberId: userFilter !== '' ? userFilter.value : userFilter,
-                            serial: serialFilter,
-                            status: statusFilter !== '' ? statusFilter.value : statusFilter,
-                            fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-                            toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-                            type: 9
+                        if (activeTab !== '') {
+                            const filterValues = {
+                                applicantId: localStorage.getItem('id'),
+                                memberId: userFilter !== '' ? userFilter.value : userFilter,
+                                serial: serialFilter,
+                                status: statusFilter !== '' ? statusFilter.value : statusFilter,
+                                fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
+                                toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
+                                type: 9,
+                                group: handleFilterGroup()
+                            }
+                            dispatch(handleReqsList(filterValues));
                         }
-                        dispatch(handleReqsList(filterValues));
                     }}>
                         اعمال فیلتر
                     </Button>

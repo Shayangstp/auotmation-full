@@ -1,11 +1,6 @@
 import http from "../httpService";
 import config from "../config.json";
 
-// get menu
-export const getMenu = (pMenuId) => {
-  return http.get(`${config.localapi}/menu/title/` + pMenuId,{timeout: 30000})
-}
-
 export const checkPassCompleted = (userId, allOrPass) => {
   return http.get(`${config.localapi}/user/need/edit-pass`, {params:{ id: userId, need: allOrPass}},{timeout: 30000})
 }

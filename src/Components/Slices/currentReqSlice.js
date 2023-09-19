@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getCurrentReqHistory, getReqProcess, getCurrentReqItems } from '../../Services/rootServices';
 import { RsetLoading } from "./mainSlices";
 import { RsetProcessModal } from "./modalsSlice";
+import { getITJReqFileList } from '../../Services/irantolJobReqServices';
 
 const initialState = {
     currentReqInfo: '',
@@ -13,7 +14,8 @@ const initialState = {
     currentReqItem: {},
     currentReqComments: [],
     currentReqToPerson: '',
-    currentReqProcess: []
+    currentReqProcess: [],
+    currentReqFiles: []
 };
 
 export const handleCurrentReqItems = createAsyncThunk(
@@ -68,6 +70,32 @@ export const handleCurrentReqComments = createAsyncThunk(
         }
     }
   );
+  export const handleReqFiles = createAsyncThunk(
+    "currentReq/handleReqFiles",
+    async (reqId, index, multi, justShow, fileName, { dispatch, getState }) => {
+        dispatch(RsetLoading(true));
+        try {
+            const reqFilesRes = await getITJReqFileList(reqId, index, multi, justShow);
+            if (reqFilesRes.data.code === 415) {
+                dispatch(RsetCurrentReqProcess(reqFilesRes.data.list));
+                dispatch(RsetLoading(false));
+            } else if(reqFilesRes.data.size !== undefined){
+                const url = window.URL.createObjectURL(reqFilesRes.data);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click()
+                link.parentNode.removeChild(link);
+            }else{
+                dispatch(RsetLoading(false));
+            }
+        } catch (ex) {
+            console.log(ex);
+            dispatch(RsetLoading(false));
+        }
+    }
+  );
 
 const currentReqSlice = createSlice({
     name: "currentReq",
@@ -103,6 +131,9 @@ const currentReqSlice = createSlice({
         RsetCurrentReqProcess: (state, action) => {
             return { ...state, currentReqProcess: action.payload };
         },
+        RsetCurrentReqFiles: (state, action) => {
+            return { ...state, currentReqFiles: action.payload };
+        },
     },
     extraReducers: {
 
@@ -119,7 +150,8 @@ export const {
     RsetCurrentReqItem,
     RsetCurrentReqComments,
     RsetCurrentReqToPerson,
-    RsetCurrentReqProcess
+    RsetCurrentReqProcess,
+    RsetCurrentReqFiles
 } = currentReqSlice.actions;
 
 export const selectCurrentReqInfo = (state) => state.currentReq.currentReqInfo;
@@ -132,5 +164,6 @@ export const selectCurrentReqItem = (state) => state.currentReq.currentReqItem;
 export const selectCurrentReqComments = (state) => state.currentReq.currentReqComments;
 export const selectCurrentReqToPerson = (state) => state.currentReq.currentReqToPerson;
 export const selectCurrentReqProcess = (state) => state.currentReq.currentReqProcess;
+export const selectCurrentReqFiles = (state) => state.currentReq.currentReqFiles;
 
 export default currentReqSlice.reducer;

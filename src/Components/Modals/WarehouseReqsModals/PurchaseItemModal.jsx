@@ -35,7 +35,7 @@ const PurchaseItemModal = () => {
                 item.acceptedPriorityCode = e;
                 dispatch(RsetCurrentReqItem(item));
             }}
-                placeholder='انتخاب' options={[{ label: 'عادی', value: 1 }, { label: 'فوری', value: 0 }]}
+                placeholder='انتخاب' options={[{ label: 'عادی', value: 1 }, { label: 'فوری', value: 2 }]}
                 menuPortalTarget={document.body} styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
         )
     }
