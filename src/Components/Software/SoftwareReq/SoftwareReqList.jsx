@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Tabs, Tab } from "react-bootstrap";
 import SoftwareReqFilter from "./SoftwareReqFilter";
 import SoftwareReqItem from "./SoftwareReqItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,6 +37,9 @@ import {
   handleUserData,
   handleCurrentReqInfo,
   selectReqsList,
+  RsetActiveTab,
+  selectActiveTab,
+  selectLoading,
 } from "../../Slices/mainSlices";
 import {
   selectAcceptReqModal,
@@ -60,7 +63,14 @@ import {
   selectStatusFilterOption,
   RsetShowFilter,
   selectShowFilter,
+  RsetRealFilter,
+  RsetUserFilter,
+  RsetStatusFilter,
+  RsetToDateFilter,
+  RsetSerialFilter,
+  handleTabs,
 } from "../../Slices/filterSlices";
+import Loading from "../../Common/Loading";
 
 const SoftwareReqList = ({ setPageTitle }) => {
   const dispatch = useDispatch();
@@ -85,6 +95,8 @@ const SoftwareReqList = ({ setPageTitle }) => {
 
   const reqsList = useSelector(selectReqsList);
   const showFilter = useSelector(selectShowFilter);
+  const activeTab = useSelector(selectActiveTab);
+  const loading = useSelector(selectLoading);
 
   const [data, setData] = useState([]);
   const [load, setload] = useState(false);
@@ -93,19 +105,60 @@ const SoftwareReqList = ({ setPageTitle }) => {
   const sortIdRef = useRef(0);
 
   useEffect(() => {
-    const filterValues = {
-      applicantId: localStorage.getItem("id"),
-      serial: "",
-      memberId: "",
-      status: "",
-      fromDate: "null",
-      toDate: "null",
-      type: 6,
-      mDep: "",
-      group: 0,
-    };
-    dispatch(handleReqsList(filterValues));
+    dispatch(RsetActiveTab("myReqs"));
   }, []);
+
+  useEffect(() => {
+    if (activeTab !== "") {
+      dispatch(RsetRealFilter(false));
+      dispatch(RsetSerialFilter(""));
+      dispatch(RsetUserFilter(""));
+      dispatch(RsetStatusFilter(""));
+      dispatch(RsetFromDateFilter(null));
+      dispatch(RsetToDateFilter(null));
+      dispatch(RsetShowFilter(false));
+      if (activeTab === "myReqs") {
+        const filterValues = {
+          applicantId: localStorage.getItem("id"),
+          serial: "",
+          memberId: "",
+          mDep: "",
+          status: "",
+          fromDate: "null",
+          toDate: "null",
+          type: 6,
+          group: 2,
+        };
+        dispatch(handleReqsList(filterValues));
+      } else if (activeTab === "inProcessReqs") {
+        const filterValues = {
+          applicantId: localStorage.getItem("id"),
+          serial: "",
+          memberId: "",
+          mDep: "",
+          status: "",
+          fromDate: "null",
+          toDate: "null",
+          type: 6,
+          group: 0,
+        };
+        dispatch(handleReqsList(filterValues));
+      } else if (activeTab === "allReqs") {
+        const filterValues = {
+          applicantId: localStorage.getItem("id"),
+          serial: "",
+          memberId: "",
+          mDep: "",
+          status: "",
+          fromDate: "null",
+          toDate: "null",
+          type: 6,
+          group: 1,
+        };
+        dispatch(handleReqsList(filterValues));
+      }
+    }
+  }, [activeTab]);
 
   const columns = useMemo(() => [
     {
@@ -391,7 +444,7 @@ const SoftwareReqList = ({ setPageTitle }) => {
           <div className="lightGray2-bg p-4 borderRadius border border-white border-2 shadow ">
             <div className="d-flex align-items-center justify-content-between">
               <div>
-                <Link to="/IrtReqRegistration">
+                <Link to="/SoftwareReqRegistration">
                   <Button size="sm" variant="success" className="mb-2 font12">
                     <FontAwesomeIcon icon={faPlus} className="me-2" />
                     افزودن درخواست جدید
@@ -413,35 +466,47 @@ const SoftwareReqList = ({ setPageTitle }) => {
                 size="sm"
                 variant="primary"
                 className="mb-2 font12"
-                onClick={() => {
-                  const filterValues = {
-                    applicantId: localStorage.getItem("id"),
-                    serial: serialFilter,
-                    memberId: userFilter.value,
-                    status: statusFilter.value,
-                    fromDate:
-                      fromDateFilter !== null
-                        ? fromDateFilter.format("YYYY/MM/DD")
-                        : "null",
-                    toDate:
-                      toDateFilter !== null
-                        ? toDateFilter.format("YYYY/MM/DD")
-                        : "null",
-                    type: 6,
-                    mDep: depFilter.value,
-                    group: 0,
-                  };
-                  dispatch(handleReqsList(filterValues));
+                onClick={async () => {
+                  const handleFilterGroup = await dispatch(handleTabs());
+                  if (activeTab !== "") {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: "",
+                      memberId: "",
+                      mDep: "",
+                      status: "",
+                      fromDate: "null",
+                      toDate: "null",
+                      type: 6,
+                      group: handleFilterGroup.payload,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
                 }}
               >
                 <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
                 به روزرسانی
               </Button>
             </div>
-            <div>
+            <div className="position-relative">
+              {loading ? <Loading /> : null}
               <Fragment>
                 {reqsList !== undefined ? (
                   <Fragment>
+                    <Tabs
+                      defaultActiveKey={"myReqs"}
+                      onSelect={(e) => {
+                        dispatch(RsetActiveTab(e));
+                      }}
+                      className="mb-2 mt-3"
+                    >
+                      <Tab eventKey={"myReqs"} title="درخواست های من"></Tab>
+                      <Tab
+                        eventKey={"inProcessReqs"}
+                        title="درخواست های در حال پردازش"
+                      ></Tab>
+                      <Tab eventKey={"allReqs"} title="کلیه درخواست ها"></Tab>
+                    </Tabs>
                     <SoftwareReqItem
                       requests={reqsList}
                       // notVisited={notVisited}

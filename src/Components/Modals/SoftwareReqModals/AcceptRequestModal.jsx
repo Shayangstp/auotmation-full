@@ -6,7 +6,7 @@ import momentJalaali from "moment-jalaali";
 import { RsetAcceptReqModal, selectAcceptReqModal } from "../../Slices/modalsSlice";
 import { selectCurrentReqInfo, selectCurrentReqComments, RsetCurrentReqComments, selectCurrentReqItems, RsetCurrentReqItems } from "../../Slices/currentReqSlice";
 import { RsetAcceptReqComment, selectAcceptReqComment, RsetSendTo, selectSendTo, RsetSendToOptions, selectSendToOptions, RsetNextAcceptReqModal } from "../../Slices/modalsSlice";
-import { handleUserImage, handleUserInformation, selectUser, selectFormErrors } from "../../Slices/mainSlices";
+import { handleUserImage, handleUserInformation, selectUser, selectFormErrors, RsetFormErrors } from "../../Slices/mainSlices";
 import Select from "react-select";
 import { getToPersonByRole } from "../../../Services/rootServices";
 import { handleAcceptSoftwareReq } from '../../Slices/softwareSlice';
@@ -34,9 +34,16 @@ const AcceptRequestModal = () => {
       getUserExpert();
     }
   }, [currentReqInfo]);
-  const sendToIsValid = sendTo !== "";
 
-  useEffect(() => { }, []);
+  const sendToIsValid = sendTo.length !== 0;
+
+  const validation = () => {
+    var errors = {};
+    if (sendToIsValid === false) {
+      errors.sendTo = "انتخاب کردن کارشناس اجباری است!";
+    }
+    return errors;
+  };
 
   return (
     <Modal
@@ -114,9 +121,9 @@ const AcceptRequestModal = () => {
               </tbody>
             </Table>
           )}
-          {user.Roles.some((role) => role === "17") ? (
+          {user.Roles !== null &&  user.Roles.some((role) => role === "17") ? (
             <Form.Group as={Col} md="4">
-              <Form.Label>ارسال به: </Form.Label>
+              <Form.Label>  کارشناس : </Form.Label>
               <Select
                 value={sendTo}
                 name="sendTo"
@@ -126,7 +133,7 @@ const AcceptRequestModal = () => {
                 placeholder="انتخاب..."
                 options={sendToOptions}
               />
-              {!sendToIsValid && (
+              {sendToIsValid === false && (
                 <p className="font12 text-danger mb-0 mt-1">
                   {formErrors.sendTo}
                 </p>
@@ -176,12 +183,21 @@ const AcceptRequestModal = () => {
               <Button
                 variant="success"
                 onClick={(e) => {
-                  if (user.Location === 2 && currentReqInfo.lastActionCode === 10) {
-                    dispatch(RsetAcceptReqModal(false));
-                    dispatch(RsetNextAcceptReqModal(true));
+                  if (currentReqInfo.lastActionCode === 11) {
+                    if (sendToIsValid === true) {
+                      e.preventDefault()
+                      dispatch(handleAcceptSoftwareReq(false))
+                      dispatch(RsetSendTo(""))
+                      
+                    } else {
+                      dispatch(RsetFormErrors(validation({
+                        sendTo
+                      })))
+                    }
                   } else {
-                    e.preventDefault();
-                    dispatch(handleAcceptSoftwareReq(false))
+                      e.preventDefault()
+                      dispatch(handleAcceptSoftwareReq(false))
+                      dispatch(RsetAcceptReqModal(false));
                   }
                 }}
               >
@@ -193,6 +209,7 @@ const AcceptRequestModal = () => {
                 dispatch(RsetAcceptReqModal(false));
                 dispatch(RsetCurrentReqItems([]));
                 dispatch(RsetAcceptReqComment(""));
+                dispatch(RsetSendTo(""))
               }}
               variant="secondary"
             >

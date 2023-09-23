@@ -233,6 +233,7 @@ const ReqItem = () => {
                                     group: handleFilterGroup()
                                 }
                                 dispatch(handleReqsList(filterValues));
+                                console.log(filterValues);
                             }
                         }}>
                             اعمال فیلتر

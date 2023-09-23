@@ -1,7 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { errorMessage, successMessage } from "../../utils/message";
 import { RsetFormErrors, RsetCompanyNames, handleReqsList } from "./mainSlices";
-import { postAction, getCoUsers, getToPersonByRole } from "../../Services/rootServices";
+import {
+  postAction,
+  getCoUsers,
+  getToPersonByRole,
+} from "../../Services/rootServices";
 import {
   submitSoftwareReq,
   softwareLists,
@@ -9,8 +13,16 @@ import {
   softwareReqItem,
   softwareReqProcess,
 } from "../../Services/softwareServices";
-import { RsetCurrentReqItems, RsetCurrentReqInfo, RsetCurrentReqToPerson } from "./currentReqSlice";
-import { RsetAcceptReqModal, RsetNextAcceptReqModal, RsetAcceptReqComment } from './modalsSlice';
+import {
+  RsetCurrentReqItems,
+  RsetCurrentReqInfo,
+  RsetCurrentReqToPerson,
+} from "./currentReqSlice";
+import {
+  RsetAcceptReqModal,
+  RsetNextAcceptReqModal,
+  RsetAcceptReqComment,
+} from "./modalsSlice";
 
 import {
   RsetMembersOption,
@@ -71,15 +83,14 @@ export const handleSoftwareCoUsersLists = createAsyncThunk(
     try {
       const { user } = getState().mainHome;
       const softwareCoUsersListsRes = await getCoUsers(
-        "0",
+        undefined,
         user.CompanyCode,
-        user.Location
+        user.Location,
+        0
       );
-      if (
-        softwareCoUsersListsRes.data.length !== undefined &&
-        softwareCoUsersListsRes.data.length !== 0
-      ) {
-        dispatch(RsetSoftwareCoUsersOption(softwareCoUsersListsRes.data));
+      console.log(softwareCoUsersListsRes);
+      if (softwareCoUsersListsRes.data.code === 415) {
+        dispatch(RsetSoftwareCoUsersOption(softwareCoUsersListsRes.data.list));
       } else {
         dispatch(RsetSoftwareCoUsersOption([]));
       }
@@ -95,9 +106,21 @@ export const handleSoftwareToPersonByRolesLists = createAsyncThunk(
   async (obj, { dispatch, getState }) => {
     try {
       const { user } = getState().mainHome;
-      const softwareToPersonByRolesListsRes = await getToPersonByRole( 0, user.Location, user.CompanyCode, 1, user.DeptCode, 0 );
-      if ( softwareToPersonByRolesListsRes.data.code === 415 ) {
-        dispatch(RsetSoftwareToPersonByRolesOption(softwareToPersonByRolesListsRes.data.list));
+      const softwareToPersonByRolesListsRes = await getToPersonByRole(
+        undefined,
+        user.Location,
+        user.CompanyCode,
+        1,
+        user.DeptCode,
+        0
+      );
+      console.log(softwareToPersonByRolesListsRes);
+      if (softwareToPersonByRolesListsRes.data.code === 415) {
+        dispatch(
+          RsetSoftwareToPersonByRolesOption(
+            softwareToPersonByRolesListsRes.data.list
+          )
+        );
       } else {
         dispatch(RsetSoftwareToPersonByRolesOption([]));
       }
@@ -126,16 +149,27 @@ export const handleSoftwareReqSubmit = createAsyncThunk(
   async (e, { dispatch, getState }) => {
     e.preventDefault();
     try {
-      const { softwareReqDescription, softwareReqCoUsers, softwareReqToPersonByRoles, softwareReqItems, radioCheck } = getState().software;
+      const {
+        softwareReqDescription,
+        softwareReqCoUsers,
+        softwareReqToPersonByRoles,
+        softwareReqItems,
+        radioCheck,
+      } = getState().software;
       const { user } = getState().mainHome;
-      const sameAccessValue = radioCheck 
-        ? softwareReqCoUsers !== "" ? softwareReqCoUsers.value : null
-        : softwareReqToPersonByRoles !== "" ? softwareReqToPersonByRoles.value : null;
+      const sameAccessValue = radioCheck
+        ? softwareReqCoUsers !== ""
+          ? softwareReqCoUsers.value
+          : null
+        : softwareReqToPersonByRoles !== ""
+        ? softwareReqToPersonByRoles.value
+        : null;
       const softwareReqValues = {
         sameAccess: sameAccessValue,
         description: softwareReqDescription,
       };
       const submitSoftwareReqRes = await submitSoftwareReq(softwareReqValues);
+      console.log(submitSoftwareReqRes);
       if (submitSoftwareReqRes.data.code === 415) {
         const sendAction = async () => {
           const actionValues = {
@@ -147,6 +181,7 @@ export const handleSoftwareReqSubmit = createAsyncThunk(
             comment: null,
           };
           const postActionRes = await postAction(actionValues);
+          console.log(postActionRes);
           if (postActionRes.data.code === 415) {
             successMessage("درخواست مورد نظر با موفقیت ثبت شد!");
             dispatch(RsetSoftwareReqDescription(""));
@@ -173,6 +208,7 @@ export const handleSoftwareReqSubmit = createAsyncThunk(
               id: item.id,
             };
             const softwareReqRes = await softwareReq(softwareReqItemValues);
+            console.log(softwareReqRes);
             if (softwareReqRes.data.code === 415) {
               items = items + 1;
               if (items === softwareReqItems.length) {
@@ -199,7 +235,7 @@ export const handleSoftwareReqItem = createAsyncThunk(
       const softwareReqItemRes = await softwareReqItem(requestId);
       if (softwareReqItemRes.data.code === 415) {
         dispatch(RsetCurrentReqItems(softwareReqItemRes.data.items));
-      }else{
+      } else {
         dispatch(RsetCurrentReqItems([]));
       }
     } catch (ex) {
@@ -225,7 +261,7 @@ export const handlesoftwareReqProcess = createAsyncThunk(
     try {
       const softwareReqProcessRes = await softwareReqProcess(reqId, typeId);
       if (softwareReqProcessRes.data.code === 415) {
-        dispatch(RsetSoftwareProcess(softwareReqProcessRes.data.process));
+        dispatch(RsetSoftwareProcess(softwareReqProcessRes.data.list));
       }
     } catch (ex) {
       console.log(ex);
@@ -253,38 +289,48 @@ export const handleAcceptSoftwareReq = createAsyncThunk(
       const { currentReqInfo, currentReqToPerson } = getState().currentReq;
       const { user } = getState().mainHome;
       const { acceptReqComment, sendTo } = getState().modals;
-      var toPersonList = '';
-      var actionCode = '';
-      if(needManager === false){
-        if(currentReqInfo.lastActionCode === 10){
-          const toPersonsRes = await getToPersonByRole( '17', 10, user.CompanyCode, 1, null, 0 );
-          if(toPersonsRes.data.code === 415){
-            toPersonList = toPersonsRes.data.list.map((item)=>{
+      var toPersonList = "";
+      var actionCode = "";
+      if (needManager === false) {
+        if (currentReqInfo.lastActionCode === 10) {
+          const toPersonsRes = await getToPersonByRole(
+            "17",
+            10,
+            user.CompanyCode,
+            1,
+            null,
+            0
+          );
+          if (toPersonsRes.data.code === 415) {
+            toPersonList = toPersonsRes.data.list.map((item) => {
               return item.value;
-            })
+            });
             actionCode = 11;
-          }else{
-            errorMessage('شخص دریافت کننده ای یافت نشد!');
+          } else {
+            errorMessage("شخص دریافت کننده ای یافت نشد!");
           }
-        }else if(currentReqInfo.lastActionCode === 11){
+        } else if (
+          currentReqInfo.lastActionCode === 11 &&
+          sendTo.value !== undefined
+        ) {
           actionCode = 12;
           toPersonList = sendTo.value;
-        }else if(currentReqInfo.lastActionCode === 12){
+        } else if (currentReqInfo.lastActionCode === 12) {
           actionCode = 1;
           toPersonList = null;
         }
-      }else{
+      } else {
         toPersonList = currentReqToPerson.value;
         actionCode = 20;
       }
-      if(actionCode !== '' && toPersonList !== ''){
+      if (actionCode !== "" && toPersonList !== "") {
         const actionValues = {
           actionCode: actionCode,
           actionId: currentReqInfo.requestId,
           userId: localStorage.getItem("id"),
           toPersons: String(toPersonList),
           typeId: 6,
-          comment: acceptReqComment !== '' ? acceptReqComment : null,
+          comment: acceptReqComment !== "" ? acceptReqComment : null,
         };
         const postActionRes = await postAction(actionValues);
         if (postActionRes.data.code === 415) {
@@ -296,17 +342,17 @@ export const handleAcceptSoftwareReq = createAsyncThunk(
           dispatch(RsetCurrentReqToPerson(""));
           const filterValues = {
             applicantId: localStorage.getItem("id"),
-            serial: '',
-            memberId: '',
-            status: '',
+            serial: "",
+            memberId: "",
+            status: "",
             fromDate: "null",
             toDate: "null",
             type: 6,
-            mDep: '',
-            group: 0
+            mDep: "",
+            group: 0,
           };
           dispatch(handleReqsList(filterValues));
-        }else{
+        } else {
           errorMessage("خطا در انجام عملیات!");
           dispatch(RsetAcceptReqModal(false));
           dispatch(RsetNextAcceptReqModal(false));
@@ -314,8 +360,8 @@ export const handleAcceptSoftwareReq = createAsyncThunk(
           dispatch(RsetAcceptReqComment(""));
           dispatch(RsetCurrentReqToPerson(""));
         }
-      }else{
-        errorMessage('خطا!')
+      } else {
+        errorMessage("خطا!");
       }
     } catch (ex) {
       console.log(ex);
@@ -391,17 +437,28 @@ export const {
   //software req list
 } = softwareSlice.actions;
 
-export const selectSoftwareReqDescription = (state) => state.software.softwareReqDescription;
-export const selectSoftwareReqItemName = (state) => state.software.softwareReqItemName;
-export const selectSoftwareReqRequireParts = (state) => state.software.softwareReqRequireParts;
-export const selectSoftwareReqCoUsers = (state) => state.software.softwareReqCoUsers;
-export const selectSoftwareReqToPersonByRoles = (state) => state.software.softwareReqToPersonByRoles;
-export const selectSoftwareToggleHandler = (state) => state.software.softwareToggleHandler;
-export const selectSoftwareReqNumber = (state) => state.software.softwareReqNumber;
-export const selectSoftwareReqItems = (state) => state.software.softwareReqItems;
-export const selectSoftwareNamesOption = (state) => state.software.softwareNamesOption;
-export const selectSoftwareCoUsersOption = (state) => state.software.softwareCoUsersOption;
-export const selectSoftwareToPersonByRolesOption = (state) => state.software.softwareToPersonByRolesOption;
+export const selectSoftwareReqDescription = (state) =>
+  state.software.softwareReqDescription;
+export const selectSoftwareReqItemName = (state) =>
+  state.software.softwareReqItemName;
+export const selectSoftwareReqRequireParts = (state) =>
+  state.software.softwareReqRequireParts;
+export const selectSoftwareReqCoUsers = (state) =>
+  state.software.softwareReqCoUsers;
+export const selectSoftwareReqToPersonByRoles = (state) =>
+  state.software.softwareReqToPersonByRoles;
+export const selectSoftwareToggleHandler = (state) =>
+  state.software.softwareToggleHandler;
+export const selectSoftwareReqNumber = (state) =>
+  state.software.softwareReqNumber;
+export const selectSoftwareReqItems = (state) =>
+  state.software.softwareReqItems;
+export const selectSoftwareNamesOption = (state) =>
+  state.software.softwareNamesOption;
+export const selectSoftwareCoUsersOption = (state) =>
+  state.software.softwareCoUsersOption;
+export const selectSoftwareToPersonByRolesOption = (state) =>
+  state.software.softwareToPersonByRolesOption;
 export const selectRadioCheck = (state) => state.software.radioCheck;
 export const selectSoftwareProcess = (state) => state.software.softwareProcess;
 //software req list

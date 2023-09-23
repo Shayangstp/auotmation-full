@@ -105,6 +105,22 @@ export const handleCancelFilter = createAsyncThunk(
   }
 );
 
+
+export const handleTabs = createAsyncThunk(
+  "filter/handleTabs",
+  async (type, { dispatch, getState }) => {
+    const { activeTab } = getState().mainHome;
+    if (activeTab === "myReqs") {
+      return 2;
+    } else if (activeTab === "inProcessReqs") {
+      return 0;
+    } else if (activeTab === "allReqs") {
+      return 1;
+    }
+  }
+);
+
+
 const filterSlices = createSlice({
   name: "filter",
   initialState,

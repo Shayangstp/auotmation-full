@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, Button, Table } from "react-bootstrap";
 import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { connect } from "react-redux";
 
 import {
   selectFormErrors,
@@ -191,6 +192,21 @@ const SoftwareReqRegistration = ({ setPageTitle }) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  // console.log(softwareCoUsersOption);
+  // console.log(softwareToPersonByRolesOption);
+
+  // const testHandler = async (e) => {
+  //   e.preventDefault();
+  //   const result = await dispatch(handleTest());
+
+  //   const newObj = {
+  //     name: "shayan",
+  //     fun: result.payload,
+  //   };
+
+  //   console.log(newObj);
+  // };
+
   return (
     <Container fluid className="mt-4 mb-5">
       <section className="lightGray2-bg p-3 shadow borderRadius border border-white border-2">
@@ -284,7 +300,7 @@ const SoftwareReqRegistration = ({ setPageTitle }) => {
                   <Button
                     onClick={addTableHandler}
                     size="md"
-                    className="mt4 font18 btn-info light-text mt-4 ps-3 pe-3"
+                    className="mt4 font18 btn-primary light-text mt-4 ps-3 pe-3"
                   >
                     +
                   </Button>

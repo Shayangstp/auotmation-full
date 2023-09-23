@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Container } from "react-bootstrap";
 import { selectSoftwareProcess } from "../../Slices/softwareSlice";
 
@@ -16,15 +16,18 @@ const SoftwareProcess = () => {
         softwareProcess.map((item, index) => {
           const lastItem = index === softwareProcess.length - 1;
           return (
-            <div key={index} className="d-flex flex-column flex-md-row me-md-5 justify-Content-center align-items-center">
-              <div className="d-flex flex-column justify-Content-center mb-1 mb-md-3 me-md-2">
-                <div className="mb-2 font10">{item.status}</div>
+            <div
+              key={index}
+              className="d-flex flex-column flex-md-row me-md-5 justify-Content-center align-items-center"
+            >
+              <div className="d-flex flex-column justify-Content-center mb-1 mb-md-3 me-md- mt-2">
+                <div className="mt-2 mb-2 font10">{item.status}</div>
                 <div className="font10">{item.toPersonName}</div>
               </div>
               {!lastItem && softwareProcess.length > 1 && (
                 <FontAwesomeIcon
                   icon={faArrowLeft}
-                  className="my-2 my-md-0 arrow-icon"
+                  className="ms-5 arrow-icon"
                 />
               )}
             </div>

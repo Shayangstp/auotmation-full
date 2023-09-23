@@ -24,6 +24,7 @@ import {
   selectDepOptions,
   selectStatusOptions,
   handleAllStatuses,
+  handleTabs,
 } from "../../Slices/filterSlices";
 import NumberFormat from "react-number-format";
 import {
@@ -62,16 +63,6 @@ const SoftwareReqFilter = () => {
     }
   }, [user]);
 
-  const handleFilterGroup = () => {
-    if (activeTab === "myReqs") {
-      return 2;
-    } else if (activeTab === "inProcessReqs") {
-      return 0;
-    } else if (activeTab === "allReqs") {
-      return 1;
-    }
-  };
-
   return (
     <div className="d-flex flex-column  mb-5 lightGray2-bg p-3 borderRadius m-auto shadow border border-white border-2">
       <Row className="align-items-center py-2">
@@ -87,7 +78,7 @@ const SoftwareReqFilter = () => {
           />
           <Form.Label className="font12 mb-0"> فیلتر لحظه ای </Form.Label>
         </Form.Group>
-        <Form.Group as={Col} md="4" xxl="2" className="mb-4 mb-xxl-0">
+        <Form.Group as={Col} md="3" xxl="2" className="mb-4 mb-xxl-0">
           <Form.Label htmlFor="serial">سریال</Form.Label>
           <NumberFormat
             dir="ltr"
@@ -96,10 +87,11 @@ const SoftwareReqFilter = () => {
             maxLength={6}
             className="form-control"
             value={serialFilter}
-            onChange={(e) => {
+            onChange={async (e) => {
               dispatch(RsetSerialFilter(e.target.value));
-              if (activeTab !== "") {
-                if (realFilter === true) {
+              const handleFilterGroup = await dispatch(handleTabs());
+              if (realFilter === true) {
+                if (activeTab !== "") {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
                     serial: e.target.value.length === 6 ? e.target.value : "",
@@ -115,7 +107,7 @@ const SoftwareReqFilter = () => {
                         : "null",
                     type: 6,
                     mDep: depFilter.value,
-                    group: handleFilterGroup(),
+                    group: handleFilterGroup.payload,
                   };
                   dispatch(handleReqsList(filterValues));
                 }
@@ -123,16 +115,18 @@ const SoftwareReqFilter = () => {
             }}
           />
         </Form.Group>
-        <Form.Group as={Col} md="4" xxl="3" className="mb-4 mb-xxl-0">
+        <Form.Group as={Col} md="3" xxl="3" className="mb-4 mb-xxl-0">
           <Form.Label htmlFor="reqPer">درخواست کننده</Form.Label>
           <Select
             type="text"
             name="softwareReqRequireParts"
             value={userFilter}
-            onChange={(e) => {
+            onChange={async (e) => {
+              const handleFilterGroup = await dispatch(handleTabs());
+
               dispatch(RsetUserFilter(e));
-              if (activeTab !== "") {
-                if (realFilter === true) {
+              if (realFilter === true) {
+                if (activeTab !== "") {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
                     serial: serialFilter,
@@ -148,7 +142,7 @@ const SoftwareReqFilter = () => {
                         : "null",
                     type: 6,
                     mDep: depFilter.value,
-                    group: handleFilterGroup(),
+                    group: handleFilterGroup.payload,
                   };
                   dispatch(handleReqsList(filterValues));
                 }
@@ -164,10 +158,12 @@ const SoftwareReqFilter = () => {
             type="text"
             name="softwareReqRequireParts"
             value={statusFilter}
-            onChange={(e) => {
+            onChange={async (e) => {
+              const handleFilterGroup = await dispatch(handleTabs());
+
               dispatch(RsetStatusFilter(e));
-              if (activeTab !== "") {
-                if (realFilter === true) {
+              if (realFilter === true) {
+                if (activeTab !== "") {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
                     serial: serialFilter,
@@ -183,7 +179,7 @@ const SoftwareReqFilter = () => {
                         : "null",
                     type: 6,
                     mDep: depFilter.value,
-                    group: handleFilterGroup(),
+                    group: handleFilterGroup.payload,
                   };
                   dispatch(handleReqsList(filterValues));
                 }
@@ -193,17 +189,19 @@ const SoftwareReqFilter = () => {
             placeholder="انتخاب کنید..."
           />
         </Form.Group>
-        <Form.Group as={Col} md="4" xxl="2" className="mb-4 mb-xl-0">
+        <Form.Group as={Col} md="3" xxl="2" className="mb-4 mb-xl-0">
           <Form.Label>از تاریخ درخواست</Form.Label>
           <DatePicker
             timePicker={false}
             showTodayButton={false}
             isGregorian={false}
             value={fromDateFilter}
-            onChange={(value) => {
+            onChange={async (value) => {
+              const handleFilterGroup = await dispatch(handleTabs());
+
               dispatch(RsetFromDateFilter(value));
-              if (activeTab !== "") {
-                if (realFilter === true) {
+              if (realFilter === true) {
+                if (activeTab !== "") {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
                     serial: serialFilter,
@@ -217,7 +215,7 @@ const SoftwareReqFilter = () => {
                         : "null",
                     type: 6,
                     mDep: depFilter.value,
-                    group: handleFilterGroup(),
+                    group: handleFilterGroup.payload,
                   };
                   dispatch(handleReqsList(filterValues));
                 }
@@ -227,17 +225,19 @@ const SoftwareReqFilter = () => {
             inputReadOnly
           />
         </Form.Group>
-        <Form.Group as={Col} md="4" xxl="2" className="mb-4 mb-xl-0">
+        <Form.Group as={Col} md="3" xxl="2" className="mb-4 mb-xl-0">
           <Form.Label>تا تاریخ درخواست</Form.Label>
           <DatePicker
             timePicker={false}
             showTodayButton={false}
             isGregorian={false}
             value={toDateFilter}
-            onChange={(value) => {
+            onChange={async (value) => {
+              const handleFilterGroup = await dispatch(handleTabs());
+
               dispatch(RsetToDateFilter(value));
-              if (activeTab !== "") {
-                if (realFilter === true) {
+              if (realFilter === true) {
+                if (activeTab !== "") {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
                     serial: serialFilter,
@@ -251,7 +251,7 @@ const SoftwareReqFilter = () => {
                       value !== null ? value.format("YYYY/MM/DD") : "null",
                     type: 6,
                     mDep: depFilter.value,
-                    group: handleFilterGroup(),
+                    group: handleFilterGroup.payload,
                   };
                   dispatch(handleReqsList(filterValues));
                 }
@@ -269,13 +269,16 @@ const SoftwareReqFilter = () => {
               variant="success"
               className="mb-1  font10"
               size="lg"
-              onClick={() => {
+              onClick={async () => {
+                const handleFilterGroup = await dispatch(handleTabs());
+                console.log(handleFilterGroup);
                 if (activeTab !== "") {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
-                    serial: serialFilter,
-                    memberId: userFilter.value,
-                    status: statusFilter.value,
+                    serial: serialFilter !== "" ? serialFilter : serialFilter,
+                    memberId: userFilter !== "" ? userFilter.value : userFilter,
+                    status:
+                      statusFilter !== "" ? statusFilter.value : statusFilter,
                     fromDate:
                       fromDateFilter !== null
                         ? fromDateFilter.format("YYYY/MM/DD")
@@ -285,10 +288,11 @@ const SoftwareReqFilter = () => {
                         ? toDateFilter.format("YYYY/MM/DD")
                         : "null",
                     type: 6,
-                    mDep: depFilter.value,
-                    group: handleFilterGroup(),
+                    mDep: depFilter ? depFilter.value : "",
+                    group: handleFilterGroup.payload,
                   };
                   dispatch(handleReqsList(filterValues));
+                  console.log(filterValues);
                 }
               }}
             >
@@ -299,8 +303,9 @@ const SoftwareReqFilter = () => {
               type="reset"
               className="mb-1 ms-2 font10"
               size="lg"
-              onClick={() => {
+              onClick={async () => {
                 dispatch(handleSoftwareFilterReset());
+                const handleFilterGroup = await dispatch(handleTabs());
                 if (activeTab !== "") {
                   const filterValues = {
                     applicantId: localStorage.getItem("id"),
@@ -311,7 +316,7 @@ const SoftwareReqFilter = () => {
                     toDate: "null",
                     type: 6,
                     mDep: "",
-                    group: handleFilterGroup(),
+                    group: handleFilterGroup.payload,
                   };
                   dispatch(handleReqsList(filterValues));
                 }
