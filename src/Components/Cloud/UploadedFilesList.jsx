@@ -7,7 +7,7 @@ import moment from "moment-jalaali";
 import Loading from "../Common/Loading";
 import FilesClodItem from "./UploadedFile";
 import { RsetIsLoadingCheckout, selectIsLoadingCheckout } from "../Slices/mainSlices";
-import { handleAccMode, handleAppName, handleCloudListFile, handleDownloadFile, selectAllCloudList, selectAppNameFilterFC, selectFileNameFilterFC, selectFromDateFilterFC, selectSerialFilterFC, selectToDateFilterFC, selectUserNameReqFilterFC } from "../Slices/filesCloudSlice";
+// import { handleAccMode, handleAppName, handleCloudListFile, handleDownloadFile, selectAllCloudList, selectAppNameFilterFC, selectFileNameFilterFC, selectFromDateFilterFC, selectSerialFilterFC, selectToDateFilterFC, selectUserNameReqFilterFC } from "../Slices/filesCloudSlice";
 import FileClodFilter from "./UploadedFilesFilter";
 import { RsetUserInfoModals, selectUserInfoModal } from "../Slices/OverTimeSlice";
 import UserInfoModal from "../Modals/UserInfoModal";
@@ -26,30 +26,30 @@ const UploadedFilesList = ({setPageTitle}) => {
     const fetchIdRef = useRef(0);
     const sortIdRef = useRef(0);
 
-    const serialNumber = useSelector(selectSerialFilterFC)
-    const userNameFilter = useSelector(selectUserNameReqFilterFC)
-    const appNameFilter = useSelector(selectAppNameFilterFC);
-    const fromDateFilterFC = useSelector(selectFromDateFilterFC);
-    const toDateFilterFC = useSelector(selectToDateFilterFC);
-    const fileNameFilterFC = useSelector(selectFileNameFilterFC)
+    // const serialNumber = useSelector(selectSerialFilterFC)
+    // const userNameFilter = useSelector(selectUserNameReqFilterFC)
+    // const appNameFilter = useSelector(selectAppNameFilterFC);
+    // const fromDateFilterFC = useSelector(selectFromDateFilterFC);
+    // const toDateFilterFC = useSelector(selectToDateFilterFC);
+    // const fileNameFilterFC = useSelector(selectFileNameFilterFC)
 
-    const isLoading = useSelector(selectIsLoadingCheckout);
-    const allCloudList = useSelector(selectAllCloudList);
-    const userInfo = useSelector(selectUserInfoModal);
+    // const isLoading = useSelector(selectIsLoadingCheckout);
+    // const allCloudList = useSelector(selectAllCloudList);
+    // const userInfo = useSelector(selectUserInfoModal);
 
-    useEffect(() => {
-        const filterValues = {
-            serial: serialNumber !== "" ? serialNumber : "",
-            filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-            application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-            fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-            toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-            memberId: userNameFilter !== "" ? userNameFilter.value : userNameFilter,
-        }
-        dispatch(handleCloudListFile(filterValues))
-        dispatch(handleAccMode())
-        dispatch(handleAppName())
-    }, [dispatch])
+    // useEffect(() => {
+    //     const filterValues = {
+    //         serial: serialNumber !== "" ? serialNumber : "",
+    //         filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
+    //         application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
+    //         fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
+    //         toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
+    //         memberId: userNameFilter !== "" ? userNameFilter.value : userNameFilter,
+    //     }
+    //     dispatch(handleCloudListFile(filterValues))
+    //     dispatch(handleAccMode())
+    //     dispatch(handleAppName())
+    // }, [dispatch])
 
 
     const columns = useMemo(() => [
@@ -121,7 +121,7 @@ const UploadedFilesList = ({setPageTitle}) => {
     const file = (reqId, fileName) => {
         return <FontAwesomeIcon
             onClick={() => {
-                dispatch(handleDownloadFile({ reqId: reqId, fileName: fileName }))
+                // dispatch(handleDownloadFile({ reqId: reqId, fileName: fileName }))
             }}
             className="font20 text-primary cursorPointer align-items-center"
             icon={faCloudArrowDown}
@@ -203,22 +203,22 @@ const UploadedFilesList = ({setPageTitle}) => {
                 </Link>
             </div>
             <FileClodFilter />
-            {userInfo && <UserInfoModal />}
+            {/* {userInfo && <UserInfoModal />} */}
             <div className="my-4">
                 <section className="position-relative">
-                    {isLoading && <Loading />}
+                    {/* {isLoading && <Loading />} */}
                     <div>
                         <Button size='sm' className="my-2"
                             onClick={() => {
-                                const filterValues = {
-                                    serial: serialNumber !== "" ? serialNumber : "",
-                                    filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                                    application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                                    fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                                    toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                                    memberId: userNameFilter !== "" ? userNameFilter.value : "",
-                                }
-                                dispatch(handleCloudListFile(filterValues))
+                                // const filterValues = {
+                                //     serial: serialNumber !== "" ? serialNumber : "",
+                                //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
+                                //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
+                                //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
+                                //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
+                                //     memberId: userNameFilter !== "" ? userNameFilter.value : "",
+                                // }
+                                // dispatch(handleCloudListFile(filterValues))
                                 dispatch(RsetIsLoadingCheckout(true))
                             }}
                         >
@@ -228,7 +228,7 @@ const UploadedFilesList = ({setPageTitle}) => {
                             </span>
                         </Button>
                         <FilesClodItem
-                            requests={allCloudList}
+                            // requests={allCloudList}
                             columns={columns}
                             data={data}
                             onSort={handleSort}

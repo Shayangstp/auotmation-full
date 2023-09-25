@@ -259,6 +259,7 @@ const MyReqsList = ({ setPageTitle }) => {
                     </Row>
                     : null
                 }
+                    <div className="lightGray2-bg p-4 borderRadius border border-white border-2 shadow ">
                 <div className="d-flex align-items-center justify-content-between">
                     <div>
                         <Button size='sm' variant='warning' className='mb-2 ms-2 font12' onClick={() => { dispatch(RsetShowFilter(!showFilter)) }}>
@@ -276,7 +277,8 @@ const MyReqsList = ({ setPageTitle }) => {
                         }
                         dispatch(handleMyReqsList(filterValues));
                     }}><FontAwesomeIcon icon={faArrowsRotate} className='me-2' />به روزرسانی</Button>
-                </div>
+                    </div>
+                    
                 <section className='position-relative'>
                     {loading ? <Loading /> : null}
                     <div>
@@ -288,12 +290,14 @@ const MyReqsList = ({ setPageTitle }) => {
                             fetchData={fetchData}
                             loading={load}
                             pageCount={pageCount}
-                        />
+                            />
                         {viewReqModal ? viewModal() : null}
                         {processModal ? <ProcessModal /> : null}
                         {userInfoModal && <UserInfoModal />}
                     </div>
-                </section>
+                    
+                    </section>
+                </div>
             </Fragment>
             {/* :
                         <Row>

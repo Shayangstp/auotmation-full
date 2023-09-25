@@ -498,7 +498,7 @@ const SoftwareReqList = ({ setPageTitle }) => {
                       onSelect={(e) => {
                         dispatch(RsetActiveTab(e));
                       }}
-                      className="mb-2 mt-3"
+                      className="mt-3"
                     >
                       <Tab eventKey={"myReqs"} title="درخواست های من"></Tab>
                       <Tab

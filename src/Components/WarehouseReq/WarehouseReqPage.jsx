@@ -489,7 +489,7 @@ const WarehouseReqPage = ({ setPageTitle }) => {
                 <section className='position-relative'>
                     {loading ? <Loading /> : null}
                     <div>
-                        <Tabs defaultActiveKey={'myReqs'} onSelect={(e) => { dispatch(RsetActiveTab(e)) }} className='mb-2 mt-3'>
+                        <Tabs defaultActiveKey={'myReqs'} onSelect={(e) => { dispatch(RsetActiveTab(e)) }} className='mt-3'>
                             <Tab eventKey={'myReqs'} title="درخواست های من"></Tab>
                             <Tab eventKey={'inProcessReqs'} title="درخواست های در حال پردازش"></Tab>
                             <Tab eventKey={'allReqs'} title="کلیه درخواست ها"></Tab>

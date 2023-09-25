@@ -188,6 +188,7 @@ const AcceptRequestModal = () => {
                       e.preventDefault()
                       dispatch(handleAcceptSoftwareReq(false))
                       dispatch(RsetSendTo(""))
+                      dispatch(RsetFormErrors(""))
                       
                     } else {
                       dispatch(RsetFormErrors(validation({

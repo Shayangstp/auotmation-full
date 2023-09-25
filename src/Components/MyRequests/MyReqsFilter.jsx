@@ -33,9 +33,23 @@ const MyReqsFilter = () => {
         dispatch(handleTypes());
     }, [])
 
+    console.log(serialFilter);
 
     return (
-        <Row className='align-items-center mb-5'>
+        <div className="d-flex flex-column  mb-5 lightGray2-bg p-3 borderRadius m-auto shadow border border-white border-2">
+            <Row className='align-items-center'>
+            <Form.Group className="d-flex align-items-center mb-3">
+            <Form.Switch
+                type="checkbox"
+                name="realFilter"
+                value={realFilter}
+                checked={realFilter}
+                onChange={() => {
+              dispatch(RsetRealFilter(!realFilter));
+            }}
+          />
+          <Form.Label className="font12 mb-0"> فیلتر لحظه ای </Form.Label>
+        </Form.Group>
             <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4 mb-xl-0'>
                 <Form.Label id='serial' className='mb-1'>سریال:</Form.Label>
                 <NumberFormat type="text" value={serialFilter} format="######" mask='-' dir='ltr' className='form-control'
@@ -69,7 +83,7 @@ const MyReqsFilter = () => {
                     }}
                 />
             </Form.Group>
-            <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4 mb-xl-0'
+            <Form.Group as={Col} md='4' lg='3' xl='3' className='mb-4 mb-xl-0'
                 onKeyUp={(option) => {
                     option.which = option.which || option.keyCode;
                     if (option.which === 13) {
@@ -106,7 +120,7 @@ const MyReqsFilter = () => {
                     }}
                 />
             </Form.Group>
-            <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4 mb-xl-0'
+            <Form.Group as={Col} md='4' lg='3' xl='3' className='mb-4 mb-xl-0'
                 onKeyUp={(option) => {
                     option.which = option.which || option.keyCode;
                     if (option.which === 13) {
@@ -192,17 +206,16 @@ const MyReqsFilter = () => {
                         }
                     }}
                 />
-            </Form.Group>
-            <Col md='4' lg='3' xl='2' className=''>
-                <Form.Group className="d-flex align-items-center mb-3 justify-content-end">
-                    <input className="" type='checkbox' name='realFilterReq' value={realFilter} checked={realFilter} onChange={() => { dispatch(RsetRealFilter(!realFilter)) }} />
-                    <Form.Label className='ms-2 font12 mb-0'> فیلتر لحظه ای </Form.Label>
                 </Form.Group>
-                <div className="d-flex justify-content-end">
-                    <Button variant='success' className='font12' onClick={() => {
-                        const filterValues = {
+                </Row>
+                 <Row> 
+                    <Col md='4' lg='3' xl='2' className="mt-4 ms-auto">
+                    <div className="d-flex justify-content-end">
+                        <Button variant='success' className='font12' onClick={() => {
+                            const filterValues = {
                             applicantId: localStorage.getItem('id'),
-                            type: typeFilter !== '' ? typeFilter.value : typeFilter,
+                            serial : serialFilter !== "" ? serialFilter : serialFilter,
+                            type: 0,
                             status: statusFilter !== '' ? statusFilter.value : statusFilter,
                             fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
                             toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
@@ -211,12 +224,25 @@ const MyReqsFilter = () => {
                     }}>
                         اعمال فیلتر
                     </Button>
-                    <Button variant='secondary' className='font12 ms-1' onClick={() => handleCancelFilter('allNewReqs')}>
+                        <Button variant='secondary' className='font12 ms-1' onClick={() => {
+                            const filterValues = {
+                                applicantId: localStorage.getItem('id'),
+                                type: 0,
+                                status: "",
+                                fromDate: null,
+                                toDate: null,
+                            }
+                            dispatch(handleMyReqsList(filterValues));
+                            dispatch(RsetSerialFilter(""))
+                            dispatch(RsetStatusFilter(""))
+                            // dispatch(Rset(""))
+                        } }>
                         لغو فیلتر
-                    </Button>
-                </div>
-            </Col>
-        </Row>
+                        </Button>
+                    </div>
+                    </Col>
+                </Row>
+         </div>
     );
 };
 
