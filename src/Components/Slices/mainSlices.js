@@ -14,12 +14,13 @@ import { handleResetOvertimeForm } from "./OverTimeSlice";
 
 import { RsetAcceptReqModal, RsetCancelReqModal, RsetEditReqModal, RsetViewReqModal, RsetDeleteReqModal, RsetReqHistoryModal, RsetViewReqComment, RsetAcceptReqComment, RsetCancelReqComment } from "./modalsSlice";
 import { RsetCurrentReqInfo, RsetCurrentReqId, RsetCurrentReqType, RsetCurrentReqCo, RsetCurrentReqDep, handleCurrentReqComments, RsetCurrentReqItems, handleCurrentReqItems } from "./currentReqSlice";
-import { RsetDepOptions } from '../Slices/filterSlices';
+import { RsetDepOptions , RsetStatusOptions } from '../Slices/filterSlices';
 
 import { handleSoftwareReqItem, handlesoftwareReqProcess } from '../Slices/softwareSlice';
 import { handleIrtUsersByRole, handleOperatorList } from '../Slices/irantoolSlices';
 
 import { handleGetWarehouseReqItems } from "../Slices/warehouseSlice";
+import { RsetCheckoutReqPersonNameOption } from "../Slices/checkoutReqSlices"
 
 const initialState = {
   unit: '',
@@ -99,6 +100,20 @@ export const handleTypes = createAsyncThunk(
   }
 );
 
+export const handleAllStatuses = createAsyncThunk(
+  "mainHome/handleAllStatuses",
+  async (type, { dispatch, getState }) => {
+    try {
+      const getAllStatusesRes = await getAllStatuses(type);
+      if (getAllStatusesRes.data.code === 415) {
+        dispatch(RsetStatusOptions(getAllStatusesRes.data.list));
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  }
+);
+
 export const handleCompaniesList = createAsyncThunk(
   "mainHome/handleCompaniesList",
   async (obj, { dispatch, getState }) => {
@@ -134,6 +149,7 @@ export const handleDepartments = createAsyncThunk(
     }
   }
 );
+
 
 export const handleMenu = createAsyncThunk(
   "mainHome/handleMenu",
@@ -952,6 +968,31 @@ export const handleInputsEnter = createAsyncThunk(
         // event.keyCode = 9;
       }
     });
+  }
+);
+
+export const handleAllUsers = createAsyncThunk(
+  "mainHome/handleAllUsers",
+  async (obj, { dispatch, getState }) => {
+    try {
+      const { user } = getState().mainHome;
+
+      const getToPersonByRoleRes = await getToPersonByRole(
+        undefined,
+        user.Location,
+        user.CompanyCode,
+        1,
+        undefined
+      );
+      console.log(getToPersonByRoleRes);
+      if (getToPersonByRoleRes.data.code === 415) {
+        dispatch(
+          RsetCheckoutReqPersonNameOption(getToPersonByRoleRes.data.list)
+        );
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
   }
 );
 

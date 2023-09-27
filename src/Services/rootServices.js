@@ -176,3 +176,6 @@ export const getNumberOfStaff = (minmaxValues) => {
 export const changeUserRole = (changedValues) => {
     return http.patch(`${config.localapi}/user/setRole`, changedValues ,{timeout: 30000});
 }
+
+
+//

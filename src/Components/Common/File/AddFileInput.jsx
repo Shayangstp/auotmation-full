@@ -17,7 +17,7 @@ const AddFileInput = () => {
             </div>
             <div className="d-flex flex-row">
                 <div className="file-input position-relative">
-                    <label for="reqFile" className="custom-button position-absolute top-0">انتخاب فایل</label>
+                    <label for="reqFile" className="file-button position-absolute top-0">انتخاب فایل</label>
                     <Form.Control type="file" multiple name="reqFiles" id='reqFile' onChange={e => { handleUploadReqFiles(e) }} ref={reqFileRef} />
                 </div>
                 <Button className="zIndex-0 ms-1" variant="primary" onClick={handleAddFile}>

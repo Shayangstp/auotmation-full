@@ -19,8 +19,13 @@ import {
   RsetUploadDescription,
   selectUploadDescription,
   handleResetUpload,
+  selectUploadFile,
+  RsetUploadFile,
 } from "../Slices/filesCloudSlice";
 import { RsetFormErrors, selectFormErrors } from "../Slices/mainSlices";
+import { handleAccessLevelOption } from "../Slices/filesCloudSlice";
+import NewFile from "./NewFile";
+import { submitCloud } from "../../Services/cloudFileService";
 
 const FileUploadForm = ({ setPageTitle }) => {
   useEffect(() => {
@@ -35,9 +40,11 @@ const FileUploadForm = ({ setPageTitle }) => {
   const uploadVersion = useSelector(selectUploadVersion);
   const uploadDescription = useSelector(selectUploadDescription);
   const formErrors = useSelector(selectFormErrors);
+  const uploadFile = useSelector(selectUploadFile);
 
   useEffect(() => {
     dispatch(handleSoftwareNameOption());
+    dispatch(handleAccessLevelOption());
   }, []);
 
   const uploadSoftwareNameIsValid = uploadSoftwareName !== "";
@@ -67,14 +74,29 @@ const FileUploadForm = ({ setPageTitle }) => {
     return errors;
   };
 
-  const handleFileUpload = () => {
+  console.log(uploadFile);
+
+  const handleFileUpload = async () => {
     if (FormIsValid) {
-      console.log({
+      let files = [];
+      const data = new FormData();
+      for (var x = 0; x < uploadFile.length; x++) {
+        data.append("reqFiles", uploadFile[x]);
+      }
+      files = data;
+
+      console.log(files);
+
+      const values = {
         softwareName: uploadSoftwareName.value,
-        file: "hi",
-        accessLevel: uploadAccessLevel.value,
-        version: uploadVersion,
-      });
+        softwareAccessId: uploadAccessLevel.value,
+        softwareVersion: uploadVersion,
+        description: uploadDescription,
+      };
+      console.log(values);
+
+      const submitCloudRes = await submitCloud(files, values);
+      console.log(submitCloudRes);
     } else {
       dispatch(
         RsetFormErrors(
@@ -105,24 +127,28 @@ const FileUploadForm = ({ setPageTitle }) => {
           </Link>
         </div>
         <Form>
-          <Row className="justify-content-center">
-            <Col xl="3" className="mt-4">
-              <label className="form-label">نام نرم افزار:</label>
-              <Select
-                placeholder="انتخاب..."
-                options={uploadSoftwareNameOption}
-                value={uploadSoftwareName}
-                onChange={(e) => {
-                  dispatch(RsetUploadSoftwareName(e));
-                }}
-              />
-              {!uploadSoftwareNameIsValid && (
-                <p className="font12 text-danger mb-0 mt-1">
-                  {formErrors.uploadSoftwareName}
-                </p>
-              )}
-            </Col>
-            <Col xl="3" className="mt-4">
+          <div className="d-flex flex-column flex-md-row justify-content-center">
+            <div className="d-flex flex-col">
+              <Row className="justify-content-center">
+                <Col xl="4" className="mt-4">
+                  <label className="form-label required-field">
+                    نام نرم افزار:{" "}
+                  </label>
+                  <Select
+                    placeholder="انتخاب..."
+                    options={uploadSoftwareNameOption}
+                    value={uploadSoftwareName}
+                    onChange={(e) => {
+                      dispatch(RsetUploadSoftwareName(e));
+                    }}
+                  />
+                  {!uploadSoftwareNameIsValid && (
+                    <p className="font12 text-danger mb-0 mt-1">
+                      {formErrors.uploadSoftwareName}
+                    </p>
+                  )}
+                </Col>
+                {/* <Col xl="3" className="mt-4">
               <div className="d-flex flex-column">
                 <label className="required-field form-label">فایل: </label>
                 <div className="file-input position-relative">
@@ -144,52 +170,62 @@ const FileUploadForm = ({ setPageTitle }) => {
                   />
                 </div>
               </div>
+            </Col> */}
+                <Col xl="4" className="mt-4">
+                  <label className="required-field form-label">
+                    سطح دسترسی:{" "}
+                  </label>
+                  <Select
+                    placeholder="انتخاب..."
+                    options={uploadAccessLevelOption}
+                    value={uploadAccessLevel}
+                    onChange={(e) => {
+                      dispatch(RsetUploadAccessLevel(e));
+                    }}
+                  />
+                  {!uploadAccessLevelIsValid && (
+                    <p className="font12 text-danger mb-0 mt-1">
+                      {formErrors.uploadAccessLevel}
+                    </p>
+                  )}
+                </Col>
+                <Col xl="4" className="mt-4">
+                  <label className="form-label">ورژن:</label>
+                  <Form.Control
+                    value={uploadVersion}
+                    onChange={(e) => {
+                      dispatch(RsetUploadVersion(e.target.value));
+                    }}
+                  />
+                </Col>
+                <Col className="mt-4 mb-3" xl="12">
+                  <label className="form-label">توضیحات:</label>
+                  <Form.Control
+                    value={uploadDescription}
+                    onChange={(e) =>
+                      dispatch(RsetUploadDescription(e.target.value))
+                    }
+                    as="textarea"
+                    rows={6}
+                  />
+                </Col>
+              </Row>
+            </div>
+            <Col className="mb-3" xl="6">
+              <div className="">
+                <NewFile />
+              </div>
             </Col>
-            <Col xl="3" className="mt-4">
-              <label className="required-field form-label">سطح دسترسی: </label>
-              <Select
-                placeholder="انتخاب..."
-                options={uploadAccessLevelOption}
-                value={uploadAccessLevel}
-                onChange={(e) => {
-                  dispatch(RsetUploadAccessLevel(e));
-                }}
-              />
-              {!uploadAccessLevelIsValid && (
-                <p className="font12 text-danger mb-0 mt-1">
-                  {formErrors.uploadAccessLevel}
-                </p>
-              )}
-            </Col>
-            <Col xl="2" className="mt-4">
-              <label className="form-label">ورژن:</label>
-              <Form.Control
-                value={uploadVersion}
-                onChange={(e) => {
-                  dispatch(RsetUploadVersion(e.target.value));
-                }}
-              />
-            </Col>
-            <Col className="mt-4 mb-3" xl="11">
-              <label className="form-label">توضیحات:</label>
-              <Form.Control
-                value={uploadDescription}
-                onChange={(e) =>
-                  dispatch(RsetUploadDescription(e.target.value))
-                }
-                as="textarea"
-                rows={6}
-              />
-            </Col>
-          </Row>
-          <div className="mt-4 justify-content-center text-center ">
+          </div>
+
+          <div className="mt-5 justify-content-center text-center mb-3">
             <Button
-              variant="success"
+              variant="dark"
               onClick={(e) => {
                 e.preventDefault();
                 handleFileUpload(e);
               }}
-              className="py-2 px-5"
+              className="py-2 px-5 uploadBtn"
             >
               آپلود فایل
             </Button>

@@ -101,6 +101,8 @@ import BaseInfo from "../Components/IranTolJobReq/IranTolBaseInfo/BaseInfo";
 import PaySlipReport from "../Components/Financial/Report/PaySlip/PaySlipReport";
 
 import PurchaseItemsList from "../Components/WarehouseReq/ProductPurchase/PurchaseItemsList";
+import CheckoutReqRegistration from "../Components/CheckoutJobReq/CheckoutReqRegistration";
+import CheckoutReqList from "../Components/CheckoutJobReq/CheckoutReqList";
 
 const Automation = (props) => {
 
@@ -628,8 +630,8 @@ const Automation = (props) => {
                                 </MainContext>
                             </CookieContext>
                     } />
-                    {/* <Route path="/Checkout" element={<CheckoutOfficial />} />
-                    <Route path="/CheckoutList" element={<CheckoutList />} /> */}
+                    <Route path="/Checkout" element={<CheckoutReqRegistration />} />
+                    <Route path="/CheckoutList" element={<CheckoutReqList />} />
                     <Route path="/OverTimeReqRegistration" render={() =>
                         hasJWT() === false ?
                             <Redirect to="/" />

@@ -3,7 +3,20 @@ import { getCurrentReqHistory, getReqProcess, getCurrentReqItems } from '../../S
 import { RsetLoading } from "./mainSlices";
 import { RsetProcessModal } from "./modalsSlice";
 import { getITJReqFileList } from '../../Services/irantolJobReqServices';
-
+import { getCurrentReqInfo } from "../../Services/rootServices"
+import {
+    handleSoftwareReqItem,
+    handlesoftwareReqProcess,
+} from "../Slices/softwareSlice";
+import { errorMessage, successMessage } from "../../utils/message";
+import {
+    RsetViewReqModal,
+    RsetReqHistoryModal,
+    RsetCancelReqModal,
+    RsetAcceptReqModal,
+    RsetEditReqModal,
+  } from "../Slices/modalsSlice";
+  
 const initialState = {
     currentReqInfo: '',
     currentReqId: '',
@@ -94,6 +107,99 @@ export const handleCurrentReqComments = createAsyncThunk(
             console.log(ex);
             dispatch(RsetLoading(false));
         }
+    }
+  );
+
+  export const handleCurrentReqInfo = createAsyncThunk(
+    "currentReq/handleCurrentReqInfo",
+    async (
+      { reqId, reqType, reqSeen, company, dep, oprationType },
+      { dispatch, getState }
+    ) => {
+      dispatch(RsetLoading(true));
+      try {
+        console.log(reqId)
+        const reqInfoRes = await getCurrentReqInfo(reqId, reqType);
+        console.log(reqInfoRes);
+        if (reqInfoRes.data.code === 415) {
+          // dispatch(RsetCurrentReqId(reqInfoRes.data.typeId));
+          // dispatch(RsetCurrentReqType(reqInfoRes.data.requestId));
+          dispatch(
+            handlesoftwareReqProcess({
+              reqId: reqInfoRes.data.reqInfo.requestId,
+              typeId: reqInfoRes.data.reqInfo.typeId,
+            })
+          );
+          if (reqInfoRes.data.code === 403) {
+            dispatch(RsetLoading(false));
+            errorMessage("اطلاعات درخواست موردنظر یافت نشد!");
+          } else {
+            dispatch(RsetCurrentReqInfo(reqInfoRes.data.reqInfo));
+            if (
+              reqInfoRes.data.reqInfo.sameAccess === null &&
+              reqInfoRes.data.reqInfo.typeId === 6
+            ) {
+              dispatch(handleSoftwareReqItem(reqId));
+            }
+  
+            // dispatch(RsetCurrentReqType(reqType));
+            // dispatch(RsetCurrentReqCo(dep));
+            // dispatch(RsetCurrentReqDep(company));
+            // dispatch(RsetCurrentReqId(reqId));
+            // if (reqSeen === false) {
+            //   dispatch(handleReqVisited({ reqId: reqId, reqType: reqType }));
+            // }
+            // dispatch(handleLastNewReqs());
+            if (oprationType === "accept") {
+              dispatch(
+                handleCurrentReqComments({
+                  commentsStatus: "detail",
+                  reqId: reqId,
+                  typeId: reqType,
+                })
+              );
+              dispatch(RsetAcceptReqModal(true));
+            } else if (oprationType === "cancel") {
+              dispatch(
+                handleCurrentReqComments({
+                  commentsStatus: "detail",
+                  reqId: reqId,
+                  typeId: reqType,
+                })
+              );
+              dispatch(RsetCancelReqModal(true));
+            } else if (oprationType === "edit") {
+              dispatch(RsetEditReqModal(true));
+            } else if (oprationType === "view") {
+              dispatch(RsetViewReqModal(true));
+              dispatch(
+                handleCurrentReqComments({
+                  commentsStatus: "detail",
+                  reqId: reqId,
+                  typeId: reqType,
+                })
+              );
+            } else if (oprationType === "history") {
+              dispatch(RsetReqHistoryModal(true));
+              dispatch(
+                handleCurrentReqComments({
+                  commentsStatus: "history",
+                  reqId: reqId,
+                  typeId: reqType,
+                })
+              );
+            } else {
+            }
+            dispatch(RsetLoading(false));
+          }
+        } else {
+          dispatch(RsetLoading(false));
+          errorMessage("خطا در دریافت اطلاعات درخواست!");
+        }
+      } catch (ex) {
+        dispatch(RsetLoading(false));
+        console.log(ex);
+      }
     }
   );
 

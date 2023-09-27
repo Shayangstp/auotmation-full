@@ -4,18 +4,20 @@ import { rootContext } from "../context/rootContext";
 import { allNewReqsContext } from "../context/allNewReqsContext/allNewReqsContext";
 import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faHome, faWarning, faEye, faBan, faCheck, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faHome, faWarning, faEye, faBan,  faPenToSquare , faCheck , faPlus , faFilter , faArrowsRotate  } from '@fortawesome/free-solid-svg-icons';
 import moment from "moment-jalaali";
 import AllNewReqsList from "./AllNewReqsList";
 import AllNewReqsFilter from "./AllNewReqsFilter";
 
 import { useDispatch, useSelector } from "react-redux";
 import { selectAcceptReqModal, RsetAcceptReqModal, selectCancelReqModal, RsetCancelReqModal, selectNextAcceptReqModal } from "../Slices/modalsSlice";
-import { handleCurrentReqInfo } from "../Slices/mainSlices";
+import { handleCurrentReqInfo , selectActiveTab , handleReqsList } from "../Slices/mainSlices";
 import { selectCurrentReqInfo } from "../Slices/currentReqSlice";
+import { selectShowFilter , RsetShowFilter , handleTabs } from "../Slices/filterSlices"
 import AcceptRequestModal from "../Modals/WarehouseReqsModals/AcceptRequestModal";
 import NextAcceptRequestModal from "../Modals/WarehouseReqsModals/NextAcceptRequestModal";
 import CancelRequestModal from "../Modals/WarehouseReqsModals/CancelRequestModal";
+
 // import EditRequestModal from "../Modals/WarehouseReqsModals/EditRequestModal";
 // import ViewRequestModal from "../Modals/WarehouseReqsModals/ViewRequestModal";
 
@@ -25,6 +27,8 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
     const nextAcceptReqModal = useSelector(selectNextAcceptReqModal);
     const cancelReqModal = useSelector(selectCancelReqModal);
     const currentReqInfo = useSelector(selectCurrentReqInfo);
+    const showFilter = useSelector(selectShowFilter);
+    const activeTab = useSelector(selectActiveTab);
 
     const mainContext = useContext(rootContext);
     const {
@@ -250,6 +254,49 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
                 <Col>
                     {/* {menuPermission ? */}
                     <Fragment>
+                        {showFilter ? <AllNewReqsFilter /> : null}
+                        <section className="position-relative">
+          <div className="lightGray2-bg p-4 borderRadius border border-white border-2 shadow ">
+          <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <Button
+                  size="sm"
+                  variant="warning"
+                  className="mb-2 ms-2 font12"
+                  onClick={() => {
+                    dispatch(RsetShowFilter(!showFilter));
+                  }}
+                >
+                  <FontAwesomeIcon icon={faFilter} className="me-2" />
+                  فیلتر
+                </Button>
+              </div>
+              <Button
+                size="sm"
+                variant="primary"
+                className="mb-2 font12"
+                onClick={async () => {
+                  const handleFilterGroup = await dispatch(handleTabs());
+                  if (activeTab !== "") {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: "",
+                      memberId: "",
+                      mDep: "",
+                      status: "",
+                      fromDate: "null",
+                      toDate: "null",
+                      type: 6,
+                      group: handleFilterGroup.payload,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
+                به روزرسانی
+              </Button>
+            </div>
                         {loading ?
                             <div className="d-flex justify-content-center"><FontAwesomeIcon icon={faSpinner} className='spinner font60' /></div>
                             :
@@ -270,7 +317,9 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
                                 {/* {editReqModal && currentReqInfo.typeId === 2 ? <EditRequestModal /> : null}
                                 {viewReqModal && currentReqInfo.typeId === 2 ? <ViewRequestModal /> : null} */}
                             </Fragment>
-                        }
+                                }
+                                </div>
+                            </section>
                     </Fragment>
                     {/* :
                         <Row>

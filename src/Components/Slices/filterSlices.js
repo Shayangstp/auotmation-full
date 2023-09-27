@@ -23,6 +23,16 @@ const initialState = {
   machineCategory: "",
   machineCode: "",
   machineNumOfShift: "",
+
+  //checkout
+  checkoutFilterSerial: "",
+  checkoutFilterUser: "",
+  checkoutFilterLeavingReason: "",
+  checkoutFilterDepartment: "",
+  checkoutFilterCompany: "",
+  checkoutFilterStatus: "",
+  checkoutFilterFromDate: null,
+  checkoutFilterToDate: null,
 };
 
 export const handleAllStatuses = createAsyncThunk(
@@ -176,6 +186,31 @@ const filterSlices = createSlice({
     RsetTypeFilter: (state, { payload }) => {
       return { ...state, typeFilter: payload };
     },
+    //checkout
+    RsetCheckoutFilterSerial: (state, { payload }) => {
+      return { ...state, checkoutFilterSerial: payload };
+    },
+    RsetCheckoutFilterUser: (state, { payload }) => {
+      return { ...state, checkoutFilterUser: payload };
+    },
+    RsetCheckoutFilterLeavingReason: (state, { payload }) => {
+      return { ...state, checkoutFilterLeavingReason: payload };
+    },
+    RsetCheckoutFilterDepartment: (state, { payload }) => {
+      return { ...state, checkoutFilterDepartment: payload };
+    },
+    RsetCheckoutFilterCompany: (state, { payload }) => {
+      return { ...state, checkoutFilterCompany: payload };
+    },
+    RsetCheckoutFilterStatus: (state, { payload }) => {
+      return { ...state, checkoutFilterStatus: payload };
+    },
+    RsetCheckoutFilterFromDate: (state, { payload }) => {
+      return { ...state, checkoutFilterFromDate: payload };
+    },
+    RsetCheckoutFilterToDate: (state, { payload }) => {
+      return { ...state, checkoutFilterToDate: payload };
+    },
   },
 });
 
@@ -197,7 +232,16 @@ export const {
   RsetDepFilter,
   RsetDepOptions,
   RsetShowFilter,
-  RsetTypeFilter
+  RsetTypeFilter,
+  //checkout
+  RsetCheckoutFilterSerial,
+  RsetCheckoutFilterUser,
+  RsetCheckoutFilterLeavingReason,
+  RsetCheckoutFilterDepartment,
+  RsetCheckoutFilterCompany,
+  RsetCheckoutFilterStatus,
+  RsetCheckoutFilterFromDate,
+  RsetCheckoutFilterToDate,
 } = filterSlices.actions;
 
 export const selectSerialFilter = (state) => state.filter.serialFilter;
@@ -218,5 +262,24 @@ export const selectDepFilter = (state) => state.filter.depFilter;
 export const selectDepOptions = (state) => state.filter.depOptions;
 export const selectShowFilter = (state) => state.filter.showFilter;
 export const selectTypeFilter = (state) => state.filter.typeFilter;
+
+//checkout
+
+export const selectCheckoutFilterSerial = (state) =>
+  state.filterList.checkoutFilterSerial;
+export const selectCheckoutFilterUser = (state) =>
+  state.filterList.checkoutFilterUser;
+export const selectCheckoutFilterLeavingReason = (state) =>
+  state.filterList.checkoutFilterLeavingReason;
+export const selectCheckoutFilterDepartment = (state) =>
+  state.filterList.checkoutFilterDepartment;
+export const selectCheckoutFilterCompany = (state) =>
+  state.filterList.checkoutFilterCompany;
+export const selectCheckoutFilterStatus = (state) =>
+  state.filterList.checkoutFilterStatus;
+export const selectCheckoutFilterFromDate = (state) =>
+  state.filterList.checkoutFilterFromDate;
+export const selectCheckoutFilterToDate = (state) =>
+  state.filterList.checkoutFilterToDate;
 
 export default filterSlices.reducer;

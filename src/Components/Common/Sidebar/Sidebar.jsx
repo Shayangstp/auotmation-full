@@ -36,11 +36,13 @@ const SideMenu = ({ lockLinks, setLocklinks, setLockLinksModal, setClickedLink, 
             sideBar.classList.add('w-5');
             content.classList.add('w-95');
         }
+        
         const sideMenuItem_caption = document.getElementsByClassName('sideMenuItem_caption');
         const sidebarSubMenu = document.getElementsByClassName('sidebarSubMenu');
         const toggleAngleDown = document.getElementsByClassName('toggleAngleDown');
         const sideMenuItem_icon = document.getElementsByClassName('sideMenuItem_icon');
         const sideMenuIcon_center = document.getElementsByClassName('sideMenuIcon_center');
+
         if (sideBar.classList.contains('w-5')) {
             for (var i = 0; i < sideMenuItem_caption.length; i++) {
                 sideMenuItem_caption[i].classList.add('d-none');

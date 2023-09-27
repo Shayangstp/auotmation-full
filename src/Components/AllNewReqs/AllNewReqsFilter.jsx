@@ -4,8 +4,11 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import DatePicker from 'react-datepicker2';
 import Select from 'react-select';
 import { allNewReqsContext } from "../context/allNewReqsContext/allNewReqsContext";
+import { useDispatch, useSelector } from "react-redux";
+import { RsetRealFilter , selectFilter } from "../Slices/filterSlices";
 
 const AllNewReqsFilter = () => {
+    const dispatch = useDispatch()
     const mainContext = useContext(rootContext);
     const {
         handleAllStatuses,
@@ -41,8 +44,21 @@ const AllNewReqsFilter = () => {
     },[])
 
     return (
-        <Row className='align-items-center mb-5'>
-            <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4 mb-xl-0'
+        <div className="d-flex flex-column  mb-5 lightGray2-bg p-4 borderRadius m-auto shadow border border-white border-2">
+            <Row className='align-items-center mb-4'>
+            <Form.Group className="d-flex align-items-center mb-3">
+          <Form.Switch
+            type="checkbox"
+            name="realFilter"
+            value={realFilter}
+            checked={realFilter}
+            onChange={() => {
+              dispatch(RsetRealFilter(!realFilter));
+            }}
+          />
+          <Form.Label className="font12 mb-0"> فیلتر لحظه ای </Form.Label>
+        </Form.Group>
+            <Form.Group as={Col} md='4' lg='3' xl='3' className='mb-4 mb-xl-0'
                 onKeyUp={(option) => {
                     option.which = option.which || option.keyCode;
                     if (option.which === 13) {
@@ -209,13 +225,11 @@ const AllNewReqsFilter = () => {
                             handleGetAllNewReqsList(filterParams);
                         }
                     }}
-                />
-            </Form.Group>
-            <Col md='4' lg='3' xl='2' className=''>
-                <Form.Group className="d-flex align-items-center mb-3 justify-content-end">
-                    <input className="" type='checkbox' name='realFilterReq' value={realFilter} checked={realFilter} onChange={() => { setRealFilter(!realFilter) }} />
-                    <Form.Label className='ms-2 font12 mb-0'> فیلتر لحظه ای </Form.Label>
+                    />
                 </Form.Group>
+            </Row>
+            <Row>
+                <Col md='4' lg='3' xl='12' className=''>
                 <div className="d-flex justify-content-end">
                     <Button variant='success' className='font12' onClick={() => {
                         const filterParams = {
@@ -235,7 +249,8 @@ const AllNewReqsFilter = () => {
                     </Button>
                 </div>
             </Col>
-        </Row>
+            </Row>
+        </div>
     );
 };
 

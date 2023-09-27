@@ -11,6 +11,7 @@ import { errorMessage, successMessage } from "../../utils/message";
 import { RsetIsLoadingCheckout, RsetRealFilter } from "./mainSlices";
 import { softwareLists } from "../../Services/softwareServices";
 import { RsetFormErrors } from "./mainSlices";
+import { getCloudAccessList } from "../../Services/cloudFileService";
 const initialState = {
   uploadSoftwareName: "",
   uploadSoftwareNameOption: [],
@@ -38,11 +39,11 @@ export const handleAccessLevelOption = createAsyncThunk(
   "filesCloud/handleAccessLevelOption",
   async (obj, { dispatch, getState }) => {
     try {
-      //   const softwareListsRes = await softwareLists();
-      //   console.log(softwareListsRes);
-      //   if (softwareListsRes.data.code === 415) {
-      //     dispatch(RsetUploadSoftwareNameOption(softwareListsRes.data.softwares));
-      //   }
+      const getCloudAccessListRes = await getCloudAccessList();
+      console.log(getCloudAccessListRes);
+      if (getCloudAccessListRes.data.code === 415) {
+        dispatch(RsetUploadAccessLevelOption(getCloudAccessListRes.data.list));
+      }
     } catch (ex) {
       console.log(ex);
     }
@@ -81,6 +82,9 @@ const filesCloudSlice = createSlice({
     RsetUploadDescription: (state, { payload }) => {
       return { ...state, uploadDescription: payload };
     },
+    RsetUploadFile: (state, { payload }) => {
+      return { ...state, uploadFile: payload };
+    },
   },
 });
 
@@ -91,6 +95,7 @@ export const {
   RsetUploadAccessLevelOption,
   RsetUploadVersion,
   RsetUploadDescription,
+  RsetUploadFile,
 } = filesCloudSlice.actions;
 
 export const selectUploadSoftwareName = (state) =>
@@ -104,5 +109,6 @@ export const selectUploadAccessLevelOption = (state) =>
 export const selectUploadVersion = (state) => state.filesCloud.uploadVersion;
 export const selectUploadDescription = (state) =>
   state.filesCloud.uploadDescription;
+export const selectUploadFile = (state) => state.filesCloud.uploadFile;
 
 export default filesCloudSlice.reducer;

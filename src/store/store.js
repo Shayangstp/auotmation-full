@@ -1,5 +1,5 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import CheckoutOfficialSlice from "../Components/Slices/CheckoutOfficialSlice";
+import checkoutReqSlices from "../Components/Slices/checkoutReqSlices";
 import OverTimeSlice from "../Components/Slices/OverTimeSlice";
 import TableCheckoutListReducer from "../Components/Slices/TableCheckoutSlice";
 import mainSlices from "../Components/Slices/mainSlices";
@@ -24,7 +24,7 @@ import financialSlices from "../Components/Slices/financialSlices";
 import purchaseSlice from "../Components/Slices/purchaseSlice";
 
 const rootReducer = {
-  checkout: CheckoutOfficialSlice,
+  checkout: checkoutReqSlices,
   tableCheckoutList: TableCheckoutListReducer,
   overTime: OverTimeSlice,
   mainHome: mainSlices,
