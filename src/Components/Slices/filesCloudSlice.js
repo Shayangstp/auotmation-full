@@ -12,6 +12,7 @@ import { RsetIsLoadingCheckout, RsetRealFilter } from "./mainSlices";
 import { softwareLists } from "../../Services/softwareServices";
 import { RsetFormErrors } from "./mainSlices";
 import { getCloudAccessList } from "../../Services/cloudFileService";
+import { submitCloud } from "../../Services/cloudFileService";
 const initialState = {
   uploadSoftwareName: "",
   uploadSoftwareNameOption: [],
@@ -20,6 +21,9 @@ const initialState = {
   uploadAccessLevelOption: [],
   uploadVersion: "",
   uploadDescription: "",
+  //filters
+  uploadSoftwareNameFilter: "",
+  uploadSoftwareNameFilterOption: [],
 };
 
 export const handleSoftwareNameOption = createAsyncThunk(
@@ -40,7 +44,6 @@ export const handleAccessLevelOption = createAsyncThunk(
   async (obj, { dispatch, getState }) => {
     try {
       const getCloudAccessListRes = await getCloudAccessList();
-      console.log(getCloudAccessListRes);
       if (getCloudAccessListRes.data.code === 415) {
         dispatch(RsetUploadAccessLevelOption(getCloudAccessListRes.data.list));
       }
@@ -49,6 +52,46 @@ export const handleAccessLevelOption = createAsyncThunk(
     }
   }
 );
+
+export const handleUploadSubmit = createAsyncThunk(
+  "filesCloud/handleUploadSubmit",
+  async (obj, { dispatch, getState }) => {
+    const {
+      uploadSoftwareName,
+      uploadAccessLevel,
+      uploadVersion,
+      uploadDescription,
+      uploadFile,
+    } = getState().filesCloud;
+    try {
+      let files = [];
+      const data = new FormData();
+      for (var x = 0; x < uploadFile.length; x++) {
+        data.append("reqFiles", uploadFile[x]);
+      }
+      files = data;
+      const values = {
+        softwareName: uploadSoftwareName.value,
+        softwareAccessId: uploadAccessLevel.value,
+        softwareVersion: uploadVersion,
+        description: uploadDescription,
+      };
+      const submitCloudRes = await submitCloud(files, values);
+      console.log(submitCloudRes);
+      if (submitCloudRes.data.code === 415) {
+        files = [];
+        dispatch(RsetUploadFile(""));
+        successMessage("آپلود فایل با موفقیت انجام شد");
+        dispatch(handleResetUpload());
+      } else {
+        errorMessage("خطا !");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 export const handleResetUpload = createAsyncThunk(
   "filesCloud/handleResetUpload",
   async (obj, { dispatch, getState }) => {
@@ -56,6 +99,7 @@ export const handleResetUpload = createAsyncThunk(
     dispatch(RsetUploadAccessLevel(""));
     dispatch(RsetUploadVersion(""));
     dispatch(RsetUploadDescription(""));
+    dispatch(RsetUploadFile(""));
     dispatch(RsetFormErrors(""));
   }
 );
@@ -85,6 +129,10 @@ const filesCloudSlice = createSlice({
     RsetUploadFile: (state, { payload }) => {
       return { ...state, uploadFile: payload };
     },
+    //filters
+    RsetUploadSoftwareNameFilter: (state, { payload }) => {
+      return { ...state, uploadSoftwareNameFilter: payload };
+    },
   },
 });
 
@@ -96,6 +144,8 @@ export const {
   RsetUploadVersion,
   RsetUploadDescription,
   RsetUploadFile,
+  //filters
+  RsetUploadSoftwareNameFilter,
 } = filesCloudSlice.actions;
 
 export const selectUploadSoftwareName = (state) =>
@@ -110,5 +160,7 @@ export const selectUploadVersion = (state) => state.filesCloud.uploadVersion;
 export const selectUploadDescription = (state) =>
   state.filesCloud.uploadDescription;
 export const selectUploadFile = (state) => state.filesCloud.uploadFile;
+export const selectUploadSoftwareNameFilter = (state) =>
+  state.filesCloud.uploadSoftwareNameFilter;
 
 export default filesCloudSlice.reducer;

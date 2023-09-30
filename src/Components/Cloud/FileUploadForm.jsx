@@ -21,11 +21,13 @@ import {
   handleResetUpload,
   selectUploadFile,
   RsetUploadFile,
+  handleUploadSubmit,
 } from "../Slices/filesCloudSlice";
 import { RsetFormErrors, selectFormErrors } from "../Slices/mainSlices";
 import { handleAccessLevelOption } from "../Slices/filesCloudSlice";
-import NewFile from "./NewFile";
+import FileUploader from "./FileUploader";
 import { submitCloud } from "../../Services/cloudFileService";
+import { errorMessage, successMessage } from "../../utils/message";
 
 const FileUploadForm = ({ setPageTitle }) => {
   useEffect(() => {
@@ -51,6 +53,7 @@ const FileUploadForm = ({ setPageTitle }) => {
   // const uploadFile = uploadFile !== "";
   const uploadAccessLevelIsValid = uploadAccessLevel !== "";
   const uploadVersionIsValid = uploadVersion !== "";
+  const uploadFileIsValid = uploadFile.length !== 0;
 
   const FormIsValid =
     uploadSoftwareNameIsValid &&
@@ -62,41 +65,19 @@ const FileUploadForm = ({ setPageTitle }) => {
     if (!uploadSoftwareNameIsValid) {
       errors.uploadSoftwareName = "انتخاب  نرم افزار اجباری است!";
     }
-    // if (!companyNamesIsValid) {
-    //   errors.companyNames = "وارد کردن شرکت عامل اجباری است!";
-    // }
     if (!uploadAccessLevelIsValid) {
       errors.uploadAccessLevel = "انتخاب  سطح دسترسی اجباری است!";
     }
-    // if (!uploadVersionIsValid) {
-    //   errors.uploadVersion = "واردکردن نام نرم افزار اجباری است!";
-    // }
     return errors;
   };
 
-  console.log(uploadFile);
-
   const handleFileUpload = async () => {
     if (FormIsValid) {
-      let files = [];
-      const data = new FormData();
-      for (var x = 0; x < uploadFile.length; x++) {
-        data.append("reqFiles", uploadFile[x]);
+      if (uploadFile.length !== 0) {
+        dispatch(handleUploadSubmit());
+      } else {
+        errorMessage("فایل برای آپلود انتخاب نشده است!");
       }
-      files = data;
-
-      console.log(files);
-
-      const values = {
-        softwareName: uploadSoftwareName.value,
-        softwareAccessId: uploadAccessLevel.value,
-        softwareVersion: uploadVersion,
-        description: uploadDescription,
-      };
-      console.log(values);
-
-      const submitCloudRes = await submitCloud(files, values);
-      console.log(submitCloudRes);
     } else {
       dispatch(
         RsetFormErrors(
@@ -148,29 +129,6 @@ const FileUploadForm = ({ setPageTitle }) => {
                     </p>
                   )}
                 </Col>
-                {/* <Col xl="3" className="mt-4">
-              <div className="d-flex flex-column">
-                <label className="required-field form-label">فایل: </label>
-                <div className="file-input position-relative">
-                  <label
-                    htmlFor="uploadedFile"
-                    className="custom-button position-absolute top-0"
-                  >
-                    انتخاب فایل
-                  </label>
-                  <Form.Control
-                    type="file"
-                    multiple
-                    name="reqFiles"
-                    id="uploadedFile"
-                    // onChange={e =>{ handleUploadReqFiles(e) }} 
-                    onChange={(e) => {
-                      console.log(e.target.files);
-                    }}
-                  />
-                </div>
-              </div>
-            </Col> */}
                 <Col xl="4" className="mt-4">
                   <label className="required-field form-label">
                     سطح دسترسی:{" "}
@@ -213,7 +171,7 @@ const FileUploadForm = ({ setPageTitle }) => {
             </div>
             <Col className="mb-3" xl="6">
               <div className="">
-                <NewFile />
+                <FileUploader />
               </div>
             </Col>
           </div>

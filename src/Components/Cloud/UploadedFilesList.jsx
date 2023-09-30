@@ -7,14 +7,20 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Container } from "react-bootstrap";
+import xssFilters from "xss-filters";
 import {
   faArrowsRotate,
-  faCloudArrowDown,
+  faCheck,
+  faBan,
+  faClockRotateLeft,
+  faEye,
+  faFilter,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment-jalaali";
 import Loading from "../Common/Loading";
-import FilesClodItem from "./UploadedFile";
+import UploadedFilesItem from "./UploadedFilesItem";
 import {
   selectUserImage,
   handleUserInformation,
@@ -48,8 +54,7 @@ import {
   RsetSerialFilter,
   handleTabs,
 } from "../Slices/filterSlices";
-import { RsetUserInfoModals } from "../Slices/OverTimeSlice";
-// import { handleAccMode, handleAppName, handleCloudListFile, handleDownloadFile, selectAllCloudList, selectAppNameFilterFC, selectFileNameFilterFC, selectFromDateFilterFC, selectSerialFilterFC, selectToDateFilterFC, selectUserNameReqFilterFC } from "../Slices/filesCloudSlice";
+
 import FileClodFilter from "./UploadedFilesFilter";
 import UserInfoModal from "../Modals/UserInfoModal";
 import { Link } from "react-router-dom";
@@ -77,130 +82,230 @@ const UploadedFilesList = ({ setPageTitle }) => {
 
   const cloudList = useSelector(selectReqsList);
   const showFilter = useSelector(selectShowFilter);
-  const activeTab = useSelector(selectActiveTab);
+  const reqsList = useSelector(selectReqsList);
   const loading = useSelector(selectLoading);
 
   useEffect(() => {
-    if (activeTab !== "") {
-      dispatch(RsetRealFilter(false));
-      dispatch(RsetSerialFilter(""));
-      dispatch(RsetUserFilter(""));
-      dispatch(RsetStatusFilter(""));
-      dispatch(RsetFromDateFilter(null));
-      dispatch(RsetToDateFilter(null));
-      dispatch(RsetShowFilter(false));
-      if (activeTab === "myReqs") {
-        const filterValues = {
-          applicantId: localStorage.getItem("id"),
-          serial: "",
-          memberId: "",
-          mDep: "",
-          status: "",
-          fromDate: "null",
-          toDate: "null",
-          type: 6,
-          group: 2,
-        };
-        dispatch(handleReqsList(filterValues));
-      } else if (activeTab === "inProcessReqs") {
-        const filterValues = {
-          applicantId: localStorage.getItem("id"),
-          serial: "",
-          memberId: "",
-          mDep: "",
-          status: "",
-          fromDate: "null",
-          toDate: "null",
-          type: 6,
-          group: 0,
-        };
-        dispatch(handleReqsList(filterValues));
-      } else if (activeTab === "allReqs") {
-        const filterValues = {
-          applicantId: localStorage.getItem("id"),
-          serial: "",
-          memberId: "",
-          mDep: "",
-          status: "",
-          fromDate: "null",
-          toDate: "null",
-          type: 6,
-          group: 1,
-        };
-        dispatch(handleReqsList(filterValues));
-      }
-    }
-  }, [activeTab]);
+    const filterValues = {
+      applicantId: localStorage.getItem("id"),
+      serial: "",
+      memberId: "",
+      mDep: "",
+      status: "",
+      fromDate: "null",
+      toDate: "null",
+      type: 11,
+      // group: undefined,
+    };
+    dispatch(handleReqsList(filterValues));
+  }, []);
+
   const columns = useMemo(() => [
     {
       Header: "سریال",
-      accessor: "col1",
+      accessor: "reqSerial",
       sortType: "basic",
     },
     {
       Header: "تاریخ",
-      accessor: "col2",
+      accessor: "reqDate",
       sortType: "basic",
     },
     {
       Header: "ارسال کننده",
-      accessor: "col3",
+      accessor: "reqUser",
       sortType: "basic",
     },
     {
       Header: "فایل",
-      accessor: "col4",
+      accessor: "reqFile",
       sortType: "basic",
     },
     {
       Header: "نام فایل",
-      accessor: "fileName",
+      accessor: "reqFileName",
       sortType: "basic",
     },
     {
       Header: "ورژن",
-      accessor: "col5",
+      accessor: "reqVersion",
       sortType: "basic",
     },
     {
       Header: "نام نرم افزار",
-      accessor: "col6",
-      sortType: "basic",
-    },
-    {
-      Header: "توضیحات",
-      accessor: "col7",
+      accessor: "reqSoftwareName",
       sortType: "basic",
     },
   ]);
 
-  const userName = (request) => {
+  const link = (request) => {
     return (
-      <span
-        className="cursorPointer"
+      <a
+        className="text-dark text-decoration-none cursorPointer serialHover"
+        title={"مشاهده درخواست " + request.serial}
         onClick={() => {
-          dispatch(RsetUserInfoModals(true));
+          dispatch(
+            handleCurrentReqInfo({
+              company: "",
+              reqId: request.requestId,
+              reqType: request.typeId,
+              reqSeen: request.seen,
+              oprationType: "view",
+              dep: "",
+            })
+          );
+          // setSeenSerial(request.serial);
         }}
       >
-        {`${request.userInfo.first_name} ${request.userInfo.last_name}`}
-      </span>
+        {xssFilters.inHTMLData(request.serial)}
+      </a>
     );
   };
-
-  const userSeries = (request) => {
-    return <span onClick={() => {}}>{request.serial_number}</span>;
-  };
-
-  const file = (reqId, fileName) => {
+  const userInfo = (request) => {
     return (
-      <FontAwesomeIcon
+      <div
+        className="text-dark cursorPointer"
+        title="مشاهده اطلاعات کاربر "
         onClick={() => {
-          // dispatch(handleDownloadFile({ reqId: reqId, fileName: fileName }))
+          dispatch(handleUserInformation(request.userId));
+          dispatch(selectUserImage({ userId: request.userId, status: 1 }));
         }}
-        className="font20 text-primary cursorPointer align-items-center"
-        icon={faCloudArrowDown}
-      />
+      >
+        {xssFilters.inHTMLData(request.fullName)}
+      </div>
     );
+  };
+
+  const operation = (request) => {
+    if (
+      request.lastToPersons !== null &&
+      request.lastToPersons
+        .split(",")
+        .some((person) => person === localStorage.getItem("id"))
+    ) {
+      return (
+        <div className="d-flex justify-content-between flex-wrap">
+          {/* <Button
+            title="تایید"
+            className="btn btn-success d-flex align-items-center me-2 mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  company: "",
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  oprationType: "accept",
+                  dep: "",
+                })
+              );
+              // setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </Button>
+          <Button
+            title="ابطال"
+            className="btn btn-danger d-flex align-items-center me-2 mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  company: "",
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  oprationType: "cancel",
+                  dep: "",
+                })
+              );
+              // setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+          </Button>
+          <Button
+            title="تاریخچه"
+            className="btn btn-info d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  company: "",
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  oprationType: "history",
+                  dep: "",
+                })
+              );
+              // handleGetCurrentReqComments(
+              //   actionCode.reqInfo.serial_number,
+              //   actionCode.type
+              // );
+            }}
+          >
+            <FontAwesomeIcon icon={faClockRotateLeft} />
+          </Button> */}
+        </div>
+      );
+    } else {
+      return (
+        <div className="d-flex justify-content-between flex-wrap">
+          {/* <Button
+            title="مشاهده"
+            className="btn btn-warning d-flex me-2 align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  company: "",
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  oprationType: "view",
+                  dep: "",
+                })
+              );
+              // setSeenSerial(serialNumber);
+              dispatch(RsetViewReqModal(true));
+            }}
+          >
+            <FontAwesomeIcon icon={faEye} />
+          </Button>
+          <Button
+            title="تاریخچه"
+            className="btn btn-info d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  company: "",
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  oprationType: "history",
+                  dep: "",
+                })
+              );
+              // handleGetCurrentReqComments(
+              //   actionCode.reqInfo.serial_number,
+              //   actionCode.type
+              // );
+              dispatch(RsetReqHistoryModal(true));
+            }}
+          >
+            <FontAwesomeIcon icon={faClockRotateLeft} />
+          </Button> */}
+        </div>
+      );
+    }
   };
 
   const fetchData = useCallback(({ pageSize, pageIndex, requests }) => {
@@ -209,16 +314,15 @@ const UploadedFilesList = ({ setPageTitle }) => {
     if (requests.length !== 0) {
       for (var i = 0; i < requests.length; i++) {
         var tableItem = {
-          col1: userSeries(requests[i]),
-          col2: new Date(requests[i].date).toLocaleString("fa-IR", {
-            numberingSystem: "latn",
-          }),
-          col3: userName(requests[i]),
-          col4: file(requests[i]._id, requests[i].file.filename),
-          col5: requests[i].version,
-          col6: requests[i].application.name,
-          col7: requests[i].description,
-          fileName: requests[i].file.originalname.split(".")[0],
+          reqSerial: link(requests[i]),
+          reqDate: moment
+            .utc(requests[i].createdDate, "YYYY/MM/DD")
+            .locale("fa")
+            .format("jYYYY/jMM/jDD"),
+          reqUser: userInfo(requests[i]),
+          reqCompany: requests[i].deptName,
+          reqStatus: requests[i].statusName,
+          reqOperation: operation(requests[i]),
         };
         tableItems.push(tableItem);
       }
@@ -239,16 +343,15 @@ const UploadedFilesList = ({ setPageTitle }) => {
       if (requests.length !== 0) {
         for (var i = 0; i < requests.length; i++) {
           var tableItem = {
-            col1: userSeries(requests[i]),
-            col2: new Date(requests[i].date).toLocaleString("fa-IR", {
-              numberingSystem: "latn",
-            }),
-            col3: userName(requests[i]),
-            col4: file(requests[i]._id, requests[i].file.filename),
-            col5: requests[i].version,
-            col6: requests[i].application.name,
-            col7: requests[i].description,
-            fileName: requests[i].file.originalname.split(".")[0],
+            reqSerial: link(requests[i]),
+            reqDate: moment
+              .utc(requests[i].createdDate, "YYYY/MM/DD")
+              .locale("fa")
+              .format("jYYYY/jMM/jDD"),
+            reqUser: userInfo(requests[i]),
+            reqCompany: requests[i].deptName,
+            reqStatus: requests[i].statusName,
+            reqOperation: operation(requests[i]),
           };
           tableItems.push(tableItem);
         }
@@ -275,57 +378,69 @@ const UploadedFilesList = ({ setPageTitle }) => {
     []
   );
 
+  console.log(reqsList);
+
   return (
     <Container fluid>
-      <div className="d-flex justify-content-end">
-        <Link to="/FileUploadForm">
-          <Button size="sm" className="font12" variant="link">
-            آپلود فایل جدید
-          </Button>
-        </Link>
-      </div>
-      <FileClodFilter />
-      {/* {userInfo && <UserInfoModal />} */}
+      {showFilter ? <FileClodFilter /> : null}
       <div className="my-4">
         <section className="position-relative">
-          {/* {isLoading && <Loading />} */}
-          <div>
-            <Button
-              size="sm"
-              className="my-2"
-              onClick={() => {
-                // const filterValues = {
-                //     serial: serialNumber !== "" ? serialNumber : "",
-                //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                //     memberId: userNameFilter !== "" ? userNameFilter.value : "",
-                // }
-                // dispatch(handleCloudListFile(filterValues))
-                dispatch(RsetLoading(true));
-              }}
-            >
-              <span>
-                <FontAwesomeIcon
-                  aria-hidden="true"
-                  focusable="false"
-                  data-prefix="fas"
-                  className="ml-2 me-1"
-                  icon={faArrowsRotate}
-                />
-                به روز رسانی
-              </span>
-            </Button>
-            <FilesClodItem
-              requests={cloudList}
-              columns={columns}
-              data={data}
-              onSort={handleSort}
-              fetchData={fetchData}
-              loading={load}
-              pageCount={pageCount}
-            />
+          <div className="lightGray2-bg p-4 borderRadius border border-white border-2 shadow ">
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <Link to="/FileUploadForm">
+                  <Button size="sm" variant="success" className="mb-2 font12">
+                    <FontAwesomeIcon icon={faPlus} className="me-2" />
+                    افزودن درخواست جدید
+                  </Button>
+                </Link>
+                <Button
+                  size="sm"
+                  variant="warning"
+                  className="mb-2 ms-2 font12"
+                  onClick={() => {
+                    dispatch(RsetShowFilter(!showFilter));
+                  }}
+                >
+                  <FontAwesomeIcon icon={faFilter} className="me-2" />
+                  فیلتر
+                </Button>
+              </div>
+              <Button
+                size="sm"
+                variant="primary"
+                className="mb-2 font12"
+                onClick={() => {
+                  console.log("hi");
+                  const filterValues = {
+                    applicantId: localStorage.getItem("id"),
+                    serial: "",
+                    memberId: "",
+                    mDep: "",
+                    status: "",
+                    fromDate: "null",
+                    toDate: "null",
+                    type: 11,
+                    // group: undefined,
+                  };
+                  dispatch(handleReqsList(filterValues));
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowsRotate} className="me-2" />
+                به روزرسانی
+              </Button>
+            </div>
+            <div>
+              <UploadedFilesItem
+                requests={reqsList}
+                columns={columns}
+                data={data}
+                onSort={handleSort}
+                fetchData={fetchData}
+                loading={load}
+                pageCount={pageCount}
+              />
+            </div>
           </div>
         </section>
       </div>
