@@ -103,6 +103,7 @@ import PaySlipReport from "../Components/Financial/Report/PaySlip/PaySlipReport"
 import PurchaseItemsList from "../Components/WarehouseReq/ProductPurchase/PurchaseItemsList";
 import CheckoutReqRegistration from "../Components/CheckoutJobReq/CheckoutReqRegistration";
 import CheckoutReqList from "../Components/CheckoutJobReq/CheckoutReqList";
+import Survey from "../Components/test/Survey"
 
 const Automation = (props) => {
 
@@ -741,11 +742,18 @@ const Automation = (props) => {
                             :
                             <Logout />}
                     />
+                    <Route path="/Survey" render={() =>
+                        hasJWT() === false ?
+                            <Redirect to="/" />
+                            :
+                            <Survey />}
+                    />
                     <Route path="/" exact render={() =>
                         <CookieContext>
                             {/* <MainContext> */}
                             <UserContext>
-                                <LoginAndRegister />
+                                {/* <LoginAndRegister /> */}
+                                <Test/>
                             </UserContext>
                             {/* </MainContext> */}
                         </CookieContext>} />

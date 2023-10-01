@@ -22,6 +22,7 @@ import saleSlices from "../Components/Slices/saleSlices";
 import warehouseSlice from "../Components/Slices/warehouseSlice";
 import financialSlices from "../Components/Slices/financialSlices";
 import purchaseSlice from "../Components/Slices/purchaseSlice";
+import surveySlices from "../Components/Slices/surveySlices";
 
 const rootReducer = {
   checkout: checkoutReqSlices,
@@ -46,7 +47,8 @@ const rootReducer = {
   sale: saleSlices,
   warehouse: warehouseSlice,
   financial: financialSlices,
-  purchase: purchaseSlice
+  purchase: purchaseSlice , 
+  survey : surveySlices
 };
 
 export const store = configureStore({

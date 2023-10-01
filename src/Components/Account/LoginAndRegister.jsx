@@ -243,7 +243,7 @@ const LoginAndRegister = () => {
                                 </div>
                             </Col>
                             <Background />
-                            <Col md='12' lg='6' className="mx-auto p-4 borderRadius shadow lightOpacity text-white my-3" style={{ zIndex: 100 }}>
+                            <Col sm="4" md='4' lg='4' className="mx-auto p-4 borderRadius shadow lightOpacity text-white my-3" style={{ zIndex: 100 }}>
                                 <header className="mb-4 d-none d-md-block">
                                     <h2 className="fw-bold font24 mb-4 headersPhoneFontSize">
                                         {showChangePassCom === false ?
@@ -265,7 +265,8 @@ const LoginAndRegister = () => {
                                         {accountMode === 'login' ?
                                             <Form>
                                                 <Form.Group className='mb-4'>
-                                                    <Form.Control placeholder="نام کاربری / کدملی" type="text" dir="ltr" value={userName} name="userName" onChange={(e) => { dispatch(RsetUserName(e.target.value)) }} ref={userNameRef} />
+                                                    <Form.Label>نام کاربری</Form.Label>
+                                                    <Form.Control placeholder="نام کاربری / کدملی" type="text" dir="ltr" value={userName} name="userName" className="text-white"  onChange={(e) => { dispatch(RsetUserName(e.target.value)) }} ref={userNameRef} />
                                                     {!userName && (
                                                         <p className="font12 text-warning  mb-0 mt-1">
                                                             {formErrors.userName}

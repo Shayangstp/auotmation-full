@@ -97,8 +97,11 @@ const UploadedFilesList = ({ setPageTitle }) => {
       type: 11,
       // group: undefined,
     };
+    console.log(filterValues);
     dispatch(handleReqsList(filterValues));
   }, []);
+
+  console.log(reqsList);
 
   const columns = useMemo(() => [
     {
@@ -322,7 +325,10 @@ const UploadedFilesList = ({ setPageTitle }) => {
           reqUser: userInfo(requests[i]),
           reqCompany: requests[i].deptName,
           reqStatus: requests[i].statusName,
-          reqOperation: operation(requests[i]),
+          reqVersion: requests[i].softwareVersion,
+          reqSoftwareName: requests[i].softwareName,
+          reqFile: requests[i].softwareAccessId,
+          reqOperation: requests[i],
         };
         tableItems.push(tableItem);
       }
@@ -351,7 +357,10 @@ const UploadedFilesList = ({ setPageTitle }) => {
             reqUser: userInfo(requests[i]),
             reqCompany: requests[i].deptName,
             reqStatus: requests[i].statusName,
-            reqOperation: operation(requests[i]),
+            reqVersion: requests[i].softwareVersion,
+            reqSoftwareName: requests[i].softwareName,
+            reqFile: requests[i].softwareAccessId,
+            reqOperation: requests[i],
           };
           tableItems.push(tableItem);
         }
@@ -377,8 +386,6 @@ const UploadedFilesList = ({ setPageTitle }) => {
     },
     []
   );
-
-  console.log(reqsList);
 
   return (
     <Container fluid>
