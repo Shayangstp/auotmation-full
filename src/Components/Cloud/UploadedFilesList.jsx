@@ -16,6 +16,7 @@ import {
   faEye,
   faFilter,
   faPlus,
+  faFile,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment-jalaali";
@@ -54,10 +55,14 @@ import {
   RsetSerialFilter,
   handleTabs,
 } from "../Slices/filterSlices";
-
+import { handleReqFiles } from "../Slices/filesCloudSlice";
 import FileClodFilter from "./UploadedFilesFilter";
 import UserInfoModal from "../Modals/UserInfoModal";
 import { Link } from "react-router-dom";
+import {
+  selectCurrentReqInfo,
+  selectCurrentReqFiles,
+} from "../Slices/currentReqSlice";
 
 const UploadedFilesList = ({ setPageTitle }) => {
   useEffect(() => {
@@ -84,6 +89,7 @@ const UploadedFilesList = ({ setPageTitle }) => {
   const showFilter = useSelector(selectShowFilter);
   const reqsList = useSelector(selectReqsList);
   const loading = useSelector(selectLoading);
+  const currentReqInfo = useSelector(selectCurrentReqInfo);
 
   useEffect(() => {
     const filterValues = {
@@ -311,6 +317,23 @@ const UploadedFilesList = ({ setPageTitle }) => {
     }
   };
 
+  const handleDownloadFile = (request) => {
+    console.log(request.requestId);
+    return (
+      <div className="text-center cursorPointer">
+        <FontAwesomeIcon
+          icon={faFile}
+          className="font24"
+          onClick={() => {
+            console.log("hi");
+            // dispatch(handleReqFiles(request.requestId));
+            dispatch(handleReqFiles(request.requestId));
+          }}
+        />
+      </div>
+    );
+  };
+
   const fetchData = useCallback(({ pageSize, pageIndex, requests }) => {
     var tableItems = [];
     console.log(requests);
@@ -327,7 +350,8 @@ const UploadedFilesList = ({ setPageTitle }) => {
           reqStatus: requests[i].statusName,
           reqVersion: requests[i].softwareVersion,
           reqSoftwareName: requests[i].softwareName,
-          reqFile: requests[i].softwareAccessId,
+          reqFile: handleDownloadFile(requests[i]),
+          reqFileName: requests[i].filename,
           reqOperation: requests[i],
         };
         tableItems.push(tableItem);
@@ -348,6 +372,7 @@ const UploadedFilesList = ({ setPageTitle }) => {
       var tableItems = [];
       if (requests.length !== 0) {
         for (var i = 0; i < requests.length; i++) {
+          console.log(requests[i].requestId);
           var tableItem = {
             reqSerial: link(requests[i]),
             reqDate: moment
@@ -359,7 +384,8 @@ const UploadedFilesList = ({ setPageTitle }) => {
             reqStatus: requests[i].statusName,
             reqVersion: requests[i].softwareVersion,
             reqSoftwareName: requests[i].softwareName,
-            reqFile: requests[i].softwareAccessId,
+            reqFile: handleDownloadFile(requests[i]),
+            reqFileName: requests[i].filename,
             reqOperation: requests[i],
           };
           tableItems.push(tableItem);

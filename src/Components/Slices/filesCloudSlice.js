@@ -12,7 +12,10 @@ import { RsetIsLoadingCheckout, RsetRealFilter } from "./mainSlices";
 import { softwareLists } from "../../Services/softwareServices";
 import { RsetFormErrors } from "./mainSlices";
 import { getCloudAccessList } from "../../Services/cloudFileService";
-import { submitCloud } from "../../Services/cloudFileService";
+import {
+  submitCloud,
+  getFileCloudDownload,
+} from "../../Services/cloudFileService";
 const initialState = {
   uploadSoftwareName: "",
   uploadSoftwareNameOption: [],
@@ -86,6 +89,18 @@ export const handleUploadSubmit = createAsyncThunk(
       } else {
         errorMessage("خطا !");
       }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+export const handleReqFiles = createAsyncThunk(
+  "filesCloud/handleReqFiles",
+  async (reqId, { dispatch, getState }) => {
+    try {
+      const getFileCloudDownloadRes = await getFileCloudDownload(reqId);
+      console.log(getFileCloudDownloadRes);
     } catch (err) {
       console.log(err);
     }

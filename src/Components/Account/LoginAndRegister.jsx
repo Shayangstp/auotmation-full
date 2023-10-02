@@ -265,7 +265,6 @@ const LoginAndRegister = () => {
                                         {accountMode === 'login' ?
                                             <Form>
                                                 <Form.Group className='mb-4'>
-                                                    <Form.Label>نام کاربری</Form.Label>
                                                     <Form.Control placeholder="نام کاربری / کدملی" type="text" dir="ltr" value={userName} name="userName" className="text-white"  onChange={(e) => { dispatch(RsetUserName(e.target.value)) }} ref={userNameRef} />
                                                     {!userName && (
                                                         <p className="font12 text-warning  mb-0 mt-1">
@@ -284,9 +283,7 @@ const LoginAndRegister = () => {
                                                         )}
                                                     </div>
                                                 </Form.Group>
-                                                <button type="button" className="btn w-100 text-white border-0 buttonDesign" onClick={(e) => {
-                                                    submitFormBtn(e)
-                                                }}>ورود</button>
+                                                <button type="button" className="btn w-100 text-white border-0 buttonDesign" g>ورود</button>
                                             </Form>
                                             :
                                             <Form onSubmit={(e) => { registerSubmit(e) }} className='row enter-in-form'>
