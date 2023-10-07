@@ -242,7 +242,6 @@ const LoginAndRegister = () => {
                                     <h1 className="font25 fw-bold headersPhoneFontSize lh-base">سامانه اتوماسیون گروه صنعتی شیشه کاوه</h1>
                                 </div>
                             </Col>
-                            <Background />
                             <Col sm="4" md='4' lg='4' className="mx-auto p-4 borderRadius shadow lightOpacity text-white my-3" style={{ zIndex: 100 }}>
                                 <header className="mb-4 d-none d-md-block">
                                     <h2 className="fw-bold font24 mb-4 headersPhoneFontSize">

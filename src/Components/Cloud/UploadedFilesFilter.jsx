@@ -9,11 +9,17 @@ import {
   RsetIsLoadingCheckout,
   RsetRealFilter,
   selectRealFilter,
+  selectRequestMemb,
 } from "../Slices/mainSlices";
 import {
   selectSerialFilter,
   selectFromDateFilter,
   selectToDateFilter,
+  RsetSerialFilter,
+  selectUserFilter,
+  RsetUserFilter,
+  RsetFromDateFilter,
+  RsetToDateFilter,
 } from "../Slices/filterSlices";
 import {
   selectUploadSoftwareNameFilter,
@@ -21,6 +27,7 @@ import {
   selectUploadSoftwareNameOption,
   handleSoftwareNameOption,
 } from "../Slices/filesCloudSlice";
+import { handleReqsList } from "../Slices/mainSlices";
 import { useEffect } from "react";
 
 const UploadedFilesFilter = () => {
@@ -30,6 +37,8 @@ const UploadedFilesFilter = () => {
   const toDateFilter = useSelector(selectToDateFilter);
   const softwareNameFilter = useSelector(selectUploadSoftwareNameFilter);
   const softwareNameOption = useSelector(selectUploadSoftwareNameOption);
+  const userFilter = useSelector(selectUserFilter);
+  const requestMembs = useSelector(selectRequestMemb);
 
   const realFilter = useSelector(selectRealFilter);
 
@@ -60,62 +69,80 @@ const UploadedFilesFilter = () => {
                 className="form-control"
                 format="######"
                 dir="ltr"
-                // value={serialNumber}
+                value={serialFilter}
                 onChange={(e) => {
-                  // if (realFilter) {
-                  // const filterValues = {
-                  //     serial: e !== "" ? e.target.value : e,
-                  //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                  //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                  //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     memberId: userName !== "" ? userName.value : userName,
-                  // }
-                  // dispatch(handleCloudListFile(filterValues))
-                  // }
-                  // dispatch(RsetSerialFilterFC(e.target.value))
+                  dispatch(RsetSerialFilter(e.target.value));
+                  if (realFilter === true) {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: e.target.value.length === 6 ? e.target.value : "",
+                      memberId: userFilter.value,
+                      fromDate:
+                        fromDateFilter !== null
+                          ? fromDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      toDate:
+                        toDateFilter !== null
+                          ? toDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
                 }}
               />
             </Col>
             <Col xl="2">
               <label className="mb-1  mt-4">ارسال کننده:</label>
               <Select
-                // value={userName}
+                value={userFilter}
+                options={requestMembs}
                 onChange={(e) => {
-                  // if (realFilter) {
-                  // const filterValues = {
-                  //     serial: serialNumber !== "" ? serialNumber : "",
-                  //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                  //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                  //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     memberId: e !== "" ? e.value : e,
-                  // }
-                  // dispatch(handleCloudListFile(filterValues))
-                  // }
-                  // dispatch(RsetUserNameReqFilterFC(e))
+                  dispatch(RsetUserFilter(e));
+                  if (realFilter === true) {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: serialFilter,
+                      memberId: e.value,
+                      fromDate:
+                        fromDateFilter !== null
+                          ? fromDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      toDate:
+                        toDateFilter !== null
+                          ? toDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
                 }}
-                // options={allMemberList}
                 placeholder="انتخاب"
               />
             </Col>
             <Col xl="2">
               <label className="mb-1 mt-4">نام فایل:</label>
               <Form.Control
-                // value={fileNameFilterFC}
                 onChange={(e) => {
-                  // if (realFilter) {
-                  // const filterValues = {
-                  //     serial: serialNumber !== undefined ? serialNumber : "",
-                  //     filename: e !== "" ? e.target.value : "",
-                  //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                  //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     memberId: userName !== "" ? userName.value : userName,
-                  // }
-                  // dispatch(handleCloudListFile(filterValues))
-                  // }
-                  // dispatch(RsetFileNameFilterFC(e.target.value))
+                  // dispatch(RsetUserFilter(e));
+                  if (realFilter === true) {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: serialFilter,
+                      memberId: userFilter.value,
+                      // filename: e.target.value,
+                      fromDate:
+                        fromDateFilter !== null
+                          ? fromDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      toDate:
+                        toDateFilter !== null
+                          ? toDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
                 }}
                 placeholder=""
               />
@@ -126,18 +153,26 @@ const UploadedFilesFilter = () => {
                 value={softwareNameFilter}
                 options={softwareNameOption}
                 onChange={(e) => {
-                  // if (realFilter) {
-                  // const filterValues = {
-                  //     serial: serialNumber !== undefined ? serialNumber : "",
-                  //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                  //     application: e !== "" ? e.value : e,
-                  //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     memberId: userName !== "" ? userName.value : userName,
-                  // }
-                  // dispatch(handleCloudListFile(filterValues))
-                  // }
-                  // dispatch(RsetAppNameFilterFC(e))
+                  // dispatch(RsetSoftwareNameFilter(e));
+                  if (realFilter === true) {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: serialFilter,
+                      memberId: userFilter.value,
+                      // filename: filename,
+                      softwareNameFilter: e.value,
+                      fromDate:
+                        fromDateFilter !== null
+                          ? fromDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      toDate:
+                        toDateFilter !== null
+                          ? toDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
                 }}
                 placeholder="انتخاب"
               />
@@ -150,20 +185,26 @@ const UploadedFilesFilter = () => {
                 pick12HourFormat={false}
                 isGregorian={false}
                 timePicker={false}
-                // value={fromDateFilterFC}
-                onChange={(e) => {
-                  // if (realFilter) {
-                  // const filterValues = {
-                  //     serial: serialNumber !== undefined ? serialNumber : "",
-                  //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                  //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                  //     fromDate: e !== null ? e.format("YYYY/MM/DD") : "null",
-                  //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     memberId: userName !== "" ? userName.value : userName,
-                  // }
-                  // dispatch(handleCloudListFile(filterValues))
-                  // }
-                  // dispatch(RsetFromDateFilterFC(e))
+                value={fromDateFilter}
+                onChange={(value) => {
+                  dispatch(RsetFromDateFilter(value));
+                  if (realFilter === true) {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: serialFilter,
+                      memberId: userFilter.value,
+                      // filename: filename,
+                      // softwareNameFilter: e.value,
+                      fromDate:
+                        value !== null ? value.format("YYYY/MM/DD") : "null",
+                      toDate:
+                        toDateFilter !== null
+                          ? toDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
                 }}
                 className="form-control"
               />
@@ -171,20 +212,26 @@ const UploadedFilesFilter = () => {
             <Col xl="2">
               <label className="mb-1 mt-4">تا تاریخ:</label>
               <DatePicker
-                // value={toDateFilterFC}
-                onChange={(e) => {
-                  // if (realFilter) {
-                  // const filterValues = {
-                  //     serial: serialNumber !== undefined ? serialNumber : "",
-                  //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                  //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                  //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                  //     toDate: e !== null ? e.format("YYYY/MM/DD") : "null",
-                  //     memberId: userName !== "" ? userName.value : userName,
-                  // }
-                  // dispatch(handleCloudListFile(filterValues))
-                  // }
-                  // dispatch(RsetToDateFilterFC(e))
+                value={toDateFilter}
+                onChange={(value) => {
+                  dispatch(RsetToDateFilter(value));
+                  if (realFilter === true) {
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: serialFilter,
+                      memberId: userFilter.value,
+                      // filename: filename,
+                      // softwareNameFilter: e.value,
+                      fromDate:
+                        fromDateFilter !== null
+                          ? fromDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      toDate:
+                        value !== null ? value.format("YYYY/MM/DD") : "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                  }
                 }}
                 type="date"
                 inputFormat="YYYY-MM-DD"
@@ -198,16 +245,24 @@ const UploadedFilesFilter = () => {
               <div className=" d-flex justify-content-end">
                 <Button
                   onClick={() => {
-                    // const filterValues = {
-                    //     serial: serialNumber !== "" ? serialNumber : "",
-                    //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                    //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                    //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                    //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                    //     memberId: userName !== "" ? userName.value : userName,
-                    // }
-                    // dispatch(RsetIsLoadingCheckout(true))
-                    // dispatch(handleCloudListFile(filterValues))
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: serialFilter !== "" ? serialFilter : serialFilter,
+                      memberId:
+                        userFilter !== "" ? userFilter.value : userFilter,
+                      // filename: filename,
+                      // softwareNameFilter: e.value,
+                      fromDate:
+                        fromDateFilter !== null
+                          ? fromDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      toDate:
+                        toDateFilter !== null
+                          ? toDateFilter.format("YYYY/MM/DD")
+                          : "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
                   }}
                   className="me-2 mt-2 font12 "
                   variant="success"
@@ -216,15 +271,27 @@ const UploadedFilesFilter = () => {
                 </Button>
                 <Button
                   onClick={() => {
-                    // const filterValues = {
-                    //     serial: serialNumber !== "" ? serialNumber : "",
-                    //     filename: fileNameFilterFC !== "" ? fileNameFilterFC : "",
-                    //     application: appNameFilter !== "" ? appNameFilter.value : appNameFilter,
-                    //     fromDate: fromDateFilterFC !== null ? fromDateFilterFC.format("YYYY/MM/DD") : "null",
-                    //     toDate: toDateFilterFC !== null ? toDateFilterFC.format("YYYY/MM/DD") : "null",
-                    //     memberId: userName !== "" ? userName.value : userName,
-                    // }
-                    // dispatch(handleResetListFile(filterValues))
+                    if (realFilter === true) {
+                      const filterValues = {
+                        applicantId: localStorage.getItem("id"),
+                        serial:
+                          serialFilter !== "" ? serialFilter : serialFilter,
+                        memberId:
+                          userFilter !== "" ? userFilter.value : userFilter,
+                        // filename: filename,
+                        // softwareNameFilter: e.value,
+                        fromDate:
+                          fromDateFilter !== null
+                            ? fromDateFilter.format("YYYY/MM/DD")
+                            : "null",
+                        toDate:
+                          toDateFilter !== null
+                            ? toDateFilter.format("YYYY/MM/DD")
+                            : "null",
+                        type: 11,
+                      };
+                      dispatch(handleReqsList(filterValues));
+                    }
                   }}
                   className="font12  mt-2"
                   variant="secondary"

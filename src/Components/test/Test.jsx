@@ -253,107 +253,500 @@ const Test = () => {
   };
 
   return (
-    <section className="min-vh-100 vw-100 vh-100 position-absolute left-0 right-0 top-0 inputDesignPrimary ">
-      <Container
-        fluid
-        className="d-flex min-vh-100 justify-content-center align-items-center login-main-img"
-      >
-        <section className="d-flex border border-1 border-secondary login-size p-2 borderRadius bg-dark shadow-lg">
-          <div className="w-100 d-flex login-bg borderRadius">
-            <div className="d-flex justify-content-end me-5 align-items-start mt-3 text-white w-100 borderRadius">
-              <Form>
-                <Row className="d-flex flex-column">
-                  <Col md="12" className="px-0 mb-4">
-                    <div className="text-center text-white">
-                      <img
-                        className="d-none d-md-inline font12"
-                        src="../../images/kavehLogo4.png"
-                        style={{
-                          width: "200px",
-                          height: "200px",
-                          filter: "invert(100%)",
-                        }}
-                      />
-                      <h1 className="font25 fw-bold headersPhoneFontSize lh-base">
-                        سامانه اتوماسیون گروه صنعتی شیشه کاوه
-                      </h1>
-                    </div>
-                  </Col>
-                  <Col className="mt-4">
-                    <Form.Group className="mb-4">
-                      <Form.Control
-                        placeholder="نام کاربری / کدملی"
-                        type="text"
-                        dir="ltr"
-                        value={userName}
-                        name="userName"
-                        className="text-white"
-                        onChange={(e) => {
-                          dispatch(RsetUserName(e.target.value));
-                        }}
-                        ref={userNameRef}
-                      />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <div className="position-relative">
-                        <Form.Control
-                          // className="p-5"
-                          autocomplete="off"
-                          dir="ltr"
-                          id="passInput"
-                          placeholder="رمزعبور"
-                          type={passType}
-                          value={password}
-                          name="password"
-                          onChange={(e) => {
-                            dispatch(RsetPassword(e.target.value));
-                          }}
-                          ref={passwordRef}
-                        />
-                        {password ? (
-                          <FontAwesomeIcon
-                            icon={passType === "text" ? faEye : faEyeSlash}
-                            className={`position-absolute cursorPointer start-0 top-0 eyeInputPass`}
-                            onClick={handlePassType}
+    <div>
+      {loading ? (
+        <Sugar />
+      ) : (
+        <section className="min-vh-100 vw-100 vh-100 position-absolute left-0 right-0 top-0 inputDesignPrimary ">
+          <Container
+            fluid
+            className="d-flex min-vh-100 justify-content-center align-items-center login-main-img"
+          >
+            <section className="d-flex border border-1 border-secondary borderRadius bg-dark shadow-lg mt-5 mb-5 p-2">
+              <div
+                className={`w-100 h-100 d-flex login-bg borderRadius login-padding`}
+              >
+                <div className="d-flex justify-content-center align-items-center text-white w-100 borderRadius ">
+                  <Form>
+                    <Row className="d-flex flex-column mb-4 ms-0 md-ms-5">
+                      <Col md="12" className="px-0 mb-4">
+                        <div className="text-center text-white">
+                          <img
+                            className="font12 img-fluid"
+                            src="../../images/kaveh_Logo.png"
+                            style={{
+                              filter: "invert(100%)",
+                            }}
                           />
-                        ) : null}
-                      </div>
-                    </Form.Group>
-                    <div
-                      className="cursorPointer mb-3 forgetPass"
-                      // onClick={() => {
-                      //   dispatch(RsetShowChangePassCom(true));
-                      // }}
-                    >
-                      فراموشی رمز عبور
-                    </div>
-                    <button
-                      type="button"
-                      className="btn w-100 text-white border-0 buttonDesignPrimary"
-                      onClick={(e) => {
-                        submitFormBtn(e);
-                      }}
-                    >
-                      ورود
-                    </button>
-                  </Col>
-                  <a
-                    href={window.location.origin + "/files/Automation.pdf"}
-                    download
-                    className="text-white font12 mt-3 text-decoration"
-                  >
-                    دانلود فایل راهنمای استفاده از اتوماسیون
-                  </a>
-                </Row>
-              </Form>
-            </div>
-            <div className="d-flex justify-content-end align-items-center  text-white w-100 borderRadius p-4 h-100">
-              <div className="h-100 w-75 login-main-img-sub borderRadius shadow"></div>
-            </div>
-          </div>
+                          <h1 className="font25 fw-bold headersPhoneFontSize lh-base">
+                            سامانه اتوماسیون گروه صنعتی شیشه کاوه
+                          </h1>
+                        </div>
+                      </Col>
+                      <Col className="mt-4">
+                        {!showChangePassCom ? (
+                          <div>
+                            <Form.Group className="mb-4">
+                              <Form.Control
+                                placeholder="نام کاربری / کدملی"
+                                type="text"
+                                dir="ltr"
+                                value={userName}
+                                name="userName"
+                                className="text-white"
+                                onChange={(e) => {
+                                  dispatch(RsetUserName(e.target.value));
+                                }}
+                                ref={userNameRef}
+                              />
+                              {!userName && (
+                                <p className="font12 text-warning  mb-0 mt-1">
+                                  {formErrors.userName}
+                                </p>
+                              )}
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                              <div className="position-relative">
+                                <Form.Control
+                                  // className="p-5"
+                                  autocomplete="off"
+                                  dir="ltr"
+                                  id="passInput"
+                                  placeholder="رمزعبور"
+                                  type={passType}
+                                  value={password}
+                                  name="password"
+                                  onChange={(e) => {
+                                    dispatch(RsetPassword(e.target.value));
+                                  }}
+                                  ref={passwordRef}
+                                />
+                                {password ? (
+                                  <FontAwesomeIcon
+                                    icon={
+                                      passType === "text" ? faEye : faEyeSlash
+                                    }
+                                    className={`position-absolute cursorPointer start-0 top-0 eyeInputPass`}
+                                    onClick={handlePassType}
+                                  />
+                                ) : null}
+                              </div>
+                            </Form.Group>
+                          </div>
+                        ) : (
+                          <div>
+                            <Row>
+                              <h1 className="text-center mb-5">
+                                برای بازیابی رمز عبور لطفا اطلاعات زیر را تکمیل
+                                کنید
+                              </h1>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <NumberFormat
+                                  type="text"
+                                  value={userName}
+                                  name="userName"
+                                  id="registerUserName"
+                                  disabled={userNameDisabled}
+                                  onChange={(e) => {
+                                    dispatch(RsetUserName(e.target.value));
+                                  }}
+                                  onBlur={(e) => {
+                                    if (e.target.value !== "") {
+                                      handleCheckUserRegister();
+                                    }
+                                    function isValidIranianNationalCode(
+                                      meli_code
+                                    ) {
+                                      if (meli_code.length == 10) {
+                                        if (
+                                          meli_code == "1111111111" ||
+                                          meli_code == "0000000000" ||
+                                          meli_code == "2222222222" ||
+                                          meli_code == "3333333333" ||
+                                          meli_code == "4444444444" ||
+                                          meli_code == "5555555555" ||
+                                          meli_code == "6666666666" ||
+                                          meli_code == "7777777777" ||
+                                          meli_code == "8888888888" ||
+                                          meli_code == "9999999999"
+                                        ) {
+                                          return false;
+                                        }
+                                        var c = parseInt(meli_code.charAt(9));
+                                        var n =
+                                          parseInt(meli_code.charAt(0)) * 10 +
+                                          parseInt(meli_code.charAt(1)) * 9 +
+                                          parseInt(meli_code.charAt(2)) * 8 +
+                                          parseInt(meli_code.charAt(3)) * 7 +
+                                          parseInt(meli_code.charAt(4)) * 6 +
+                                          parseInt(meli_code.charAt(5)) * 5 +
+                                          parseInt(meli_code.charAt(6)) * 4 +
+                                          parseInt(meli_code.charAt(7)) * 3 +
+                                          parseInt(meli_code.charAt(8)) * 2;
+                                        var r = n - parseInt(n / 11) * 11;
+                                        if (
+                                          (r == 0 && r == c) ||
+                                          (r == 1 && c == 1) ||
+                                          (r > 1 && c == 11 - r)
+                                        ) {
+                                          return true;
+                                        } else {
+                                          return false;
+                                        }
+                                      } else {
+                                        return false;
+                                      }
+                                    }
+                                    // const test = isValidIranianNationalCode(
+                                    //   userNameRef.current.state.numAsString
+                                    // );
+                                  }}
+                                  ref={userNameRef}
+                                  format="# # # # # # # # # #"
+                                  mask="-"
+                                  dir="ltr"
+                                  placeholder="کدملی"
+                                  className={userNameValidationClass}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  <div
+                                    id="userName-required"
+                                    className="d-none"
+                                  >
+                                    <span className="font12 mb-1">
+                                      واردکردن کد ملی اجباری است!
+                                    </span>
+                                  </div>
+                                  <div
+                                    id="userName-validation"
+                                    className="d-none"
+                                  >
+                                    <span className="font12">
+                                      کد ملی حداقل باید 10 کاراکتر باشد!
+                                    </span>
+                                  </div>
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <NumberFormat
+                                  type="text"
+                                  value={personalCode}
+                                  name="personalCode"
+                                  id="registerPersonalCode"
+                                  onBlur={(e) => {
+                                    if (e.target.value !== "") {
+                                      handleCheckUserRegister();
+                                    }
+                                  }}
+                                  onChange={(e) => {
+                                    setPersonalCode(e.target.value);
+                                  }}
+                                  ref={personalCodeRef}
+                                  format="# # # # # # #"
+                                  mask="-"
+                                  dir="ltr"
+                                  placeholder="کدپرسنلی"
+                                  className={personalCodeValidationClass}
+                                  disabled={personalCodeDisabled}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  <div
+                                    id="personalCode-validation"
+                                    className="d-none"
+                                  >
+                                    <span className="font12">
+                                      کدپرسنلی باید 7 کاراکتر باشد!
+                                    </span>
+                                  </div>
+                                  <div
+                                    id="personalCode-validation2"
+                                    className="d-none"
+                                  >
+                                    <span className="font12">
+                                      کدپرسنلی باید با 6 شروع شود!
+                                    </span>
+                                  </div>
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                            </Row>
+                            <Row>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <NumberFormat
+                                  type="text"
+                                  value={birthCertificateNumber}
+                                  name="birthCertificateNumber"
+                                  id="registerBirthCertificateNumber"
+                                  onChange={(e) => {
+                                    setBirthCertificateNumber(e.target.value);
+                                  }}
+                                  ref={birthCertificateNumberRef}
+                                  maxLength="10"
+                                  dir="ltr"
+                                  placeholder="شماره شناسنامه"
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  <div
+                                    id="birthCertificateNumber-required"
+                                    className="d-none"
+                                  >
+                                    <span className="font12 mb-1">
+                                      واردکردن شماره شناسنامه اجباری است!
+                                    </span>
+                                  </div>
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <NumberFormat
+                                  type="text"
+                                  value={insuranceNumber}
+                                  name="insuranceNumber"
+                                  id=""
+                                  onChange={(e) => {
+                                    setInsuranceNumber(e.target.value);
+                                  }}
+                                  ref={insuranceNumberRef}
+                                  dir="ltr"
+                                  placeholder="شماره بیمه"
+                                  className={insuranceNumberValidationClass}
+                                  // disabled={insuranceNumberDisabled}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  <div
+                                    id="insuranceNumber-required"
+                                    className="d-none"
+                                  >
+                                    <span className="font12 mb-1">
+                                      واردکردن شماره بیمه اجباری است!
+                                    </span>
+                                  </div>
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                            </Row>
+                            <Row>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <DatePicker
+                                  inputReadOnly
+                                  name="birthday"
+                                  isGregorian={false}
+                                  timePicker={false}
+                                  showTodayButton={false}
+                                  placeholder="تاریخ تولد"
+                                  ref={birthdayRef}
+                                  inputFormat="YYYY-MM-DD"
+                                  inputJalaaliFormat="jYYYY/jMM/jDD"
+                                  value={birthday}
+                                  className="form-control"
+                                  // disabled={birthdayDisabled}
+                                  onChange={(e) => {
+                                    setBirthday(e);
+                                  }}
+                                />
+                                <div
+                                  id="birthday-validation"
+                                  className="d-none mt-1"
+                                >
+                                  <span className="text-danger font12">
+                                    تاریخ تولد معتبر نمی باشد!
+                                  </span>
+                                </div>
+                              </Form.Group>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <NumberFormat
+                                  type="text"
+                                  value={phoneNumber}
+                                  name="phoneNumber"
+                                  onChange={(e) => {
+                                    setPhoneNumber(e.target.value);
+                                  }}
+                                  ref={phoneNumberRef}
+                                  format="# # # # # # # # # # #"
+                                  mask="-"
+                                  dir="ltr"
+                                  placeholder="شماره موبایل"
+                                  className={phoneNumberValidationClass}
+                                  // disabled={phoneNumberDisabled}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  <div
+                                    id="phoneNumber-required"
+                                    className="d-none"
+                                  >
+                                    <span className="font12 mb-1">
+                                      واردکردن شماره موبایل اجباری است!
+                                    </span>
+                                  </div>
+                                  <div
+                                    id="phoneNumber-validation"
+                                    className="d-none"
+                                  >
+                                    <span className="font12">
+                                      شماره موبایل حداقل باید 11 کاراکتر باشد!
+                                    </span>
+                                  </div>
+                                  <div
+                                    id="phoneNumber-validation2"
+                                    className="d-none"
+                                  >
+                                    <span className="font12">
+                                      شماره موبایل باید با 09 شروع شود!
+                                    </span>
+                                  </div>
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                            </Row>
+                            <Row>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <Form.Control
+                                  type="password"
+                                  autoComplete="new-password"
+                                  value={password}
+                                  name="password"
+                                  onChange={(e) => {
+                                    dispatch(RsetPassword(e.target.value));
+                                  }}
+                                  ref={passwordRef}
+                                  placeholder="رمز عبور"
+                                  // disabled={passwordDisabled}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  <div
+                                    id="password-required"
+                                    className="d-none"
+                                  >
+                                    <span className="font12 mb-1">
+                                      واردکردن رمز عبور اجباری است!
+                                    </span>
+                                  </div>
+                                  <div
+                                    id="password-validation"
+                                    className="d-none"
+                                  >
+                                    <span className="font12">
+                                      رمز عبور باید شامل حروف و عدد و حداقل 6
+                                      کاراکتر باشد!
+                                    </span>
+                                  </div>
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                              <Form.Group
+                                as={Col}
+                                md="6"
+                                className="mb-4 px-0 px-md-3"
+                              >
+                                <Form.Control
+                                  type="password"
+                                  value={confirmPassword}
+                                  name="confirmPassword"
+                                  onChange={(e) => {
+                                    setConfirmPassword(e.target.value);
+                                  }}
+                                  ref={confirmPasswordRef}
+                                  placeholder="تکرار رمز عبور"
+                                  // disabled={confirmPasswordDisabled}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  <div
+                                    id="passwordConfirm-required"
+                                    className="d-none"
+                                  >
+                                    <span className="font12 mb-1">
+                                      واردکردن تکرار رمز عبور اجباری است!
+                                    </span>
+                                  </div>
+                                  <div
+                                    id="passwordConfirm-validation"
+                                    className="d-none"
+                                  >
+                                    <span className="font12">
+                                      رمزهای وارد شده یکسان نیستند!
+                                    </span>
+                                  </div>
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                            </Row>
+                          </div>
+                        )}
+
+                        <div className="cursorPointer mb-3 forgetPass">
+                          {!showChangePassCom ? (
+                            <div
+                              className="font12"
+                              onClick={() => {
+                                dispatch(RsetShowChangePassCom(true));
+                              }}
+                            >
+                              فراموشی رمز عبور
+                            </div>
+                          ) : (
+                            <div
+                              className="font12"
+                              onClick={() => {
+                                dispatch(RsetShowChangePassCom(false));
+                              }}
+                            >
+                              ورود به سامانه
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          className="btn w-100 text-white border-0 buttonDesignPrimary"
+                          onClick={(e) => {
+                            submitFormBtn(e);
+                          }}
+                        >
+                          {!showChangePassCom ? "ورود" : "بازیابی رمز عبور"}
+                        </button>
+                      </Col>
+                      <a
+                        href={window.location.origin + "/files/Automation.pdf"}
+                        download
+                        className="text-white font12 mt-3 text-decoration mb-5"
+                      >
+                        دانلود فایل راهنمای استفاده از اتوماسیون
+                      </a>
+                    </Row>
+                  </Form>
+                </div>
+                {/* {!showChangePassCom ? (
+                  <div className="d-none d-xxl-flex justify-content-end align-items-center text-white borderRadius">
+                    <div className="borderRadius login-main-img-sub img-fluid" />
+                  </div>
+                ) : null} */}
+              </div>
+            </section>
+          </Container>
         </section>
-      </Container>
-    </section>
+      )}
+    </div>
   );
 };
 

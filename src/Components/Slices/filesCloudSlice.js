@@ -78,7 +78,9 @@ export const handleUploadSubmit = createAsyncThunk(
         softwareAccessId: uploadAccessLevel.value,
         softwareVersion: uploadVersion,
         description: uploadDescription,
+        userId: localStorage.getItem("id"),
       };
+      console.log(values);
       const submitCloudRes = await submitCloud(files, values);
       console.log(submitCloudRes);
       if (submitCloudRes.data.code === 415) {
