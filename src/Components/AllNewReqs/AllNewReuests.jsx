@@ -17,6 +17,7 @@ import { selectShowFilter , RsetShowFilter , handleTabs } from "../Slices/filter
 import AcceptRequestModal from "../Modals/WarehouseReqsModals/AcceptRequestModal";
 import NextAcceptRequestModal from "../Modals/WarehouseReqsModals/NextAcceptRequestModal";
 import CancelRequestModal from "../Modals/WarehouseReqsModals/CancelRequestModal";
+import { selectReqsList } from "../Slices/mainSlices";
 
 // import EditRequestModal from "../Modals/WarehouseReqsModals/EditRequestModal";
 // import ViewRequestModal from "../Modals/WarehouseReqsModals/ViewRequestModal";
@@ -29,6 +30,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
     const currentReqInfo = useSelector(selectCurrentReqInfo);
     const showFilter = useSelector(selectShowFilter);
     const activeTab = useSelector(selectActiveTab);
+    const reqsList = useSelector(selectReqsList)
 
     const mainContext = useContext(rootContext);
     const {
@@ -50,7 +52,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
 
     } = allNewRequestsContext;
     useEffect(() => {
-        const filterParams = {
+        const filterValues = {
             applicantId: localStorage.getItem('id'),
             memberId: '',
             type: '',
@@ -58,8 +60,10 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
             fromDate: 'null',
             toDate: 'null',
         }
-        handleGetAllNewReqsList(filterParams);
+        dispatch(handleReqsList(filterValues));
     }, [])
+
+    console.log(reqsList);
 
     const [data, setData] = useState([]);
     const [load, setload] = useState(false);
@@ -249,7 +253,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
     }, []);
 
     return (
-        <Container>
+        <Container fluid>
             <Row>
                 <Col>
                     {/* {menuPermission ? */}
@@ -303,7 +307,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
                             <Fragment>
                                 {/* <AllNewReqsFilter /> */}
                                 <AllNewReqsList
-                                    requests={allNewReqsList}
+                                    requests={reqsList}
                                     columns={columns}
                                     data={data}
                                     onSort={handleSort}

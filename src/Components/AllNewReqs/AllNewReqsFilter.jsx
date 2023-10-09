@@ -97,7 +97,7 @@ const AllNewReqsFilter = () => {
                     }}
                 />
             </Form.Group>
-            <Form.Group as={Col} md='4' lg='3' xl='2' className='mb-4 mb-xl-0'
+            <Form.Group as={Col} md='4' lg='3' xl='3' className='mb-4 mb-xl-0'
                 onKeyUp={(option) => {
                     option.which = option.which || option.keyCode;
                     if (option.which === 13) {

@@ -8,7 +8,11 @@ import {
 } from "../../Services/r-ghanavatian/fileCloud";
 import { postAction } from "../../Services/r-ghanavatian/mainApi";
 import { errorMessage, successMessage } from "../../utils/message";
-import { RsetIsLoadingCheckout, RsetRealFilter } from "./mainSlices";
+import {
+  RsetIsLoadingCheckout,
+  RsetLoading,
+  RsetRealFilter,
+} from "./mainSlices";
 import { softwareLists } from "../../Services/softwareServices";
 import { RsetFormErrors } from "./mainSlices";
 import { getCloudAccessList } from "../../Services/cloudFileService";
@@ -16,6 +20,12 @@ import {
   submitCloud,
   getFileCloudDownload,
 } from "../../Services/cloudFileService";
+import {
+  RsetSerialFilter,
+  RsetUserFilter,
+  RsetFromDateFilter,
+  RsetToDateFilter,
+} from "./filterSlices";
 const initialState = {
   uploadSoftwareName: "",
   uploadSoftwareNameOption: [],
@@ -81,12 +91,14 @@ export const handleUploadSubmit = createAsyncThunk(
         userId: localStorage.getItem("id"),
       };
       console.log(values);
+      dispatch(RsetLoading(true));
       const submitCloudRes = await submitCloud(files, values);
       console.log(submitCloudRes);
       if (submitCloudRes.data.code === 415) {
         files = [];
         dispatch(RsetUploadFile(""));
         successMessage("آپلود فایل با موفقیت انجام شد");
+        dispatch(RsetLoading(false));
         dispatch(handleResetUpload());
       } else {
         errorMessage("خطا !");
@@ -97,12 +109,19 @@ export const handleUploadSubmit = createAsyncThunk(
   }
 );
 
-export const handleReqFiles = createAsyncThunk(
-  "filesCloud/handleReqFiles",
-  async (reqId, { dispatch, getState }) => {
+export const handleCloudReqFiles = createAsyncThunk(
+  "filesCloud/handleCloudReqFiles",
+  async ({ reqId, fileName }, { dispatch, getState }) => {
     try {
       const getFileCloudDownloadRes = await getFileCloudDownload(reqId);
       console.log(getFileCloudDownloadRes);
+      const url = window.URL.createObjectURL(getFileCloudDownloadRes.data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (err) {
       console.log(err);
     }
@@ -118,6 +137,17 @@ export const handleResetUpload = createAsyncThunk(
     dispatch(RsetUploadDescription(""));
     dispatch(RsetUploadFile(""));
     dispatch(RsetFormErrors(""));
+  }
+);
+export const handleResetUploadFilters = createAsyncThunk(
+  "filesCloud/handleResetUploadFilters",
+  async (obj, { dispatch, getState }) => {
+    dispatch(RsetSerialFilter(""));
+    dispatch(RsetRealFilter(false));
+    dispatch(RsetUserFilter(""));
+    dispatch(RsetFromDateFilter(null));
+    dispatch(RsetToDateFilter(null));
+    dispatch(RsetUploadSoftwareNameFilter(""));
   }
 );
 

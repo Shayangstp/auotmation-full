@@ -7,7 +7,7 @@ import moment from "moment-jalaali";
 import MyReqsItem from "./MyReqsItem";
 import MyReqsFilter from "./MyReqsFilter";
 import { useDispatch, useSelector } from "react-redux";
-import { handleMyReqsList, selectLoading, selectReqsList, handleUserInformation, handleUserImage, selectUserInfoModal, handleCurrentReqInfo } from '../Slices/mainSlices';
+import {  selectLoading, selectReqsList, handleUserInformation, handleUserImage, selectUserInfoModal, handleCurrentReqInfo , handleMyReqsList , selectMyReqsList } from '../Slices/mainSlices';
 import OfficeViewRequestM from "../Modals/OfficeReqsModals/ViewRequestModal";
 import WarehouseViewRequestM from "../Modals/WarehouseReqsModals/ViewRequestModal";
 import ViewOverTime from "../Modals/OfficeReqsModals/overTimeModals/ViewOverTime";
@@ -24,12 +24,13 @@ const MyReqsList = ({ setPageTitle }) => {
 
     const dispatch = useDispatch();
     const viewReqModal = useSelector(selectViewReqModal);
-    const reqsList = useSelector(selectReqsList);
     const loading = useSelector(selectLoading);
     const showFilter = useSelector(selectShowFilter);
     const processModal = useSelector(selectProcessModal);
     const userInfoModal = useSelector(selectUserInfoModal);
     const currentReqType = useSelector(selectCurrentReqType);
+    // const reqsList = useSelector(selectReqsList)
+    const myRequestsList = useSelector(selectMyReqsList);
 
     const mainContext = useContext(rootContext);
     const {
@@ -43,6 +44,22 @@ const MyReqsList = ({ setPageTitle }) => {
     useEffect(() => {
         setPageTitle('درخواست های من');
     }, [setPageTitle]);
+
+
+    useEffect(() => {
+        const filterValues = {
+            applicantId: localStorage.getItem('id'),
+            serial: '',
+            type: '',
+            status: '',
+            fromDate: 'null',
+            toDate: 'null',
+        }
+        console.log(filterValues);
+        dispatch(handleMyReqsList(filterValues));
+    }, [])
+
+    console.log(myRequestsList);
 
     const [data, setData] = useState([]);
     const [load, setload] = useState(false);
@@ -235,18 +252,6 @@ const MyReqsList = ({ setPageTitle }) => {
         }
     }
 
-    useEffect(() => {
-        const filterValues = {
-            applicantId: localStorage.getItem('id'),
-            memberId: '',
-            type: 0,
-            status: '',
-            fromDate: 'null',
-            toDate: 'null',
-        }
-        dispatch(handleMyReqsList(filterValues));
-    }, [])
-
     return (
         <Container fluid>
             {/* {menuPermission ? */}
@@ -283,7 +288,7 @@ const MyReqsList = ({ setPageTitle }) => {
                     {loading ? <Loading /> : null}
                     <div>
                         <MyReqsItem
-                            requests={reqsList}
+                            requests={myRequestsList}
                             columns={columns}
                             data={data}
                             onSort={handleSort}

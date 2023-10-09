@@ -66,7 +66,9 @@ const initialState = {
   usersByRoleOptions: [],
   roles: [],
   rolesOptions: [{ value: 26, label: 'تاییدکننده QC' }],
-  addRole: null
+  addRole: null,
+
+  myReqsList : []
 };
 
 export const handleUnits = createAsyncThunk(
@@ -730,10 +732,10 @@ export const handleMyReqsList = createAsyncThunk(
     dispatch(RsetLoading(true));
     try {
       const reqsListRes = await getMyReqsList(filterValues);
+      console.log(reqsListRes);
       if (reqsListRes.data.code === 415) {
         dispatch(RsetLoading(false));
-        dispatch(RsetRequestsList(reqsListRes.data.list));
-        dispatch(RsetRequestMembs(reqsListRes.data.members));
+        dispatch(RsetMyReqsList(reqsListRes.data.list));
       } else {
         errorMessage("اطلاعات یافت نشد!");
         dispatch(RsetLoading(false));
@@ -1115,6 +1117,10 @@ const mainSlices = createSlice({
     RsetRequestMembs: (state, { payload }) => {
       return { ...state, requestMembs: payload };
     },
+    RsetMyReqsList: (state, { payload }) => {
+      return { ...state, myReqsList: payload };
+    },
+
   },
   extraReducers: {
     [handleHistories.fulfilled]: (state, { payload }) => {
@@ -1176,6 +1182,7 @@ export const {
   RsetLoggedInUserImage,
 
   RsetRequestMembs
+  , RsetMyReqsList
 } = mainSlices.actions;
 
 export const selectUnit = (state) => state.mainHome.unit;
@@ -1224,5 +1231,8 @@ export const selectUsersByRoleOptions = (state) => state.mainHome.usersByRoleOpt
 export const selectRoles = (state) => state.mainHome.roles;
 export const selectRolesOptions = (state) => state.mainHome.rolesOptions;
 export const selectAddRole = (state) => state.mainHome.addRole;
+export const selectMyReqsList = (state) => state.mainHome.myReqsList;
+
+
 
 export default mainSlices.reducer;

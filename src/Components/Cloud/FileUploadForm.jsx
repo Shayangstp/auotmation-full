@@ -23,11 +23,16 @@ import {
   RsetUploadFile,
   handleUploadSubmit,
 } from "../Slices/filesCloudSlice";
-import { RsetFormErrors, selectFormErrors } from "../Slices/mainSlices";
+import {
+  RsetFormErrors,
+  selectFormErrors,
+  selectLoading,
+} from "../Slices/mainSlices";
 import { handleAccessLevelOption } from "../Slices/filesCloudSlice";
 import FileUploader from "./FileUploader";
 import { submitCloud } from "../../Services/cloudFileService";
 import { errorMessage, successMessage } from "../../utils/message";
+import Loading from "../Common/Loading";
 
 const FileUploadForm = ({ setPageTitle }) => {
   useEffect(() => {
@@ -43,6 +48,7 @@ const FileUploadForm = ({ setPageTitle }) => {
   const uploadDescription = useSelector(selectUploadDescription);
   const formErrors = useSelector(selectFormErrors);
   const uploadFile = useSelector(selectUploadFile);
+  const loading = useSelector(selectLoading);
 
   useEffect(() => {
     dispatch(handleSoftwareNameOption());
@@ -92,7 +98,8 @@ const FileUploadForm = ({ setPageTitle }) => {
   };
 
   return (
-    <Container fluid className="mt-5">
+    <Container fluid className="mt-5 position-relative">
+      {loading ? <Loading /> : null}
       <section className="lightGray2-bg p-3 shadow borderRadius border border-white border-2">
         <div className="shadow p-4 mb-5 borderRadius lightGray-bg  border border-white font16">
           فرم آپلود فایل

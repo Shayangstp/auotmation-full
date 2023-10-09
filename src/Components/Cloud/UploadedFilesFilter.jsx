@@ -24,8 +24,10 @@ import {
 import {
   selectUploadSoftwareNameFilter,
   RsetUploadSoftwareNameFilter,
-  selectUploadSoftwareNameOption,
   handleSoftwareNameOption,
+  RsetUploadSoftwareNameOption,
+  selectUploadSoftwareNameOption,
+  handleResetUploadFilters,
 } from "../Slices/filesCloudSlice";
 import { handleReqsList } from "../Slices/mainSlices";
 import { useEffect } from "react";
@@ -36,9 +38,12 @@ const UploadedFilesFilter = () => {
   const fromDateFilter = useSelector(selectFromDateFilter);
   const toDateFilter = useSelector(selectToDateFilter);
   const softwareNameFilter = useSelector(selectUploadSoftwareNameFilter);
-  const softwareNameOption = useSelector(selectUploadSoftwareNameOption);
   const userFilter = useSelector(selectUserFilter);
   const requestMembs = useSelector(selectRequestMemb);
+  const uploadSoftwareNameFilterOption = useSelector(
+    selectUploadSoftwareNameOption
+  );
+  const uploadSoftwareNameFilter = useSelector(selectUploadSoftwareNameFilter);
 
   const realFilter = useSelector(selectRealFilter);
 
@@ -92,7 +97,7 @@ const UploadedFilesFilter = () => {
                 }}
               />
             </Col>
-            <Col xl="2">
+            <Col xl="3">
               <label className="mb-1  mt-4">ارسال کننده:</label>
               <Select
                 value={userFilter}
@@ -120,47 +125,19 @@ const UploadedFilesFilter = () => {
                 placeholder="انتخاب"
               />
             </Col>
-            <Col xl="2">
-              <label className="mb-1 mt-4">نام فایل:</label>
-              <Form.Control
-                onChange={(e) => {
-                  // dispatch(RsetUserFilter(e));
-                  if (realFilter === true) {
-                    const filterValues = {
-                      applicantId: localStorage.getItem("id"),
-                      serial: serialFilter,
-                      memberId: userFilter.value,
-                      // filename: e.target.value,
-                      fromDate:
-                        fromDateFilter !== null
-                          ? fromDateFilter.format("YYYY/MM/DD")
-                          : "null",
-                      toDate:
-                        toDateFilter !== null
-                          ? toDateFilter.format("YYYY/MM/DD")
-                          : "null",
-                      type: 11,
-                    };
-                    dispatch(handleReqsList(filterValues));
-                  }
-                }}
-                placeholder=""
-              />
-            </Col>
-            <Col xl="2">
+            <Col xl="3">
               <label className="mb-1 mt-4">نام نرم افزار:</label>
               <Select
-                value={softwareNameFilter}
-                options={softwareNameOption}
+                value={uploadSoftwareNameFilter}
+                options={uploadSoftwareNameFilterOption}
                 onChange={(e) => {
-                  // dispatch(RsetSoftwareNameFilter(e));
+                  dispatch(RsetUploadSoftwareNameFilter(e));
                   if (realFilter === true) {
                     const filterValues = {
                       applicantId: localStorage.getItem("id"),
                       serial: serialFilter,
                       memberId: userFilter.value,
-                      // filename: filename,
-                      softwareNameFilter: e.value,
+                      softwareId: e.value,
                       fromDate:
                         fromDateFilter !== null
                           ? fromDateFilter.format("YYYY/MM/DD")
@@ -250,8 +227,7 @@ const UploadedFilesFilter = () => {
                       serial: serialFilter !== "" ? serialFilter : serialFilter,
                       memberId:
                         userFilter !== "" ? userFilter.value : userFilter,
-                      // filename: filename,
-                      // softwareNameFilter: e.value,
+                      softwareId: uploadSoftwareNameFilter.value,
                       fromDate:
                         fromDateFilter !== null
                           ? fromDateFilter.format("YYYY/MM/DD")
@@ -271,27 +247,18 @@ const UploadedFilesFilter = () => {
                 </Button>
                 <Button
                   onClick={() => {
-                    if (realFilter === true) {
-                      const filterValues = {
-                        applicantId: localStorage.getItem("id"),
-                        serial:
-                          serialFilter !== "" ? serialFilter : serialFilter,
-                        memberId:
-                          userFilter !== "" ? userFilter.value : userFilter,
-                        // filename: filename,
-                        // softwareNameFilter: e.value,
-                        fromDate:
-                          fromDateFilter !== null
-                            ? fromDateFilter.format("YYYY/MM/DD")
-                            : "null",
-                        toDate:
-                          toDateFilter !== null
-                            ? toDateFilter.format("YYYY/MM/DD")
-                            : "null",
-                        type: 11,
-                      };
-                      dispatch(handleReqsList(filterValues));
-                    }
+                    const filterValues = {
+                      applicantId: localStorage.getItem("id"),
+                      serial: "",
+                      memberId: "",
+                      // filename: filename,
+                      softwareId: "",
+                      fromDate: "null",
+                      toDate: "null",
+                      type: 11,
+                    };
+                    dispatch(handleReqsList(filterValues));
+                    dispatch(handleResetUploadFilters());
                   }}
                   className="font12  mt-2"
                   variant="secondary"

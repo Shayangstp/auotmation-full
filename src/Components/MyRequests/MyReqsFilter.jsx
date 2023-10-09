@@ -215,7 +215,7 @@ const MyReqsFilter = () => {
                             const filterValues = {
                             applicantId: localStorage.getItem('id'),
                             serial : serialFilter !== "" ? serialFilter : serialFilter,
-                            type: 0,
+                            type: "",
                             status: statusFilter !== '' ? statusFilter.value : statusFilter,
                             fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
                             toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
@@ -227,10 +227,10 @@ const MyReqsFilter = () => {
                         <Button variant='secondary' className='font12 ms-1' onClick={() => {
                             const filterValues = {
                                 applicantId: localStorage.getItem('id'),
-                                type: 0,
+                                type: "",
                                 status: "",
-                                fromDate: null,
-                                toDate: null,
+                                fromDate: "null",
+                                toDate: "null",
                             }
                             dispatch(handleMyReqsList(filterValues));
                             dispatch(RsetSerialFilter(""))

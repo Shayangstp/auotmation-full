@@ -85,12 +85,12 @@ export const handleCurrentReqComments = createAsyncThunk(
   );
   export const handleReqFiles = createAsyncThunk(
     "currentReq/handleReqFiles",
-    async (reqId, index, multi, justShow, fileName, { dispatch, getState }) => {
+    async ({reqId, index, multi, justShow, fileName}, { dispatch, getState }) => {
         dispatch(RsetLoading(true));
         try {
             const reqFilesRes = await getITJReqFileList(reqId, index, multi, justShow);
             if (reqFilesRes.data.code === 415) {
-                dispatch(RsetCurrentReqProcess(reqFilesRes.data.list));
+                dispatch(RsetCurrentReqFiles(reqFilesRes.data.files));
                 dispatch(RsetLoading(false));
             } else if(reqFilesRes.data.size !== undefined){
                 const url = window.URL.createObjectURL(reqFilesRes.data);

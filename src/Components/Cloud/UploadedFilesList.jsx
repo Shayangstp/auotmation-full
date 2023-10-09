@@ -55,7 +55,7 @@ import {
   RsetSerialFilter,
   handleTabs,
 } from "../Slices/filterSlices";
-import { handleReqFiles } from "../Slices/filesCloudSlice";
+import { handleCloudReqFiles } from "../Slices/filesCloudSlice";
 import FileClodFilter from "./UploadedFilesFilter";
 import UserInfoModal from "../Modals/UserInfoModal";
 import { Link } from "react-router-dom";
@@ -96,12 +96,9 @@ const UploadedFilesList = ({ setPageTitle }) => {
       applicantId: localStorage.getItem("id"),
       serial: "",
       memberId: "",
-      mDep: "",
-      status: "",
       fromDate: "null",
       toDate: "null",
       type: 11,
-      // group: undefined,
     };
     console.log(filterValues);
     dispatch(handleReqsList(filterValues));
@@ -318,16 +315,13 @@ const UploadedFilesList = ({ setPageTitle }) => {
   };
 
   const handleDownloadFile = (request) => {
-    console.log(request.requestId);
     return (
       <div className="text-center cursorPointer">
         <FontAwesomeIcon
           icon={faFile}
           className="font24"
           onClick={() => {
-            console.log("hi");
-            // dispatch(handleReqFiles(request.requestId));
-            dispatch(handleReqFiles(request.requestId));
+            dispatch(handleCloudReqFiles({reqId: request.requestId, fileName: request.filename}));
           }}
         />
       </div>
@@ -454,7 +448,6 @@ const UploadedFilesList = ({ setPageTitle }) => {
                     fromDate: "null",
                     toDate: "null",
                     type: 11,
-                    // group: undefined,
                   };
                   dispatch(handleReqsList(filterValues));
                 }}

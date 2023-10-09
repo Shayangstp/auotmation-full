@@ -257,14 +257,14 @@ const Test = () => {
       {loading ? (
         <Sugar />
       ) : (
-        <section className="min-vh-100 vw-100 vh-100 position-absolute left-0 right-0 top-0 inputDesignPrimary ">
+        <section className="min-vh-100 vw-100 vh-100 position-absolute left-0 right-0 top-0 inputDesignPrimary">
           <Container
             fluid
             className="d-flex min-vh-100 justify-content-center align-items-center login-main-img"
           >
-            <section className="d-flex border border-1 border-secondary borderRadius bg-dark shadow-lg mt-5 mb-5 p-2">
+            <section className="d-flex border border-1 border-secondary borderRadius bg-dark  mt-5 mb-5 p-2">
               <div
-                className={`w-100 h-100 d-flex login-bg borderRadius login-padding`}
+                className={`w-100 h-100 d-flex login-bg borderRadius login-padding `}
               >
                 <div className="d-flex justify-content-center align-items-center text-white w-100 borderRadius ">
                   <Form>
@@ -278,7 +278,7 @@ const Test = () => {
                               filter: "invert(100%)",
                             }}
                           />
-                          <h1 className="font25 fw-bold headersPhoneFontSize lh-base">
+                          <h1 className="font25 fw-bold headersPhoneFontSize lh-base ">
                             سامانه اتوماسیون گروه صنعتی شیشه کاوه
                           </h1>
                         </div>
@@ -736,11 +736,11 @@ const Test = () => {
                     </Row>
                   </Form>
                 </div>
-                {/* {!showChangePassCom ? (
+                {!showChangePassCom ? (
                   <div className="d-none d-xxl-flex justify-content-end align-items-center text-white borderRadius">
                     <div className="borderRadius login-main-img-sub img-fluid" />
                   </div>
-                ) : null} */}
+                ) : null}
               </div>
             </section>
           </Container>

@@ -12,9 +12,9 @@ export const submitCloud = (files , values) => {
 export const getFileCloudDownload = (reqId) => {
     return http.get(
       `${config.localapi}/cloud/download/` + reqId,
-      // {
-      //   responseType: "blob",
-      // },
+      {
+        responseType: "blob",
+      },
       { timeout: 30000 }
     );
 };
