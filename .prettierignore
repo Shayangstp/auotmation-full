@@ -7,7 +7,7 @@ src/Components/Account/*.jsx
 #adminPanel
 src/Components/AdminPanel/*.js
 #allNewReq
-src/Components/AllNewReqs/*.jsx
+# src/Components/AllNewReqs/*.jsx
 #cloud
 # src/Components/Cloud/*.jsx
 #common

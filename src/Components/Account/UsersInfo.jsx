@@ -304,7 +304,7 @@ const UsersInfo = ({ setPageTitle }) => {
         }
     }
     return (
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             <Row>
                 <Col>
                     <Tabs defaultActiveKey={"notApprovedAvatars"} id="users-tab" onSelect={(e) => { handleTabSelect(e); setActiveTab(e) }} className="justify-content-center mb-5">

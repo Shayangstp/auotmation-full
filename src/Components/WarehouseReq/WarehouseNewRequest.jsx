@@ -166,7 +166,7 @@ const WarehouseNewRequest = ({ setPageTitle, setLocklinks }) => {
 
     }, [user])
     return (
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             {/* {menuPermission ? */}
             <section className="px-4 py-3 shadow lightGray2-bg mb-5 borderRadius border border-white border-2">
                 <div className="shadow p-4 mb-5 borderRadius lightGray-bg border border-white font16">

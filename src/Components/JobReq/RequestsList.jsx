@@ -406,7 +406,7 @@ const RequestsList = ({setPageTitle, loading, setLoading}) => {
     }, [])
 
     return(
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             {/* {menuPermission ? */}
                 <Fragment>
                     <ReqListFilter cancelFilter={handleCancelFilter} setLoading={setLoading}/>

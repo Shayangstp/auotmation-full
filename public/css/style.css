@@ -1175,25 +1175,26 @@ input[type="number"] {
 }
 
 .buttonDesignPrimary {
-  background: #2daeca;
+  background: #267ee4;
   padding: 13px 12px;
   border-radius: 14px;
   transition: all 0.2s ease-in-out;
 }
 .buttonDesignPrimary:hover {
-  background: #02cffd;
+  background: #4596f3;
   padding: 13px 12px;
   border-radius: 14px;
   transition: all 0.2s ease-in-out;
 }
 
 .forgetPass {
-  color: #34e7ff;
+  color: #7dd6fc;
   font-size: 12px;
 }
 
 .forgetPass:hover {
-  color: #8eeeff;
+  color: #5dc1ff;
+
   font-size: 12px;
   transition: all 0.2s ease-in-out;
 }
@@ -1244,3 +1245,58 @@ input[type="number"] {
 /* .shadow002 {
   box-shadow: 0px 1px 2px 2px rgb(63, 252, 255);
 } */
+
+/* final login */
+
+.login-final-img {
+  left: 0;
+  right: 0;
+  background-image: url(../images/loginMainBg.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  object-fit: cover;
+  height: 750px;
+}
+.login-back-img {
+  left: 0;
+  right: 0;
+  background-image: url(../images/loginBackground.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  object-fit: cover;
+}
+
+.bg-login {
+  background: linear-gradient(
+    to bottom right,
+    #3939399e 0%,
+    #1a1b1a 50%,
+    #00eeff 500%
+  );
+}
+
+.font15 {
+  font-size: 18px;
+}
+
+.margin {
+  margin-right: 100px;
+}
+
+.orBorder {
+  width: 50%;
+  height: 1px;
+  border: 1px solid gray;
+}
+
+.res {
+  height: 90%;
+  width: 60%;
+}
+
+
+.logoPosition{
+  position: absolute;
+  top: 550px;
+  left: -20px;
+}

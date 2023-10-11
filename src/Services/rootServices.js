@@ -23,7 +23,7 @@ export const getReqProcess = (processValues) => {
 export const getAllItems = (typeId, filterValues) => {
     return http.get(`${config.localapi}/global/getItemsList/${localStorage.getItem('id')}/${typeId}`, {params:filterValues},{timeout: 30000})
 }
-// get companies
+// get companies 
 export const getCompanies = () => {
     return http.get(`${config.localapi}/cmp`,{timeout: 30000})
 }
@@ -153,6 +153,9 @@ export const getToPersonByRole = (role, location, company, existRole, dep, task)
 
 export const getAllStatuses = (type) => {
     return http.get(`${config.localapi}/actionCode/` + type,{timeout: 30000});
+}
+export const getAllTypes = () => {
+    return http.get(`${config.localapi}/global/getAutomations`,{timeout: 30000});
 }
 
 export const postActionToPersons = (reqId, type, toPersons) => {

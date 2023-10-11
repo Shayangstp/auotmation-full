@@ -40,6 +40,7 @@ export const handleAllStatuses = createAsyncThunk(
   async (type, { dispatch, getState }) => {
     try {
       const statusesRes = await getAllStatuses(type);
+      console.log(statusesRes);
       if (statusesRes.data.code === 415) {
         dispatch(RsetStatusOptions(statusesRes.data.list));
       } else {

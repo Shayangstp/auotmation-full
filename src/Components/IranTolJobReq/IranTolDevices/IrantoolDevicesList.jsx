@@ -164,7 +164,7 @@ const IrantoolDevicesList = () => {
   }, []);
 
   return (
-    <Container fluid className="pb-4 mt-4">
+    <Container fluid className="py-4 mt-4">
       <Fragment>
         <IrantoolDevicesFilter />
         <section className="position-relative">

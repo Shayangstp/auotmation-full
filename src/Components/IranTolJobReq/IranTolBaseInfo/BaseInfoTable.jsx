@@ -124,7 +124,7 @@ const BaseInfoTable = ({ handleList, list, role }) => {
         }
     }, [user])
     return (
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             <Fragment>
                 <Row>
                     <Col md='12'>

@@ -272,7 +272,7 @@ const WarehouseNewRequestsList = ({setPageTitle, loading, setLoading}) => {
         handleAllNewWarehouseRequests();
     }, [allWarehouseReqs.length])
     return(
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             {menuPermission?
                 <Fragment>
                     {localStorage.getItem("id")?

@@ -220,7 +220,7 @@ const WarehouseItemsList = ({ setPageTitle, loading, setLoading }) => {
         dispatch(handleAllItems({ typeId: 9, filterValues: filterValues }));
     }, [])
     return (
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             {/* {menuPermission ? */}
             <Fragment>
                 <section>

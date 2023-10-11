@@ -33,7 +33,7 @@ const RequestHistory = ({setPageTitle, loading, setLoading}) => {
     } = context;
 
     return(
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             {menuPermission ?
                 <Fragment>
                     <Form onSubmit={(e)=>{e.preventDefault();}}>

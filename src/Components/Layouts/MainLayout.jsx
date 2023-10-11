@@ -98,7 +98,7 @@ const MainLayout = (props) => {
                         </Col>
                         {props.lockLinks ? <LockLinksM lockLinksModal={props.lockLinksModal} setLockLinksModal={props.setLockLinksModal} setLocklinks={props.setLocklinks} clickedLink={props.clickedLink} setClearReq={props.setClearReq} /> : null}
                         {sideBar}
-                        <Col xl={side === true ? { span: 9 } : { span: 12 }} xxl={side === true ? { span: 10 } : { span: 12 }} className='p-0 pt-4 min-vh-100' id='routeContent'>
+                        <Col xl={side === true ? { span: 9 } : { span: 12 }} xxl={side === true ? { span: 10 } : { span: 12 }} className='p-0 min-vh-100' id='routeContent'>
                             <main id="page-content">{props.children}</main>
                         </Col>
                         {userNotFoundModal && pathname !== '/' ? <UserNotFoundM /> : null}

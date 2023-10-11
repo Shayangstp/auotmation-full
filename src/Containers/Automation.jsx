@@ -104,6 +104,7 @@ import PurchaseItemsList from "../Components/WarehouseReq/ProductPurchase/Purcha
 import CheckoutReqRegistration from "../Components/CheckoutJobReq/CheckoutReqRegistration";
 import CheckoutReqList from "../Components/CheckoutJobReq/CheckoutReqList";
 import Survey from "../Components/test/Survey"
+import Test2 from "../Components/test/Test2";
 
 const Automation = (props) => {
 
@@ -753,7 +754,8 @@ const Automation = (props) => {
                             {/* <MainContext> */}
                             <UserContext>
                                 {/* <LoginAndRegister /> */}
-                                <Test/>
+                                <Test />
+                                {/* <Test2/> */}
                             </UserContext>
                             {/* </MainContext> */}
                         </CookieContext>} />

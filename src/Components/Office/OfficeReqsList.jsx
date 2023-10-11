@@ -34,7 +34,7 @@ const RequestsList = ({setPageTitle, loading}) => {
     },[]);
     
     return(
-        <Container className='pb-4'>
+        <Container className='py-4'>
             {menuPermission ?
                 <section>
                     {loading ?

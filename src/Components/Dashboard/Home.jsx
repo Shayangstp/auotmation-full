@@ -86,7 +86,7 @@ const Home = () => {
                         <Col md='3'>
                             <div className="bg-white h-100">
                                 <img src="../../images/gif/dribbleballoon.gif" alt="birthday" className="img-fluid py-4" />
-                                <div className="w-100 text-center fw-bold pb-4">
+                                <div className="w-100 text-center fw-bold py-4">
                                     <span>تولدت مبارک :)</span>
                                 </div>
                             </div>

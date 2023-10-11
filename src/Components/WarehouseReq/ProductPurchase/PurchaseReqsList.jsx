@@ -269,7 +269,7 @@ const PurchaseReqsList = ({ setPageTitle }) => {
         dispatch(handleReqsList(filterValues));
     }, [])
     return (
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             {/* {menuPermission ? */}
             <Fragment>
                 {showFilter

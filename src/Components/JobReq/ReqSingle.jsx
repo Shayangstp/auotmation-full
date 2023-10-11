@@ -42,7 +42,7 @@ const ReqSingle = ({ setPageTitle }) => {
     }, [request.process !== undefined])
 
     return (
-        <Container fluid className='pb-4'>
+        <Container fluid className='py-4'>
             {request.process !== undefined ?
                 <section>
                     <Row>

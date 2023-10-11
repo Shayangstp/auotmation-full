@@ -96,7 +96,7 @@ const CheckoutReqFilter = () => {
   const realFilter = useSelector(selectRealFilter);
 
   return (
-    <Container fluid className="pb-4">
+    <Container fluid className="py-4">
       <Row className="mb-2 mt-4">
         <Form.Group as={Col} md="3" xl="2" className="mb-4 mb-xl-0 mb-md-4">
           <Form.Label htmlFor="serial">سریال</Form.Label>

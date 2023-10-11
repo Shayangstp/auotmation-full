@@ -275,7 +275,7 @@ const MyReqsList = ({ setPageTitle }) => {
                         const filterValues = {
                             applicantId: localStorage.getItem('id'),
                             memberId: '',
-                            type: 0,
+                            type: "",
                             status: '',
                             fromDate: 'null',
                             toDate: 'null',

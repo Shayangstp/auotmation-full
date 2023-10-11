@@ -14,13 +14,17 @@ import { handleResetOvertimeForm } from "./OverTimeSlice";
 
 import { RsetAcceptReqModal, RsetCancelReqModal, RsetEditReqModal, RsetViewReqModal, RsetDeleteReqModal, RsetReqHistoryModal, RsetViewReqComment, RsetAcceptReqComment, RsetCancelReqComment } from "./modalsSlice";
 import { RsetCurrentReqInfo, RsetCurrentReqId, RsetCurrentReqType, RsetCurrentReqCo, RsetCurrentReqDep, handleCurrentReqComments, RsetCurrentReqItems, handleCurrentReqItems } from "./currentReqSlice";
-import { RsetDepOptions , RsetStatusOptions } from '../Slices/filterSlices';
+import { RsetDepOptions , RsetStatusOptions , RsetMembersOption } from '../Slices/filterSlices';
 
 import { handleSoftwareReqItem, handlesoftwareReqProcess } from '../Slices/softwareSlice';
 import { handleIrtUsersByRole, handleOperatorList } from '../Slices/irantoolSlices';
 
 import { handleGetWarehouseReqItems } from "../Slices/warehouseSlice";
 import { RsetCheckoutReqPersonNameOption } from "../Slices/checkoutReqSlices"
+import { getAllTypes } from "../../Services/rootServices";
+import {getAllNewReqsList} from "../../Services/allNewReqsServices"
+
+
 
 const initialState = {
   unit: '',
@@ -68,7 +72,8 @@ const initialState = {
   rolesOptions: [{ value: 26, label: 'تاییدکننده QC' }],
   addRole: null,
 
-  myReqsList : []
+  myReqsList: [],
+  allNewReqsList : []
 };
 
 export const handleUnits = createAsyncThunk(
@@ -90,9 +95,10 @@ export const handleTypes = createAsyncThunk(
   "mainHome/handleTypes",
   async (obj, { dispatch, getState }) => {
     try {
-      const typesRes = await getAllStatuses(0);
-      if (typesRes.data.code === 415) {
-        dispatch(RsetTypesOption(typesRes.data.list))
+      const getAllTypesRes = await getAllTypes();
+      console.log(getAllTypesRes);
+      if (getAllTypesRes.data.code === 415) {
+        dispatch(RsetTypesOption(getAllTypesRes.data.list))
       } else {
         dispatch(RsetTypesOption([]));
       }
@@ -748,6 +754,29 @@ export const handleMyReqsList = createAsyncThunk(
     }
   }
 );
+export const handleAllNewReqs = createAsyncThunk(
+  "mainHome/handleAllNewReqs",
+  async (filterValues, { dispatch }) => {
+    dispatch(RsetLoading(true));
+    try {
+      const getAllNewReqsListRes = await getAllNewReqsList(filterValues);
+      console.log(getAllNewReqsListRes);
+      if (getAllNewReqsListRes.data.code === 415) {
+        dispatch(RsetLoading(false));
+        dispatch(RsetAllNewReqsList(getAllNewReqsListRes.data.list));
+        dispatch(RsetMembersOption(getAllNewReqsListRes.data.member));
+      } else {
+        errorMessage("اطلاعات یافت نشد!");
+        dispatch(RsetLoading(false));
+        dispatch(RsetRequestsList([]));
+        dispatch(RsetRequestMembs([]));
+      }
+    } catch (ex) {
+      console.log(ex);
+      dispatch(RsetLoading(false));
+    }
+  }
+);
 
 export const handleCancelReq = createAsyncThunk(
   "mainHome/handleCancelReq",
@@ -1120,6 +1149,9 @@ const mainSlices = createSlice({
     RsetMyReqsList: (state, { payload }) => {
       return { ...state, myReqsList: payload };
     },
+    RsetAllNewReqsList: (state, { payload }) => {
+      return { ...state, allNewReqsList: payload };
+    },
 
   },
   extraReducers: {
@@ -1182,7 +1214,8 @@ export const {
   RsetLoggedInUserImage,
 
   RsetRequestMembs
-  , RsetMyReqsList
+  , RsetMyReqsList, 
+  RsetAllNewReqsList,
 } = mainSlices.actions;
 
 export const selectUnit = (state) => state.mainHome.unit;
@@ -1232,6 +1265,7 @@ export const selectRoles = (state) => state.mainHome.roles;
 export const selectRolesOptions = (state) => state.mainHome.rolesOptions;
 export const selectAddRole = (state) => state.mainHome.addRole;
 export const selectMyReqsList = (state) => state.mainHome.myReqsList;
+export const selectAllNewReqsList  = (state) => state.mainHome.allNewReqsList;
 
 
 

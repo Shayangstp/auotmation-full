@@ -33,7 +33,6 @@ const MyReqsFilter = () => {
         dispatch(handleTypes());
     }, [])
 
-    console.log(serialFilter);
 
     return (
         <div className="d-flex flex-column  mb-5 lightGray2-bg p-3 borderRadius m-auto shadow border border-white border-2">
@@ -215,7 +214,7 @@ const MyReqsFilter = () => {
                             const filterValues = {
                             applicantId: localStorage.getItem('id'),
                             serial : serialFilter !== "" ? serialFilter : serialFilter,
-                            type: "",
+                            type: typeFilter ? typeFilter.value : "",
                             status: statusFilter !== '' ? statusFilter.value : statusFilter,
                             fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
                             toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
@@ -235,7 +234,10 @@ const MyReqsFilter = () => {
                             dispatch(handleMyReqsList(filterValues));
                             dispatch(RsetSerialFilter(""))
                             dispatch(RsetStatusFilter(""))
-                            // dispatch(Rset(""))
+                            dispatch(RsetTypeFilter(""))
+                            dispatch(RsetFromDateFilter(null))
+                            dispatch(RsetToDateFilter(null))
+                            dispatch(RsetRealFilter(false))
                         } }>
                         لغو فیلتر
                         </Button>

@@ -57,7 +57,7 @@ const IranTolJobRegistration = ({ setPageTitle }) => {
         handleITJProjectTypes();
     }, [setPageTitle])
     return (
-        <Container fluid className="pb-4">
+        <Container fluid className="py-4">
             {/* {menuPermission ? */}
             <section className="lightGray2-bg p-3 shadow mt-5 borderRadius border border-white border-2">
                 <div className="shadow p-4 mb-5 borderRadius lightGray-bg  border border-white font16">

@@ -335,7 +335,7 @@ const SoftwareSupportList = () => {
   );
 
   return (
-    <Container fluid className="pb-4">
+    <Container fluid className="py-4">
       <Fragment>
         <Row>
           <CeramicPriceFilter />
