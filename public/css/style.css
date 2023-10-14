@@ -1167,7 +1167,7 @@ input[type="number"] {
 .inputDesignPrimary input[type="text"]:focus,
 .inputDesignPrimary input[type="password"]:focus {
   outline: none !important;
-  border: 1px solid #46e9ff !important;
+  border: 1px solid #62a9ff !important;
   border-radius: 500px;
   background: transparent !important;
   /* background: rgba(255, 255, 255, 0.9) !important; */
@@ -1175,13 +1175,13 @@ input[type="number"] {
 }
 
 .buttonDesignPrimary {
-  background: #267ee4;
+  background: #0077ff;
   padding: 13px 12px;
   border-radius: 14px;
   transition: all 0.2s ease-in-out;
 }
 .buttonDesignPrimary:hover {
-  background: #4596f3;
+  background: #008cff;
   padding: 13px 12px;
   border-radius: 14px;
   transition: all 0.2s ease-in-out;
@@ -1279,24 +1279,22 @@ input[type="number"] {
   font-size: 18px;
 }
 
-.margin {
-  margin-right: 100px;
-}
-
 .orBorder {
   width: 50%;
   height: 1px;
-  border: 1px solid gray;
+  border: 1px solid rgba(145, 145, 145, 0.511);
 }
 
 .res {
-  height: 90%;
+  height: 100%;
   width: 60%;
 }
 
+.margin-left {
+  margin-right: 120px;
+}
 
-.logoPosition{
-  position: absolute;
-  top: 550px;
-  left: -20px;
+
+.sso:hover{
+  background: rgb(9, 50, 83);
 }

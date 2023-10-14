@@ -754,8 +754,8 @@ const Automation = (props) => {
                             {/* <MainContext> */}
                             <UserContext>
                                 {/* <LoginAndRegister /> */}
-                                <Test />
-                                {/* <Test2/> */}
+                                {/* <Test /> */}
+                                <Test2/>
                             </UserContext>
                             {/* </MainContext> */}
                         </CookieContext>} />
