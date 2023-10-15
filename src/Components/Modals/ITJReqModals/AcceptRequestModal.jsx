@@ -17,6 +17,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAcceptReqModal, RsetAcceptReqModal, selectAcceptReqComment, RsetAcceptReqComment } from '../../Slices/modalsSlice';
 import { handleUnits, selectUnitsOption, selectUser, handleUserInformation, handleUserImage } from "../../Slices/mainSlices";
 import { handleReqFiles, selectCurrentReqFiles } from '../../Slices/currentReqSlice';
+import AddMaterialWorkFlowModal from "../../Modals/ITJReqModals/AddMaterialWorkflowModal";
+import {
+    RsetIrantoolAddMaterialWorkFlowModal,
+    selectIrantoolMaterialWorkFlowModal,
+  } from "../../Slices/irantoolSlices";
 
 
 const AcceptRequestModal = () => {
@@ -26,6 +31,9 @@ const AcceptRequestModal = () => {
     const unitsOption = useSelector(selectUnitsOption);
     const user = useSelector(selectUser);
     const currentReqFiles = useSelector(selectCurrentReqFiles);
+    const irantoolAddMaterialWorkFlowModal = useSelector(
+        selectIrantoolMaterialWorkFlowModal
+      );
 
     const mainContext = useContext(rootContext);
     const {
@@ -94,6 +102,7 @@ const AcceptRequestModal = () => {
         setWorkItems,
         deleteItemFromWorks,
         deleteItemFromMaterials,
+        setActionToPersonsModal
     } = jobContext;
 
     const [clickedPlusBtn, setClickedPlusBtn] = useState('');
@@ -559,8 +568,10 @@ const AcceptRequestModal = () => {
                             <Button
                                 variant="success"
                                 onClick={() => {
-                                    if (!currentReqInfo.acceptedByHajAlireza && user.Roles.some(role => role === '14')) {
+                                    console.log(currentReqInfo);
+                                    if (currentReqInfo.acceptedByHajAlireza === 0 && user.Roles.some(role => role === '14')) {
                                         //open modal
+                                        setActionToPersonsModal(true);
                                     } else {
                                         handleAcceptITJobReq();
                                     }
@@ -580,6 +591,7 @@ const AcceptRequestModal = () => {
                         >بستن</Button>
                     </div>
                 </Modal.Footer>
+                {irantoolAddMaterialWorkFlowModal && <AddMaterialWorkFlowModal />}
             </Fragment>
         </Modal>
     )

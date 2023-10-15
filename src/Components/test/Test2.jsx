@@ -30,13 +30,13 @@ import {
 } from "./../Slices/mainSlices";
 
 import { useHistory } from "react-router-dom";
-import Particles from "react-tsparticles";
 
 import {
   selectShowChangePassCom,
   RsetShowChangePassCom,
 } from "../Slices/changePassSlice";
 import ResetPassword from "../Account/ResetPassword";
+import Test3 from "./Test3";
 
 const Test2 = () => {
   const loading = useSelector(selectLoading);
@@ -54,6 +54,7 @@ const Test2 = () => {
     }
   }, [loggedIn]);
   const dispatch = useDispatch();
+
   const mainContext = useContext(rootContext);
   const {
     accountMode,
@@ -162,6 +163,8 @@ const Test2 = () => {
     bankAccountNumberRef,
     bankAccountNumberDisabled,
     bankAccountNumberValidationClass,
+
+    handleCheckForResetPass,
   } = accountContext;
   useEffect(() => {
     localStorage.clear();
@@ -200,13 +203,22 @@ const Test2 = () => {
   const validation = () => {
     var errors = {};
     if (!userName) {
-      errors.userName = "واردکردن کد ملی اجباری است!";
+      errors.userName = "border border-danger";
     }
     if (!password) {
-      errors.password = "واردکردن رمز عبور اجباری است!";
+      errors.password = "border border-danger";
     }
     return errors;
   };
+  const forgetPasswordvalidation = () => {
+    var errors = {};
+    if (!userName) {
+      errors.userName = "border border-danger";
+    }
+
+    return errors;
+  };
+
   const submitFormBtn = (e) => {
     e.preventDefault();
     if (userName !== "" && password !== "") {
@@ -322,17 +334,14 @@ const Test2 = () => {
                               dir="ltr"
                               value={userName}
                               name="userName"
-                              className="text-white "
+                              className={`text-white ${
+                                !userName ? formErrors.userName : ""
+                              }`}
                               onChange={(e) => {
                                 dispatch(RsetUserName(e.target.value));
                               }}
                               ref={userNameRef}
                             />
-                            {!userName && (
-                              <p className="font12 text-warning  mb-0 mt-1">
-                                {formErrors.userName}
-                              </p>
-                            )}
                           </Form.Group>
                           {/* pass */}
                           <Form.Group
@@ -344,7 +353,9 @@ const Test2 = () => {
                           >
                             <div className="position-relative">
                               <Form.Control
-                                className="p-5"
+                                className={`${
+                                  !password ? formErrors.password : ""
+                                } `}
                                 autocomplete="off"
                                 dir="ltr"
                                 id="passInput"
@@ -376,25 +387,17 @@ const Test2 = () => {
                             lg="8"
                             className="mb-4 forgetPass cursorPointer"
                           >
-                            {!showChangePassCom ? (
-                              <div
-                                className="font12"
-                                onClick={() => {
-                                  dispatch(RsetShowChangePassCom(true));
-                                }}
-                              >
-                                فراموشی رمز عبور
-                              </div>
-                            ) : (
-                              <div
-                                className="font12"
-                                onClick={() => {
-                                  dispatch(RsetShowChangePassCom(false));
-                                }}
-                              >
-                                ورود به سامانه
-                              </div>
-                            )}
+                            <div
+                              className="font12"
+                              onClick={() => {
+                                dispatch(RsetShowChangePassCom(true));
+                                dispatch(RsetUserName(""));
+                                dispatch(RsetPassword(""));
+                                dispatch(RsetFormErrors(""));
+                              }}
+                            >
+                              فراموشی رمز عبور
+                            </div>
                           </Form.Group>
                           {/* button */}
                           <Form.Group
@@ -439,166 +442,9 @@ const Test2 = () => {
                             برای بازیابی رمز عبور لطفا اطلاعات زیر را تکمیل کنید
                           </div>
                           <Row className="d-flex justify-content-center w-100">
-                            <Form.Group as={Col} md="5" className="mb-4">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
-                            <Form.Group as={Col} md="5" className="mb-4">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
+                            <Test3 />
                           </Row>
-                          <Row className="d-flex justify-content-center w-100">
-                            <Form.Group as={Col} md="5" className="mb-4">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
-                            <Form.Group as={Col} md="5" className="mb-4">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
-                          </Row>
-                          <Row className="d-flex justify-content-center w-100">
-                            <Form.Group as={Col} md="5" className="mb-4 ">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
-                            <Form.Group as={Col} md="5" className="mb-4">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
-                          </Row>
-                          <Row className="d-flex justify-content-center w-100">
-                            <Form.Group as={Col} md="5" className="mb-4">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
-                            <Form.Group as={Col} md="5" className="mb-4">
-                              <Form.Control
-                                placeholder="نام کاربری / کدملی"
-                                type="text"
-                                dir="ltr"
-                                value={userName}
-                                name="userName"
-                                className="text-white "
-                                onChange={(e) => {
-                                  dispatch(RsetUserName(e.target.value));
-                                }}
-                                ref={userNameRef}
-                              />
-                              {!userName && (
-                                <p className="font12 text-warning  mb-0 mt-1">
-                                  {formErrors.userName}
-                                </p>
-                              )}
-                            </Form.Group>
-                          </Row>
-                          <Row className="d-flex justify-content-center w-100">
+                          {/* <Row className="d-flex justify-content-center w-100">
                             <Form.Group
                               as={Col}
                               md="10"
@@ -613,8 +459,8 @@ const Test2 = () => {
                                 ورود به سامانه
                               </div>
                             </Form.Group>
-                          </Row>
-                          <Row className="d-flex justify-content-center w-100">
+                          </Row> */}
+                          {/* <Row className="d-flex justify-content-center w-100">
                             <Form.Group
                               as={Col}
                               xs="10"
@@ -625,7 +471,7 @@ const Test2 = () => {
                                 type="button"
                                 className="btn w-100 font12 text-white border-0 buttonDesignPrimary focus-ring"
                                 onClick={(e) => {
-                                  submitFormBtn(e);
+                                  handleUserValuesForResetPass(e);
                                 }}
                               >
                                 بازیابی رمز عبور
@@ -650,7 +496,7 @@ const Test2 = () => {
                                 دانلود فایل راهنمای استفاده از اتوماسیون
                               </a>
                             </Form.Group>
-                          </Row>
+                          </Row> */}
                         </div>
                       )}
                     </Row>

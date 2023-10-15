@@ -234,6 +234,7 @@ const IranTolJobContext = ({ children }) => {
     }
     const handleITJReqActionToPersons = async () => {
         try {
+            console.log(currentReqInfo);
             var toPersons = '';
             if (needConfirmation === true) {
                 if (needConfirmationUsers.length !== 0) {
@@ -245,15 +246,59 @@ const IranTolJobContext = ({ children }) => {
                     errorMessage('فردی انتخاب نشده است!')
                 }
             } else {
-                const toPersonRes = await getToPersonByRole('14', 2, 49, 1, null, '0');
-                if (toPersonRes.data.code === 415) {
+                var toPersonRes = '';
+                if (currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons === null) {
+                    toPersonRes = await getToPersonByRole('14', 2, 49, 1, null, '0');
+                } else if(currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons !== null){
+                    toPersonRes = await getToPersonByRole('4', 2, 49, 1, null, '0');
+                }
+                console.log(toPersonRes);
+                if (toPersonRes !== '' && toPersonRes.data.code === 415 && toPersonRes.data.list.length !== 0) {
                     toPersons = toPersonRes.data.list[0].value;
                 } else {
                     errorMessage('شخص دریافت کننده ای یافت نشد!')
                 }
             }
             if (toPersons !== '') {
-                const actionToPersonsRes = await postActionToPersons(actionReqId, 1, toPersons);
+                var actionToPersonsRes = '';
+                if (currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons === null) {
+                    actionToPersonsRes = await postActionToPersons(actionReqId, 1, toPersons);   
+                } else if (currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons !== null) {
+                    const actionValues = {
+                        actionCode: 37,
+                        actionId: currentReqInfo.requestId,
+                        userId: localStorage.getItem("id"),
+                        typeId: 1,
+                        toPersons: getToPersonByRole(
+                            4,
+                            user.Location,
+                            user.CompanyCode,
+                            1,
+                            null),
+                        comment: null,
+                    };
+                    const postActionRes = await postAction(actionValues);
+                    console.log(postActionRes);
+                    if (postActionRes.data.code) {
+                        handleResetITJReq();
+                        setActionToPersonsModal(false);
+                        const filterParams = {
+                            applicantId: localStorage.getItem('id'),
+                            serial: '',
+                            memberId: '',
+                            company: '',
+                            requestType: '',
+                            toolType: '',
+                            status: '',
+                            fromDate: 'null',
+                            toDate: 'null',
+                            type: 1
+                        }
+                        handleGetRequestList(filterParams);
+                        successMessage('درخواست با موفقیت ارسال شد!')
+                        dispatch(RsetAcceptReqModal(false));
+                    }
+                }
                 if (actionToPersonsRes.data.code === 415) {
                     handleResetITJReq();
                     setActionToPersonsModal(false);
@@ -544,6 +589,8 @@ const IranTolJobContext = ({ children }) => {
     const handleAcceptITJobReq = async () => {
         try {
             const { data } = await checkReqUpdateDate(currentReqInfo.requestId, currentReqInfo.lastActionId, 1);
+            console.log(data)
+
             if (data.type === "accepted") {
                 var actionCode = '';
                 var toPersonsRes = '';
