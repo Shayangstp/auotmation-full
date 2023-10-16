@@ -11,7 +11,7 @@ const AddFileInput = () => {
 
     return (
         <Form.Group as={Col} md='6' lg='6' xxl='3' className='mb-4'>
-            <div className=" d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-center">
                 <Form.Label className='mb-1' placeholder="انتخاب">فایل: </Form.Label>
                 {reqFiles && reqFiles.length !== 0 ? <span className="font12">({reqFiles.length})</span> : null}
             </div>

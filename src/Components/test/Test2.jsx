@@ -269,17 +269,17 @@ const Test2 = () => {
       {loading ? (
         <Sugar />
       ) : (
-        <section className="min-vh-100 vw-100 d-flex justify-content-center align-items-center login-back-img inputDesignPrimary">
-          <div className="res mb-5 mt-5">
+        <section className="min-vh-100 vw-100 d-flex justify-content-center align-items-center  login-back-img inputDesignPrimary">
+          <div className="res-main mt-5">
             <div className="row">
-              <div className="col-12">
-                <div className="d-flex login-final-img img-fluid shadow-lg borderRadius border border-secondary h-100">
-                  <div className="mt-5 w-100">
+              <div className="col-12 mb-5">
+                <div className="d-flex login-main-img img-fluid shadow-lg borderRadius border border-secondary h-100">
+                  <div className="w-100">
                     <Row className="mt-5">
                       {!showChangePassCom ? (
                         <Col
                           md="12"
-                          className="mb-5 mt-5 ms-5 d-flex flex-column w-75 justify-content-center align-items-center"
+                          className="mb-5 ms-5 d-flex flex-column w-75 justify-content-center align-items-center"
                         >
                           {/* title */}
                           <div className="text-center text-white">
@@ -289,9 +289,10 @@ const Test2 = () => {
                           </div>
                           <Form.Group
                             as={Col}
-                            xs="10"
-                            md="10"
-                            lg="8"
+                            xs="12"
+                            md="12"
+                            lg="10"
+                            xl="8"
                             className="mb-4"
                           >
                             <button
@@ -311,9 +312,10 @@ const Test2 = () => {
                           {/*  or  */}
                           <Form.Group
                             as={Col}
-                            xs="10"
-                            md="10"
-                            lg="8"
+                            xs="12"
+                            md="12"
+                            lg="10"
+                            xl="8"
                             className="mb-4 d-flex align-items-center justify-content-center"
                           >
                             <div className="orBorder mb-4 "></div>
@@ -323,9 +325,10 @@ const Test2 = () => {
                           {/* userName */}
                           <Form.Group
                             as={Col}
-                            xs="10"
-                            md="10"
-                            lg="8"
+                            xs="12"
+                            md="12"
+                            lg="10"
+                            xl="8"
                             className="mb-4"
                           >
                             <Form.Control
@@ -346,9 +349,10 @@ const Test2 = () => {
                           {/* pass */}
                           <Form.Group
                             as={Col}
-                            xs="10"
-                            md="10"
-                            lg="8"
+                            xs="12"
+                            md="12"
+                            lg="10"
+                            xl="8"
                             className="mb-4"
                           >
                             <div className="position-relative">
@@ -382,9 +386,10 @@ const Test2 = () => {
                           {/* forgetPass */}
                           <Form.Group
                             as={Col}
-                            xs="10"
-                            md="10"
-                            lg="8"
+                            xs="12"
+                            md="12"
+                            lg="10"
+                            xl="8"
                             className="mb-4 forgetPass cursorPointer"
                           >
                             <div
@@ -402,9 +407,10 @@ const Test2 = () => {
                           {/* button */}
                           <Form.Group
                             as={Col}
-                            xs="10"
-                            md="10"
-                            lg="8"
+                            xs="12"
+                            md="12"
+                            lg="10"
+                            xl="8"
                             className="mb-4"
                           >
                             <button
@@ -420,9 +426,10 @@ const Test2 = () => {
                           {/* pdf */}
                           <Form.Group
                             as={Col}
-                            md="10"
-                            lg="8"
-                            xs="10"
+                            xs="12"
+                            md="12"
+                            lg="10"
+                            xl="8"
                             className="mb-4"
                           >
                             <a

@@ -264,22 +264,30 @@ const IranTolJobContext = ({ children }) => {
                 if (currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons === null) {
                     actionToPersonsRes = await postActionToPersons(actionReqId, 1, toPersons);   
                 } else if (currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons !== null) {
+                    
+                    const toPerson = (await getToPersonByRole(
+                        "4",
+                        user.Location,
+                        user.CompanyCode,
+                        1,
+                        null)).data.list
+                    
+                    const toPersonslist = []
+                    toPerson.map((item) => { 
+                        toPersonslist.push(item.value)
+                    }) 
                     const actionValues = {
                         actionCode: 37,
                         actionId: currentReqInfo.requestId,
                         userId: localStorage.getItem("id"),
                         typeId: 1,
-                        toPersons: getToPersonByRole(
-                            4,
-                            user.Location,
-                            user.CompanyCode,
-                            1,
-                            null),
+                        toPersons: String(toPersonslist),
                         comment: null,
                     };
+
                     const postActionRes = await postAction(actionValues);
                     console.log(postActionRes);
-                    if (postActionRes.data.code) {
+                    if (postActionRes.data.code === 415) {
                         handleResetITJReq();
                         setActionToPersonsModal(false);
                         const filterParams = {

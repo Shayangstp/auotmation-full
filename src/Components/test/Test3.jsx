@@ -76,12 +76,12 @@ const Test3 = () => {
     if (!userName) {
       errors.userName = "border border-danger";
     } else if (userNameValue.length < 10) {
-      errors.userName = "کد ملی باید 10 کاراکتر باشد!";
+      errors.userNameChar = "کد ملی باید 10 کاراکتر باشد!";
     }
     if (!personalCode) {
       errors.personalCode = "border border-danger";
     } else if (personalCodeValue.length < 10) {
-      errors.personalCode = "کد پرسنلی باید 7 کاراکتر باشد!";
+      errors.personalCodeChar = "کد پرسنلی باید 7 کاراکتر باشد!";
     }
     if (!birthCertificateNumber) {
       errors.birthCertificateNumber = "border border-danger";
@@ -100,12 +100,13 @@ const Test3 = () => {
     if (!password) {
       errors.password = "border border-danger";
     } else if (!pass.test(password)) {
-      errors.password = "رمز عبور باید شامل حروف و عدد و حداقل 6 کاراکتر باشد!";
+      errors.passwordChar =
+        "رمز عبور باید شامل حروف و عدد و حداقل 6 کاراکتر باشد!";
     }
     if (!confirmPassword) {
       errors.confirmPassword = "border border-danger";
     } else if (password !== confirmPassword) {
-      errors.confirmPassword = "رمزهای وارد شده یکسان نیستند!";
+      errors.confirmPasswordChar = "رمزهای وارد شده یکسان نیستند!";
     }
     return errors;
   };
@@ -218,6 +219,12 @@ const Test3 = () => {
             placeholder="کدملی"
             className={`text-white ${!userName ? formErrors.userName : ""}`}
           />
+          {!userName ||
+          personalCode.replaceAll("-", "").replaceAll(" ", "").length < 7 ? (
+            <p className="font10 text-danger mb-0 mt-1">
+              {formErrors.userNameChar}
+            </p>
+          ) : null}
         </Form.Group>
         <Form.Group as={Col} md="5" className="mb-4">
           <NumberFormat
@@ -234,12 +241,12 @@ const Test3 = () => {
             placeholder="کدپرسنلی"
             className={`${!personalCode ? formErrors.personalCode : ""}`}
           />
-          {/* {!personalCode ||
-        personalCode.replaceAll("-", "").replaceAll(" ", "").length < 7 ? (
-          <p className="font12 text-warning mb-0 mt-1">
-            {formErrors.personalCode}
-          </p>
-        ) : null} */}
+          {!personalCode ||
+          personalCode.replaceAll("-", "").replaceAll(" ", "").length < 7 ? (
+            <p className="font10 text-danger mb-0 mt-1">
+              {formErrors.personalCodeChar}
+            </p>
+          ) : null}
         </Form.Group>
       </Row>
       <Row className="d-flex justify-content-center w-100">
@@ -259,11 +266,6 @@ const Test3 = () => {
               !birthCertificateNumber ? formErrors.birthCertificateNumber : ""
             }`}
           />
-          {/* {!birthCertificateNumber && (
-            <p className="font12 text-warning  mb-0 mt-1">
-              {formErrors.birthCertificateNumber}
-            </p>
-          )} */}
         </Form.Group>
         <Form.Group as={Col} md="5" className="mb-4">
           <NumberFormat
@@ -278,11 +280,6 @@ const Test3 = () => {
             placeholder="شماره بیمه"
             className={`${!insuranceNumber ? formErrors.insuranceNumber : ""}`}
           />
-          {/* {!insuranceNumber && (
-            <p className="font12 text-warning  mb-0 mt-1">
-              {formErrors.insuranceNumber}
-            </p>
-          )} */}
         </Form.Group>
       </Row>
       <Row className="d-flex justify-content-center w-100">
@@ -302,11 +299,6 @@ const Test3 = () => {
             }}
             placeholder="تاریخ تولد"
           />
-          {/* {!birthday && (
-            <p className="font12 text-warning mb-0 mt-1">
-              {formErrors.birthday}
-            </p>
-          )} */}
         </Form.Group>
         <Form.Group as={Col} md="5" className="mb-4">
           <NumberFormat
@@ -322,12 +314,12 @@ const Test3 = () => {
             placeholder="شماره موبایل"
             className={`${!phoneNumber ? formErrors.phoneNumber : ""}`}
           />
-          {/* {!phoneNumber ||
+          {!phoneNumber ||
           phoneNumber.replaceAll("-", "").replaceAll(" ", "").length < 11 ? (
-            <p className="font12 text-warning mb-0 mt-1">
-              {formErrors.phoneNumber}
+            <p className="font10 text-danger mb-0 mt-1">
+              {formErrors.phoneNumberChar}
             </p>
-          ) : null} */}
+          ) : null}
         </Form.Group>
       </Row>
       <Row className="d-flex justify-content-center w-100">
@@ -352,11 +344,11 @@ const Test3 = () => {
               onClick={handlePassType}
             />
           ) : null}
-          {/* {!password || !pass.test(password) ? (
-            <p className="font12 text-warning mb-0 mt-1">
-              {formErrors.password}
+          {!password || !pass.test(password) ? (
+            <p className="font10 text-danger mb-0 mt-1">
+              {formErrors.passwordChar}
             </p>
-          ) : null} */}
+          ) : null}
         </Form.Group>
         <Form.Group as={Col} md="5" className="mb-4">
           <Form.Control
@@ -370,11 +362,11 @@ const Test3 = () => {
             placeholder="تکرار رمز عبور جدید"
             className={`${!confirmPassword ? formErrors.confirmPassword : ""}`}
           />
-          {/* {!confirmPassword || confirmPassword !== password ? (
-            <p className="font12 text-warning mb-0 mt-1">
-              {formErrors.confirmPassword}
+          {!confirmPassword || confirmPassword !== password ? (
+            <p className="font10 text-danger mb-0 mt-1">
+              {formErrors.confirmPasswordChar}
             </p>
-          ) : null} */}
+          ) : null}
         </Form.Group>
         <Row className="d-flex justify-content-center w-100">
           <Form.Group

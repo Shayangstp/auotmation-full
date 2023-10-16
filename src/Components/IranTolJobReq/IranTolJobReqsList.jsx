@@ -32,6 +32,8 @@ import {
   handleCurrentReqInfo,
   handleUserInformation,
   handleUserImage,
+  selectUser,
+  handleUserData,
 } from "../Slices/mainSlices";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -67,11 +69,13 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
   const irantoolAddMaterialWorkFlowModal = useSelector(
     selectIrantoolMaterialWorkFlowModal
   );
+  const user = useSelector(selectUser);
   const showFilter = useSelector(selectShowFilter);
 
   const [data, setData] = useState([]);
   const [load, setload] = useState(false);
   const [pageCount, setPageCount] = useState(0);
+
   const fetchIdRef = useRef(0);
   const sortIdRef = useRef(0);
   const columns = useMemo(() => [
@@ -182,8 +186,8 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
       </div>
     );
   };
+
   const operation = (request, serialNumber) => {
-    console.log(request);
     if (request.lastToPersons === null && request.lastActionCode !== 2) {
       return (
         <section className="d-flex justify-content-between flex-wrap">
@@ -207,6 +211,60 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
         .split(",")
         .some((elem) => elem === localStorage.getItem("id")) === true &&
       request.lastActionCode === 0
+    ) {
+      return (
+        <div className="d-flex justify-content-between flex-wrap">
+          <Button
+            title="تایید"
+            variant="success"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "accept",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </Button>
+          <Button
+            title="ابطال"
+            variant="danger"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "cancel",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+          </Button>
+        </div>
+      );
+    } else if (
+      request.lastToPersons !== undefined &&
+      request.lastActionCode === 37 &&
+      user.Roles !== undefined &&
+      user.Roles.some((role) => role === "4")
     ) {
       return (
         <div className="d-flex justify-content-between flex-wrap">
@@ -364,36 +422,43 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
       );
     }
   };
-  const fetchData = useCallback(({ pageSize, pageIndex, requests }) => {
-    var tableItems = [];
-    if (requests.length !== 0) {
-      for (var i = 0; i < requests.length; i++) {
-        var tableItem = {
-          reqSerial: link(requests[i], requests[i].serial),
-          reqDate: moment
-            .utc(requests[i].createdDate, "YYYY/MM/DD")
-            .locale("fa")
-            .format("jYYYY/jMM/jDD"),
-          reqUser: userInfo(requests[i]),
-          reqCo: xssFilters.inHTMLData(requests[i].companyName),
-          projectType: xssFilters.inHTMLData(requests[i].requestTypeName),
-          toolType: xssFilters.inHTMLData(requests[i].toolTypeName),
-          reqStatus: xssFilters.inHTMLData(requests[i].statusName),
-          reqOperation: operation(requests[i], requests[i].serial),
-        };
-        tableItems.push(tableItem);
+
+  const fetchData = useCallback(
+    ({ pageSize, pageIndex, requests }) => {
+      var tableItems = [];
+      if (requests.length !== 0) {
+        for (var i = 0; i < requests.length; i++) {
+          var tableItem = {
+            reqSerial: link(requests[i], requests[i].serial),
+            reqDate: moment
+              .utc(requests[i].createdDate, "YYYY/MM/DD")
+              .locale("fa")
+              .format("jYYYY/jMM/jDD"),
+            reqUser: userInfo(requests[i]),
+            reqCo: xssFilters.inHTMLData(requests[i].companyName),
+            projectType: xssFilters.inHTMLData(requests[i].requestTypeName),
+            toolType: xssFilters.inHTMLData(requests[i].toolTypeName),
+            reqStatus: xssFilters.inHTMLData(requests[i].statusName),
+            reqOperation:
+              user === undefined
+                ? undefined
+                : operation(requests[i], requests[i].serial),
+          };
+          tableItems.push(tableItem);
+        }
       }
-    }
-    const fetchId = ++fetchIdRef.current;
-    setload(true);
-    if (fetchId === fetchIdRef.current) {
-      const startRow = pageSize * pageIndex;
-      const endRow = startRow + pageSize;
-      setData(tableItems.slice(startRow, endRow));
-      setPageCount(Math.ceil(tableItems.length / pageSize));
-      setload(false);
-    }
-  }, []);
+      const fetchId = ++fetchIdRef.current;
+      setload(true);
+      if (fetchId === fetchIdRef.current) {
+        const startRow = pageSize * pageIndex;
+        const endRow = startRow + pageSize;
+        setData(tableItems.slice(startRow, endRow));
+        setPageCount(Math.ceil(tableItems.length / pageSize));
+        setload(false);
+      }
+    },
+    [user]
+  );
   const handleSort = useCallback(
     ({ sortBy, pageIndex, pageSize, requests }) => {
       var tableItems = [];
@@ -410,7 +475,10 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
             projectType: xssFilters.inHTMLData(requests[i].requestTypeName),
             toolType: xssFilters.inHTMLData(requests[i].toolTypeName),
             reqStatus: xssFilters.inHTMLData(requests[i].statusName),
-            reqOperation: operation(requests[i], requests[i].serial),
+            reqOperation:
+              user === undefined
+                ? undefined
+                : operation(requests[i], requests[i].serial),
           };
           tableItems.push(tableItem);
         }
@@ -434,7 +502,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
         setload(false);
       }
     },
-    []
+    [user]
   );
 
   useEffect(() => {
@@ -514,6 +582,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           </div>
           <section className="position-relative">
             {loading ? <Loading /> : null}
+
             <div>
               <IranTolJobReqItem
                 requests={requestList}

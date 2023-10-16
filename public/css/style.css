@@ -1089,55 +1089,7 @@ input[type="number"] {
   color: #ffffff;
 }
 
-.login-size {
-  height: 40rem;
-  width: 70%;
-}
-
-@media (min-width: 992px) {
-  .login-size {
-    height: 60rem;
-    width: 70%;
-  }
-}
-
-.login-bg {
-  background: linear-gradient(
-    to bottom right,
-    #3939399e 0%,
-    #1a1b1a 50%,
-    #00eeff 500%
-  );
-}
-
-.login-main-img {
-  left: 0;
-  right: 0;
-  background-image: url(../images/kavehBG6R.png);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  object-fit: cover;
-}
-
-@media (min-width: 992px) {
-  .login-main-img {
-    left: 0;
-    right: 0;
-    background-image: url(../images/kavehBG3.png);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    object-fit: cover;
-  }
-}
-
-.login-main-img-sub {
-  left: 0;
-  right: 0;
-  background-image: url(../images/kavehGlassSubImg.png);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  object-fit: cover;
-}
+/* loginStyles */
 
 .inputDesignPrimary input[type="text"],
 .inputDesignPrimary input[type="password"] {
@@ -1211,44 +1163,7 @@ input[type="number"] {
   margin-right: 13px;
 }
 
-/* .inputDesignPrimary input[type="text"],
-.inputDesignPrimary input[type="password"] {
-  background: transparent !important;
-  width: 100% !important;
-  border: 1px solid rgba(139, 139, 139, 0.99) !important;
-  border-radius: 14px !important;
-  padding: 18px 15px !important;
-  color: #ffffff !important;
-  cursor: default;
-} */
-
-.login-padding {
-  padding: 60px 200px;
-  /* padding: 50px 100px; */
-}
-
-@media (max-width: 905px) {
-  .login-padding {
-    padding: 50px 100px;
-  }
-}
-@media (max-width: 577px) {
-  .login-padding {
-    padding: 25px 50px;
-  }
-}
-
-.forgetPass-padding {
-  padding: 100px 200px;
-}
-
-/* .shadow002 {
-  box-shadow: 0px 1px 2px 2px rgb(63, 252, 255);
-} */
-
-/* final login */
-
-.login-final-img {
+.login-main-img {
   left: 0;
   right: 0;
   background-image: url(../images/loginMainBg.png);
@@ -1285,13 +1200,9 @@ input[type="number"] {
   border: 1px solid rgba(145, 145, 145, 0.511);
 }
 
-.res {
-  height: 100%;
+.res-main {
   width: 60%;
-}
-
-.margin-left {
-  margin-right: 120px;
+  height: 100%;
 }
 
 .sso:hover {
@@ -1301,3 +1212,5 @@ input[type="number"] {
 .font10 {
   font-size: 10px;
 }
+
+/* end of loginStyles  */
