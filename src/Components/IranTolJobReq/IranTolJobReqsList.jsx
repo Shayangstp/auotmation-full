@@ -198,6 +198,16 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
             active
             onClick={() => {
               setActionToPersonsModal(true);
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "ارسال",
+                })
+              );
               setActionReqId(request.requestId);
             }}
           >
@@ -260,6 +270,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           </Button>
         </div>
       );
+      // plannig manager
     } else if (
       request.lastToPersons !== undefined &&
       request.lastActionCode === 37 &&
@@ -308,6 +319,173 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                 })
               );
               setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+          </Button>
+        </div>
+      );
+      //product manager
+    } else if (
+      request.lastToPersons !== undefined &&
+      request.lastActionCode === 39 &&
+      user.Roles !== undefined &&
+      user.Roles.some((role) => role === "6")
+    ) {
+      return (
+        <div className="d-flex justify-content-between flex-wrap">
+          <Button
+            title="تایید"
+            variant="success"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "accept",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </Button>
+          <Button
+            title="ابطال"
+            variant="danger"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "cancel",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+          </Button>
+        </div>
+      );
+      //product manager
+    } else if (
+      request.lastToPersons !== undefined &&
+      request.lastActionCode === 38 &&
+      user.Roles !== undefined &&
+      user.Roles.some((role) => role === "5")
+    ) {
+      return (
+        <div className="d-flex justify-content-between flex-wrap">
+          <Button
+            title="تایید"
+            variant="success"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "accept",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </Button>
+          <Button
+            title="ابطال"
+            variant="danger"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "cancel",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+          </Button>
+        </div>
+      );
+      // product Manager for second time accept the maps
+    } else if (
+      request.lastToPersons !== undefined &&
+      request.lastActionCode === 40 &&
+      user.Roles !== undefined &&
+      user.Roles.some((role) => role === "5")
+    ) {
+      return (
+        <div className="d-flex justify-content-between flex-wrap">
+          <Button
+            title="تایید"
+            variant="success"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "accept",
+                })
+              );
+              setSeenSerial(serialNumber);
+            }}
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </Button>
+          <Button
+            title="ابطال"
+            variant="danger"
+            className="d-flex align-items-center mb-2 mb-md-0"
+            size="sm"
+            active
+            onClick={() => {
+              dispatch(
+                handleCurrentReqInfo({
+                  reqId: request.requestId,
+                  reqType: request.typeId,
+                  reqSeen: request.seen,
+                  company: request.companyName,
+                  dep: "",
+                  oprationType: "cancel",
+                })
+              );
+              setSeenSerial(serialNumber);
+              dispatch(RsetIrantoolAddMaterialWorkFlowModal(true));
+              // history.push(`/MtrWrkflw/${request.requestId}`);
             }}
           >
             <FontAwesomeIcon icon={faBan} />
@@ -363,7 +541,9 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
                 })
               );
               setSeenSerial(serialNumber);
-              history.push(`/MtrWrkflw/${request.requestId}`);
+              // history.push(`/MtrWrkflw/${request.requestId}`);
+              dispatch(RsetIrantoolAddMaterialWorkFlowModal(true));
+              console.log(request);
             }}
           >
             <FontAwesomeIcon icon={faPlus} />
@@ -395,7 +575,7 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
           >
             <FontAwesomeIcon icon={faEye} />
           </Button>
-          <Button
+          {/* <Button
             title="ثبت متریال و مراحل کار"
             className="d-flex align-items-center"
             size="sm"
@@ -413,11 +593,12 @@ const IranTolJobReqsList = ({ setPageTitle }) => {
               );
               setSeenSerial(serialNumber);
               // history.push(`/MtrWrkflw/${request.requestId}`);
-              dispatch(RsetIrantoolAddMaterialWorkFlowModal(true));
+              history.push(`/MtrWrkflw`);
+              // dispatch(RsetIrantoolAddMaterialWorkFlowModal(true));
             }}
           >
             <FontAwesomeIcon icon={faPlus} />
-          </Button>
+          </Button> */}
         </section>
       );
     }

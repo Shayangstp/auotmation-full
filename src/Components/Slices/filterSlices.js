@@ -160,6 +160,9 @@ const filterSlices = createSlice({
     RsetFilterData: (state, { payload }) => {
       return { ...state, filterData: payload };
     },
+    RsetMembersOption: (state, { payload }) => {
+      return { ...state, membersOption: payload };
+    },
     RsetYearFilter: (state, { payload }) => {
       return { ...state, yearFilter: payload };
     },

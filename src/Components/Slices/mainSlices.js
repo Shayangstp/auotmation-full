@@ -764,7 +764,7 @@ export const handleAllNewReqs = createAsyncThunk(
       if (getAllNewReqsListRes.data.code === 415) {
         dispatch(RsetLoading(false));
         dispatch(RsetAllNewReqsList(getAllNewReqsListRes.data.list));
-        dispatch(RsetMembersOption(getAllNewReqsListRes.data.member));
+        dispatch(RsetMembersOption(getAllNewReqsListRes.data.members));
       } else {
         errorMessage("اطلاعات یافت نشد!");
         dispatch(RsetLoading(false));

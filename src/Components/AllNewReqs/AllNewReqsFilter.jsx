@@ -24,6 +24,7 @@ import {
   RsetUserFilter,
   selectUserFilter,
   handleAllStatuses,
+  selectMembersOption,
 } from "../Slices/filterSlices";
 import {
   handleAllNewReqs,
@@ -45,7 +46,7 @@ const AllNewReqsFilter = () => {
   const statusOptions = useSelector(selectStatusOptions);
   const typesOption = useSelector(selectTypesOption);
   const userFilter = useSelector(selectUserFilter);
-  const requestMembs = useSelector(selectRequestMemb);
+  const membersOptions = useSelector(selectMembersOption);
 
   const allNewRequestContext = useContext(allNewReqsContext);
   const { reqCategoriesList } = allNewRequestContext;
@@ -54,6 +55,8 @@ const AllNewReqsFilter = () => {
     dispatch(handleAllStatuses(0));
     dispatch(handleTypes());
   }, []);
+
+  console.log(membersOptions);
 
   return (
     <div className="d-flex flex-column  mb-5 lightGray2-bg p-4 borderRadius m-auto shadow border border-white border-2">
@@ -91,7 +94,7 @@ const AllNewReqsFilter = () => {
                 const filterValues = {
                   applicantId: localStorage.getItem("id"),
                   serial: option.target.value,
-                  type: typeFilter !== "" ? typeFilter.value : typeFilter,
+                  typeId: typeFilter !== "" ? typeFilter.value : typeFilter,
                   status:
                     statusFilter !== "" ? statusFilter.value : statusFilter,
                   fromDate:
@@ -106,50 +109,9 @@ const AllNewReqsFilter = () => {
                 dispatch(handleAllNewReqs(filterValues));
               }
             }}
-            // onKeyUp={(option) => {
-            //   option.which = option.which || option.keyCode;
-            //   if (option.which === 13) {
-            //     const filterValues = {
-            //       applicantId: localStorage.getItem("id"),
-            //       serial: option.target.value,
-            //       type: typeFilter !== "" ? typeFilter.value : typeFilter,
-            //       status:
-            //         statusFilter !== "" ? statusFilter.value : statusFilter,
-            //       fromDate:
-            //         fromDateFilter !== null
-            //           ? fromDateFilter.format("YYYY/MM/DD")
-            //           : "null",
-            //       toDate:
-            //         toDateFilter !== null
-            //           ? toDateFilter.format("YYYY/MM/DD")
-            //           : "null",
-            //     };
-            //     dispatch(handleMyReqsList(filterValues));
-            //   }
-            // }}
           />
         </Form.Group>
-        <Form.Group
-          as={Col}
-          md="4"
-          lg="3"
-          xl="3"
-          className="mb-4 mb-xl-0"
-          onKeyUp={(option) => {
-            option.which = option.which || option.keyCode;
-            if (option.which === 13) {
-              // const filterParams = {
-              //     applicantId: localStorage.getItem('id'),
-              //     memberId: userFilter.value !== '' ? userFilter.value : "",
-              //     type : typeFilterSelect !== '' ? typeFilterSelect.value : typeFilterSelect,
-              //     status: statusIdFilterSelect !== '' ? statusIdFilterSelect.value : statusIdFilterSelect,
-              //     fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-              //     toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-              // }
-              // handleGetAllNewReqsList(filterParams);
-            }
-          }}
-        >
+        <Form.Group as={Col} md="4" lg="3" xl="3" className="mb-4 mb-xl-0">
           <Form.Label id="firstname" className="mb-1">
             درخواست کننده:
           </Form.Label>
@@ -157,45 +119,33 @@ const AllNewReqsFilter = () => {
             id="members"
             placeholder="همه"
             isSearchable
-            // value={userIdFilterSelect}
-            options={requestMembs}
-            // onChange={(e) => {
-            //     dispatch(RsetStatusFilter(e));
-            //     if (realFilter) {
-            //         const filterParams = {
-            //             applicantId: localStorage.getItem('id'),
-            //             memberId: e !== '' ? e.value : e,
-            //             type : typeFilterSelect !== '' ? typeFilterSelect.value : typeFilterSelect,
-            //             status: statusIdFilterSelect !== '' ? statusIdFilterSelect.value : statusIdFilterSelect,
-            //             fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-            //             toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-            //         }
-            //         dispatch(handleAllNewReqs(filterParams));
-            //     }
-            // }}
+            value={userFilter}
+            options={membersOptions}
+            onChange={(e) => {
+              dispatch(RsetUserFilter(e));
+              if (realFilter) {
+                const filterParams = {
+                  applicantId: localStorage.getItem("id"),
+                  serial: serialFilter !== "" ? serialFilter : serialFilter,
+                  memberId: e.value !== "" ? userFilter.value : userFilter,
+                  typeId: e !== "" ? e.value : e,
+                  status:
+                    statusFilter !== "" ? statusFilter.value : statusFilter,
+                  fromDate:
+                    fromDateFilter !== null
+                      ? fromDateFilter.format("YYYY/MM/DD")
+                      : "null",
+                  toDate:
+                    toDateFilter !== null
+                      ? toDateFilter.format("YYYY/MM/DD")
+                      : "null",
+                };
+                dispatch(handleAllNewReqs(filterParams));
+              }
+            }}
           />
         </Form.Group>
-        <Form.Group
-          as={Col}
-          md="4"
-          lg="3"
-          xl="3"
-          className="mb-4 mb-xl-0"
-          // onKeyUp={(option) => {
-          //     option.which = option.which || option.keyCode;
-          //     if (option.which === 13) {
-          //         const filterParams = {
-          //             applicantId: localStorage.getItem('id'),
-          //             memberId: userIdFilterSelect !== '' ? userIdFilterSelect.value : userIdFilterSelect,
-          //             type : option !== '' ? option.value : option,
-          //             status: statusIdFilterSelect !== '' ? statusIdFilterSelect.value : statusIdFilterSelect,
-          //             fromDate: fromDateFilter !== null ? fromDateFilter.format('YYYY/MM/DD') : 'null',
-          //             toDate: toDateFilter !== null ? toDateFilter.format('YYYY/MM/DD') : 'null',
-          //         }
-          //         handleGetAllNewReqsList(filterParams);
-          //     }
-          // }}
-        >
+        <Form.Group as={Col} md="4" lg="3" xl="3" className="mb-4 mb-xl-0">
           <Form.Label id="firstname" className="mb-1">
             دسته بندی:
           </Form.Label>
@@ -212,7 +162,7 @@ const AllNewReqsFilter = () => {
                   applicantId: localStorage.getItem("id"),
                   serial: serialFilter !== "" ? serialFilter : serialFilter,
                   memberId: userFilter !== "" ? userFilter.value : userFilter,
-                  type: e !== "" ? e.value : e,
+                  typeId: e.value !== "" ? e.value : e,
                   status:
                     statusFilter !== "" ? statusFilter.value : statusFilter,
                   fromDate:
@@ -254,7 +204,7 @@ const AllNewReqsFilter = () => {
                 const filterParams = {
                   applicantId: localStorage.getItem("id"),
                   memberId: userFilter !== "" ? userFilter.value : userFilter,
-                  type: typeFilter !== "" ? typeFilter.value : typeFilter,
+                  typeId: typeFilter !== "" ? typeFilter.value : typeFilter,
                   status: statusFilter !== "" ? statusFilter.value : "",
                   fromDate:
                     value !== null ? value.format("YYYY/MM/DD") : "null",
@@ -286,7 +236,7 @@ const AllNewReqsFilter = () => {
                 const filterParams = {
                   applicantId: localStorage.getItem("id"),
                   memberId: userFilter !== "" ? userFilter.value : userFilter,
-                  type: typeFilter !== "" ? typeFilter.value : typeFilter,
+                  typeId: typeFilter !== "" ? typeFilter.value : typeFilter,
                   status:
                     statusFilter !== "" ? statusFilter.value : statusFilter,
                   fromDate:
@@ -313,7 +263,7 @@ const AllNewReqsFilter = () => {
                   applicantId: localStorage.getItem("id"),
                   serial: serialFilter !== "" ? serialFilter : serialFilter,
                   memberId: userFilter !== "" ? userFilter.value : userFilter,
-                  type: typeFilter !== "" ? typeFilter.value : typeFilter,
+                  typeId: typeFilter !== "" ? typeFilter.value : typeFilter,
                   status:
                     statusFilter !== "" ? statusFilter.value : statusFilter,
                   fromDate:
@@ -334,11 +284,22 @@ const AllNewReqsFilter = () => {
               variant="secondary"
               className="font12 ms-1"
               onClick={() => {
-                dispatch(RsetSerialFilter(""))
-                dispatch(RsetUserFilter(""))
-                dispatch(RsetTypeFilter(""))
-                dispatch(RsetFromDateFilter(null))
-                dispatch(RsetToDateFilter(null))
+                const filterParams = {
+                  applicantId: localStorage.getItem("id"),
+                  serial: "",
+                  memberId: "",
+                  typeId: "",
+                  status: "",
+                  fromDate: "null",
+                  toDate: "null",
+                };
+                dispatch(handleAllNewReqs(filterParams));
+                dispatch(RsetSerialFilter(""));
+                dispatch(RsetUserFilter(""));
+                dispatch(RsetTypeFilter(""));
+                dispatch(RsetFromDateFilter(null));
+                dispatch(RsetToDateFilter(null));
+                dispatch(RsetRealFilter(false));
               }}
             >
               لغو فیلتر

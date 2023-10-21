@@ -104,7 +104,7 @@ import PurchaseItemsList from "../Components/WarehouseReq/ProductPurchase/Purcha
 import CheckoutReqRegistration from "../Components/CheckoutJobReq/CheckoutReqRegistration";
 import CheckoutReqList from "../Components/CheckoutJobReq/CheckoutReqList";
 import Survey from "../Components/test/Survey"
-import Test2 from "../Components/test/Test2";
+import Login from "../Components/test/Login";
 
 const Automation = (props) => {
 
@@ -312,7 +312,7 @@ const Automation = (props) => {
                             </CookieContext>}
                     />
                     <Route
-                        path="/MtrWrkflw/:userId/:fileId"
+                        path="/MtrWrkflw/:reqId/:fileId"
                         render={() =>
                             hasJWT() === false ? (
                                 <Redirect to="/" />
@@ -755,7 +755,7 @@ const Automation = (props) => {
                             <UserContext>
                                 {/* <LoginAndRegister /> */}
                                 {/* <Test /> */}
-                                <Test2/>
+                                <Login/>
                             </UserContext>
                             {/* </MainContext> */}
                         </CookieContext>} />

@@ -252,7 +252,6 @@ const IranTolJobContext = ({ children }) => {
                 } else if(currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons !== null){
                     toPersonRes = await getToPersonByRole('4', 2, 49, 1, null, '0');
                 }
-                console.log(toPersonRes);
                 if (toPersonRes !== '' && toPersonRes.data.code === 415 && toPersonRes.data.list.length !== 0) {
                     toPersons = toPersonRes.data.list[0].value;
                 } else {
@@ -261,8 +260,10 @@ const IranTolJobContext = ({ children }) => {
             }
             if (toPersons !== '') {
                 var actionToPersonsRes = '';
+                console.log(actionReqId , 1 , toPersons);
                 if (currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons === null) {
-                    actionToPersonsRes = await postActionToPersons(actionReqId, 1, toPersons);   
+                    actionToPersonsRes = await postActionToPersons(actionReqId, 1, toPersons);
+                    console.log(actionToPersonsRes);
                 } else if (currentReqInfo.lastActionCode === 0 && currentReqInfo.lastToPersons !== null) {
                     
                     const toPerson = (await getToPersonByRole(

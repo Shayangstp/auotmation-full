@@ -16,7 +16,7 @@ import { isAccordionItemSelected } from "react-bootstrap/esm/AccordionContext";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAcceptReqModal, RsetAcceptReqModal, selectAcceptReqComment, RsetAcceptReqComment } from '../../Slices/modalsSlice';
 import { handleUnits, selectUnitsOption, selectUser, handleUserInformation, handleUserImage } from "../../Slices/mainSlices";
-import { handleReqFiles, selectCurrentReqFiles } from '../../Slices/currentReqSlice';
+import { handleReqFiles, selectCurrentReqFiles, selectCurrentReqInfo } from '../../Slices/currentReqSlice';
 import AddMaterialWorkFlowModal from "../../Modals/ITJReqModals/AddMaterialWorkflowModal";
 import {
     RsetIrantoolAddMaterialWorkFlowModal,
@@ -33,7 +33,10 @@ const AcceptRequestModal = () => {
     const currentReqFiles = useSelector(selectCurrentReqFiles);
     const irantoolAddMaterialWorkFlowModal = useSelector(
         selectIrantoolMaterialWorkFlowModal
-      );
+    );
+    
+    // const currentReqInfo = useSelector(selectCurrentReqInfo)
+
 
     const mainContext = useContext(rootContext);
     const {
@@ -45,6 +48,8 @@ const AcceptRequestModal = () => {
         deletedItemId,
         currentReqComments,
     } = mainContext;
+
+    console.log(currentReqInfo);
 
     const jobContext = useContext(iranTolJobCntxt);
     const {
@@ -569,7 +574,7 @@ const AcceptRequestModal = () => {
                                 variant="success"
                                 onClick={() => {
                                     console.log(currentReqInfo);
-                                    if (currentReqInfo.acceptedByHajAlireza === 0 && user.Roles.some(role => role === '14')) {
+                                    if (currentReqInfo.acceptedByHajAlireza === 0 && user.Roles.some(role => role === '14') && currentReqInfo.lastActionCode === 0)    {
                                         //open modal
                                         setActionToPersonsModal(true);
                                     } else {

@@ -3,8 +3,14 @@ import { Modal, Button, Row, Form, Col } from "react-bootstrap";
 import { iranTolJobCntxt } from "../../context/iranTolJobContext/IranTolJobCntxt";
 import Select from 'react-select';
 import { useEffect } from "react";
-
+import { selectCurrentReqInfo } from "../../Slices/currentReqSlice"
+import { useSelector } from "react-redux";
 const ActionToPersonsModal = () => {
+    const currentReqInfo = useSelector(selectCurrentReqInfo);   
+
+    console.log(currentReqInfo);
+
+
 
     const jobContext = useContext(iranTolJobCntxt);
     const {

@@ -48,9 +48,11 @@ const ViewRequestModal = () => {
 
   useEffect(() => {
     if (currentReqInfo.requestId !== undefined) {
-      dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, multi: 0, multi: 1, fileName: ""}));
+      dispatch(handleReqFiles({reqId: currentReqInfo.requestId, index: 0, multi: 0, justShow: 1, fileName: ""}));
     }
   }, [currentReqInfo]);
+
+  console.log(currentReqFiles);
 
   return (
     <Modal

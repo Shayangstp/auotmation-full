@@ -33,6 +33,14 @@ const MyReqsFilter = () => {
         dispatch(handleTypes());
     }, [])
 
+    //handle Reset
+    useEffect(() => {
+        dispatch(RsetSerialFilter(""))
+        dispatch(RsetTypeFilter(""))
+        dispatch(RsetStatusFilter(""))
+        dispatch(RsetFromDateFilter(null))
+        dispatch(RsetToDateFilter(null))
+    } , [])
 
     return (
         <div className="d-flex flex-column  mb-5 lightGray2-bg p-3 borderRadius m-auto shadow border border-white border-2">

@@ -46,17 +46,23 @@ import { selectCurrentReqInfo } from "../Slices/currentReqSlice";
 import {
   selectShowFilter,
   RsetShowFilter,
-  handleTabs,
+  RsetSerialFilter,
+  RsetTypeFilter,
+  RsetUserFilter,
+  RsetFromDateFilter,
+  RsetToDateFilter,
 } from "../Slices/filterSlices";
 import AcceptRequestModal from "../Modals/WarehouseReqsModals/AcceptRequestModal";
 import NextAcceptRequestModal from "../Modals/WarehouseReqsModals/NextAcceptRequestModal";
 import CancelRequestModal from "../Modals/WarehouseReqsModals/CancelRequestModal";
-import { selectReqsList, handleAllNewReqs } from "../Slices/mainSlices";
+import {
+  selectReqsList,
+  handleAllNewReqs,
+  selectLoading,
+} from "../Slices/mainSlices";
+import Loading from "../Common/Loading";
 
-// import EditRequestModal from "../Modals/WarehouseReqsModals/EditRequestModal";
-// import ViewRequestModal from "../Modals/WarehouseReqsModals/ViewRequestModal";
-
-const AllNewRequests = ({ setPageTitle, loading }) => {
+const AllNewRequests = ({ setPageTitle }) => {
   const dispatch = useDispatch();
   const acceptReqModal = useSelector(selectAcceptReqModal);
   const nextAcceptReqModal = useSelector(selectNextAcceptReqModal);
@@ -64,6 +70,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
   const currentReqInfo = useSelector(selectCurrentReqInfo);
   const showFilter = useSelector(selectShowFilter);
   const allNewReqs = useSelector(selectAllNewReqsList);
+  const loading = useSelector(selectLoading);
 
   const mainContext = useContext(rootContext);
   const {
@@ -73,9 +80,7 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
     allNewReqsList,
     handleUpdateSupStatus,
   } = mainContext;
-  // useEffect(()=>{
-  //     handleCheckPermission(localStorage.getItem('lastLocation'));
-  // },[])
+
   useEffect(() => {
     setPageTitle("درخواست های جدید");
   }, [setPageTitle]);
@@ -83,7 +88,13 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
   const allNewRequestsContext = useContext(allNewReqsContext);
   const {} = allNewRequestsContext;
 
+  //handleReset
   useEffect(() => {
+    dispatch(RsetSerialFilter(""));
+    dispatch(RsetUserFilter(""));
+    dispatch(RsetTypeFilter(""));
+    dispatch(RsetFromDateFilter(null));
+    dispatch(RsetToDateFilter(null));
     const filterValues = {
       applicantId: localStorage.getItem("id"),
       serial: "",
@@ -363,14 +374,8 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
                     به روزرسانی
                   </Button>
                 </div>
-                {loading ? (
-                  <div className="d-flex justify-content-center">
-                    <FontAwesomeIcon
-                      icon={faSpinner}
-                      className="spinner font60"
-                    />
-                  </div>
-                ) : (
+                <section className="position-relative">
+                  {loading ? <Loading /> : null}
                   <Fragment>
                     {/* <AllNewReqsFilter /> */}
                     <AllNewReqsList
@@ -391,37 +396,11 @@ const AllNewRequests = ({ setPageTitle, loading }) => {
                     {cancelReqModal && currentReqInfo.typeId === 2 ? (
                       <CancelRequestModal />
                     ) : null}
-                    {/* {editReqModal && currentReqInfo.typeId === 2 ? <EditRequestModal /> : null}
-                                {viewReqModal && currentReqInfo.typeId === 2 ? <ViewRequestModal /> : null} */}
                   </Fragment>
-                )}
+                </section>
               </div>
             </section>
           </Fragment>
-          {/* :
-                        <Row>
-                            <Col>
-                                <Alert variant="warning">
-                                    <Alert.Heading>
-                                        <FontAwesomeIcon icon={faWarning} className='me-2 font24' />
-                                        <span className="font24">عدم دسترسی!</span>
-                                    </Alert.Heading>
-                                    <p>
-                                        کاربر گرامی شما به این بخش دسترسی ندارید.
-                                    </p>
-                                    <hr />
-                                    <div className="d-flex justify-content-end">
-                                        <Link to='/Home'>
-                                            <Button variant="outline-success">
-                                                <FontAwesomeIcon icon={faHome} className='me-2' />
-                                                صفحه اصلی
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </Alert>
-                            </Col>
-                        </Row>
-                    } */}
         </Col>
       </Row>
     </Container>
